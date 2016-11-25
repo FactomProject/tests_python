@@ -1,10 +1,11 @@
 import json
+import os
 
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
 
 class FactomCliCreate():
-
-    _factom_cli_command = '$GOPATH/bin/factom-cli ' #TODO get it globalized
+    _gopath = os.environ['GOPATH']
+    _factom_cli_command = _gopath + '/bin/factom-cli ' #TODO get it globalized
     _factom_importaddress = "importaddress "
     _factom_newfctaddress = "newfctaddress "
     _factom_importwords = "importwords "
