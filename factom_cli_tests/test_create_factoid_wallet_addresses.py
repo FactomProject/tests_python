@@ -7,17 +7,16 @@ from api_objects.factom_cli_create import FactomCliCreate
 
 class FactomCliEndToEndTest(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.factom_cli_create = FactomCliCreate()
-        cls.first_address = cls.factom_cli_create.import_address_from_factoid("Fs2DNirmGDtnAZGXqca3XHkukTNMxoMGFFQxJA3bAjJnKzzsZBMH") #TODO data pachage for that
-        cls.second_address = cls.factom_cli_create.create_new_factoid_address()
+    def setUp(self):
+        self.factom_cli_create = FactomCliCreate()
+        self.first_address = self.factom_cli_create.import_address_from_factoid("Fs2DNirmGDtnAZGXqca3XHkukTNMxoMGFFQxJA3bAjJnKzzsZBMH") #TODO data pachage for that
+        self.second_address = self.factom_cli_create.create_new_factoid_address()
         words = '"salute umbrella proud setup delay ginger practice split toss jewel tuition stool"'
-        cls.third_address = cls.factom_cli_create.import_words_from_koinify_into_wallet(words)
-        cls.ecrate = cls.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
-        cls.entry_creds_wallet1 = cls.factom_cli_create.import_address_from_factoid(
+        self.third_address = self.factom_cli_create.import_words_from_koinify_into_wallet(words)
+        self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
+        self.entry_creds_wallet1 = self.factom_cli_create.import_address_from_factoid(
             'Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG')
-        cls.entry_creds_wallet2 = cls.factom_cli_create.create_entry_credit_address()
+        self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
     def test_alocate_founds_to_factoid_walled_address(self):
 
@@ -183,8 +182,6 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self._wait_for_ack(transaction_id, 60)
         balance_1_after = self.factom_cli_create.check_waller_address_balance(self.second_address)
         self.assertEqual(int(balance_1_after), int(balance_1) + value_of_factoids)
-
-
 
 
 
