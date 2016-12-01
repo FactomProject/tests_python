@@ -1,11 +1,9 @@
 import json
-import os
 
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
+from base_object import FactomBaseObject
 
-class FactomCliCreate():
-    _gopath = os.environ['GOPATH']
-    _factom_cli_command = _gopath + '/bin/factom-cli ' #TODO get it globalized
+class FactomCliCreate(FactomBaseObject):
     _factom_importaddress = "importaddress "
     _factom_newfctaddress = "newfctaddress "
     _factom_importwords = "importwords "
@@ -13,18 +11,18 @@ class FactomCliCreate():
     _factom_ecrate = "ecrate"
     _factom_newtx = "newtx "
     _factom_add_transaction_f_input = "addtxinput "
-    factom_add_transaction_f_output = "addtxoutput "
-    factom_add_transaction_ec_output = "addtxecoutput "
-    factomd_substract_fee_on_tx = "subtxfee "
-    factomd_add_fee_on_tx = "addtxfee "
-    factom_sign_transaction = 'signtx '
-    factom_composetx = 'composetx '
-    factom_ack = "ack "
-    factom_sendtx = "sendtx "
-    factom_new_entry_address = "newecaddress"
-    factom_listadresses = "listaddresses"
-    factom_exportadresses = "exportadresses"
-    factom_list_local_txs = "listtxs tmp"
+    _factom_add_transaction_f_output = "addtxoutput "
+    _factom_add_transaction_ec_output = "addtxecoutput "
+    _factomd_substract_fee_on_tx = "subtxfee "
+    _factomd_add_fee_on_tx = "addtxfee "
+    _factom_sign_transaction = 'signtx '
+    _factom_composetx = 'composetx '
+    _factom_ack = "ack "
+    _factom_sendtx = "sendtx "
+    _factom_new_entry_address = "newecaddress"
+    _factom_listadresses = "listaddresses"
+    _factom_exportadresses = "exportadresses"
+    _factom_list_local_txs = "listtxs tmp"
     _factom_remove_tx = "rmtx "
     _factom_buy_ec = "buyec "
     _factom_send_factoids = "sendfct "
@@ -60,46 +58,46 @@ class FactomCliCreate():
 
     def add_factoid_output_to_transaction_in_wallet(self, transaction_name, wallet_address, amount):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self.factom_add_transaction_f_output, transaction_name,
+                                                             self._factom_add_transaction_f_output, transaction_name,
                                                              ' ', wallet_address, ' ', amount)))
 
     def set_account_to_substract_fee_from_that_transaction(self, transaction_name, wallet_address):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self.factomd_substract_fee_on_tx, transaction_name, ' ', wallet_address)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_substract_fee_on_tx, transaction_name, ' ', wallet_address)))
 
     def set_acconut_to_add_fee_from_transaction_input(self, transaction_name, wallet_address):
         return send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self.factomd_add_fee_on_tx, transaction_name, ' ', wallet_address)))
+            (self._factom_cli_command, self._factomd_add_fee_on_tx, transaction_name, ' ', wallet_address)))
 
     def sign_transaction_in_wallet(self, transaction_name):
-        return send_command_to_cli_and_receive_text((''.join((self._factom_cli_command, self.factom_sign_transaction, transaction_name))))
+        return send_command_to_cli_and_receive_text((''.join((self._factom_cli_command, self._factom_sign_transaction, transaction_name))))
 
     def compose_transactsion_and_return_transactoin_code(self, transaction_name):
-        transaction = json.loads(send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self.factom_composetx, transaction_name))))
+        transaction = json.loads(send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_composetx, transaction_name))))
         return transaction['params']['transaction']
 
     def compose_transactsion(self, transaction_name):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self.factom_composetx, transaction_name)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_composetx, transaction_name)))
 
 
     def request_transaction_acknowledgement(self, transaction_hash):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self.factom_ack, transaction_hash)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_ack, transaction_hash)))
 
 
     def send_transaction_and_recive_transaction_id(self, transaction_name):
-        transacton = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self.factom_sendtx, transaction_name)))
+        transacton = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_sendtx, transaction_name)))
         return transacton.split(' ')[1]
 
     def create_entry_credit_address(self):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self.factom_new_entry_address)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_new_entry_address)))
 
     def list_adresses(self):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self.factom_listadresses)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_listadresses)))
 
     def export_addresses(self):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self.factom_exportadresses)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_exportadresses)))
 
     def list_local_transactions(self):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self.factom_list_local_txs)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_list_local_txs)))
 
     def remove_transaction_from_wallet(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_remove_tx, transaction_name)))
@@ -107,7 +105,7 @@ class FactomCliCreate():
 
     def add_entry_credit_output_to_transaction_in_wallet(self, transaction_name, wallet_address, amount):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self.factom_add_transaction_ec_output, transaction_name,
+                                                             self._factom_add_transaction_ec_output, transaction_name,
                                                              ' ', wallet_address, ' ', amount)))
 
     def buy_ec(self, wallet_address, ec_wallet_address, amount):
