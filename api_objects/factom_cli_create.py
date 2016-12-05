@@ -17,7 +17,7 @@ class FactomCliCreate(FactomBaseObject):
     _factomd_add_fee_on_tx = "addtxfee "
     _factom_sign_transaction = 'signtx '
     _factom_composetx = 'composetx '
-    _factom_ack = "ack "
+    _factom_ack = "status "
     _factom_sendtx = "sendtx "
     _factom_new_entry_address = "newecaddress"
     _factom_listadresses = "listaddresses"
