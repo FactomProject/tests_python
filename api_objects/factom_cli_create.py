@@ -1,5 +1,3 @@
-import json
-
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
 from base_object import FactomBaseObject
 
@@ -72,8 +70,7 @@ class FactomCliCreate(FactomBaseObject):
         return send_command_to_cli_and_receive_text((''.join((self._factom_cli_command, self._factom_sign_transaction, transaction_name))))
 
     def compose_transactsion_and_return_transactoin_code(self, transaction_name):
-        transaction = json.loads(send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_composetx, transaction_name))))
-        return transaction['params']['transaction']
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_composetx, transaction_name))).split('"')[11]
 
     def compose_transactsion(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_composetx, transaction_name)))
