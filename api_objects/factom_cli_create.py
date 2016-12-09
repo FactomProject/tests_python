@@ -82,7 +82,6 @@ class FactomCliCreate(FactomBaseObject):
     def request_transaction_acknowledgement(self, transaction_hash):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_ack, transaction_hash)))
 
-
     def send_transaction_and_recive_transaction_id(self, transaction_name):
         transacton = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_sendtx, transaction_name)))
         return transacton.split(' ')[1]
