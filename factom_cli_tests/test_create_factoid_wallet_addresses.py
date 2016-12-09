@@ -20,9 +20,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
     def test_alocate_founds_to_factoid_walled_address(self):
 
-        balance1 = self.factom_cli_create.check_waller_address_balance(self.first_address)
-        balance2 = self.factom_cli_create.check_waller_address_balance(self.second_address)
-        balance3 = self.factom_cli_create.check_waller_address_balance(self.third_address)
+
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_foactoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
@@ -36,10 +34,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self._wait_for_ack(transaction_id, 60)
 
         #test here balance after change
-        balance1_after = self.factom_cli_create.check_waller_address_balance(self.first_address)
         balance2_after = self.factom_cli_create.check_waller_address_balance(self.second_address)
-        balance3_after = self.factom_cli_create.check_waller_address_balance(self.third_address)
-
 
         self.assertTrue(balance2_after is not 0, 'cash was not send to address: ' + self.second_address)
 

@@ -4,6 +4,8 @@ import os
 from api_objects.factom_cli_create import FactomCliCreate
 from api_objects.factom_chain_objects import FactomChainObjects
 
+from helpers.helpers import create_random_string
+
 class FactomChainTests(unittest.TestCase):
 
     def setUp(self):
@@ -22,7 +24,37 @@ class FactomChainTests(unittest.TestCase):
 
     def test_make_chain_with_factoids_not_ec(self):
         path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
-        self.assertTrue("not an Entry" in self.factom_chain_object.make_chain_from_binary_file(self.first_address, path, '1', '1'))
+        self.assertTrue("not an Entry" in self.factom_chain_object.make_chain_from_binary_file(self.first_address, path,
+                                                                                               '1', '1'))
+
+    def test_make_correct_chain_with_not_enough_ec(self):
+        path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
+
+        self.assertTrue(
+            'Not enough Entry Credits' in self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1,
+                                                                                               path, '2', '2'))
+
+    def test_make_chain_that_allredy_exist(self):
+        path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
+        self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '100')
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1, name_2)
+        self.assertTrue('already exist' in self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1, name_2))
+
+    def test_make_chain_and_check_balance(self):
+        path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
+        self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '100')
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1, name_2)
+
+    def test_check_chain_height(self):
+        seq = self.factom_chain_object.get_sequence_number_from_head()
+        directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
+        self.assertTrue(seq == directory_block_height, 'Directory block is not equal to sequence')
+
+
 
 
 
