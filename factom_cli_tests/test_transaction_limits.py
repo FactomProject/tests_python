@@ -95,20 +95,10 @@ class FactomCliTransactionLimits(unittest.TestCase):
         balance2 = self.factom_cli_create.check_waller_address_balance(self.first_address)
         self.assertTrue(balance1 == balance2, "Balance is substracted for too small input")
 
-
-
-
-
-
-
-
-
-
-
     def _wait_for_ack(self, transaction_id, time_to_wait):
         status = 'not found'
         i = 0
-        while "not found" in status and i < time_to_wait:
+        while "TransactionACK" not in status and i < time_to_wait:
             status = self.factom_cli_create.request_transaction_acknowledgement(transaction_id)
             time.sleep(1)
-            i +=1
+            i += 1
