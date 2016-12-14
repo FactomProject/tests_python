@@ -3,7 +3,7 @@ import string
 import random
 import time
 
-from api_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_create import FactomCliCreate
 
 class FactomCliEndToEndTest(unittest.TestCase):
 

@@ -1,8 +1,8 @@
 import unittest
 import os
 
-from api_objects.factom_cli_create import FactomCliCreate
-from api_objects.factom_chain_objects import FactomChainObjects
+from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_chain_objects import FactomChainObjects
 
 from helpers.helpers import create_random_string
 
