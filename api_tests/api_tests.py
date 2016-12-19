@@ -9,6 +9,6 @@ from helpers.helpers import create_random_string
 
 class FactomChainTests(unittest.TestCase):
 
-    def test_make_chain_with_wrong_address(self):
+    def make_chain_with_wrong_address(self):
         factom_api = FactomApiObjects()
-        print factom_api.get_directory_block_head()
+        factom_api.get_directory_block_head()

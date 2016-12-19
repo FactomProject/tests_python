@@ -55,8 +55,8 @@ class FactomCliEndToEndTest(unittest.TestCase):
     def test_create_transaction_with_no_inputs_outputs_and_entry_creds(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
-        self.factom_cli_create.send_transaction_and_recive_transaction_id(transaction_name)
-        self.assertTrue(transaction_name not in self.factom_cli_create.list_local_transactions(), 'Transaction was created')
+        self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
+        self.assertTrue('Cannot send unsigned transaction' in self.factom_cli_create.send_transaction(transaction_name))
 
     def test_delete_transaction(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
@@ -87,7 +87,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.set_account_to_substract_fee_from_that_transaction(transaction_name, self.first_address)
         self.factom_cli_create.add_foactoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '10')
-        self.assertTrue('Overpaying Fee' in self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
+        self.assertTrue('Overpaying fee' in self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
                         'Was able to overpay fee')
         self.factom_cli_create.remove_transaction_from_wallet(transaction_name)
         self.assertTrue(transaction_name not in self.factom_cli_create.list_local_transactions(),
@@ -173,6 +173,20 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self._wait_for_ack(transaction_id, 60)
         balance_1_after = self.factom_cli_create.check_waller_address_balance(self.second_address)
         self.assertEqual(int(balance_1_after), int(balance_1) + value_of_factoids)
+
+    def test_for_sof_425(self):
+        #todo change assert when fixed
+        second_address = self.factom_cli_create.create_new_factoid_address()
+        third_address = self.factom_cli_create.create_new_factoid_address()
+        self.factom_cli_create.send_factoids(self.first_address, second_address, '100')
+
+
+        self.assertTrue('100' in self.factom_cli_create.check_waller_address_balance(second_address))
+        self.assertTrue('balance is too low' in self.factom_cli_create.send_factoids(second_address, third_address, '99.9999'))
+        self.assertTrue('0' in self.factom_cli_create.check_waller_address_balance(third_address))
+        self.factom_cli_create.send_factoids(second_address, third_address, '99.99988')
+        self.assertTrue('99.99988' in self.factom_cli_create.check_waller_address_balance(third_address))
+
 
 
 
