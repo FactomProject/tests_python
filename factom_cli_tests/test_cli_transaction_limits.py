@@ -67,7 +67,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_foactoid_input_to_transaction_in_wallet(transaction_name, self.first_address, str(balance_plus_one))
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.first_address, str(balance_plus_one - transaction_fee))
-        self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
+        self.assertIn("balance is too low", self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
         transaction_id = self.factom_cli_create.send_transaction_and_recive_transaction_id(transaction_name)
         self._wait_for_ack(transaction_id, 10)
         balance2 = self.factom_cli_create.check_waller_address_balance(self.first_address)
