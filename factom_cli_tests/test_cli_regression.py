@@ -187,6 +187,16 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.send_factoids(second_address, third_address, '99.99988')
         self.assertTrue('99.99988' in self.factom_cli_create.check_waller_address_balance(third_address))
 
+    def transaction_juggling(self):
+        second_ec_address = self.factom_cli_create.create_entry_credit_address()
+
+        print self.first_address
+
+        print second_ec_address
+
+        for x in xrange(10000):
+            print self.factom_cli_create.buy_ec(self.first_address, second_ec_address, '1')
+
 
 
 

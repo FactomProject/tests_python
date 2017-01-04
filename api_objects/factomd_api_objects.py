@@ -1,21 +1,27 @@
 import requests
 import json
 
+from helpers.helpers import read_data_from_json
+
 
 class FactomApiObjects():
+    data = read_data_from_json('addresses.json')
+    factomd_address = data['factomd_address']
 
     def send_get_request_with_params_dict(self, method, params_dict):
-        url = 'http://10.29.0.5:8088/v2'
+        url = 'http://'+self.factomd_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
+        print data
         return r.text, r.status_code
 
     def send_get_request_with_method(self, method):
-        url = 'http://10.29.0.5:8088/v2'
+        url = 'http://' + self.factomd_address + '/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
+        print data
         return r.text
 
     def get_directory_block_head(self):
@@ -168,7 +174,8 @@ class FactomApiObjects():
         :param factoid_address: str address
         :return: int - balance
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('factoid-balance', {'address': factoid_address}))
+        print self.send_get_request_with_params_dict('factoid-balance', {'address': factoid_address})
+        blocks = json.loads(self.send_get_request_with_params_dict('factoid-balance', {'address': factoid_address})[0])
         return blocks['result']['balance']
 
     def get_entry_credits_rate(self):
@@ -193,7 +200,7 @@ class FactomApiObjects():
         :param transaction: str, transaction hash
         :return:
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('factoid-submit', {'transaction': transaction}))
+        blocks = json.loads(self.send_get_request_with_params_dict('factoid-submit', {'transaction': transaction})[0])
         return blocks['result']
 
     def commit_chain_by_message(self, message):

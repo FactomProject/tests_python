@@ -1,5 +1,6 @@
 import unittest
 import os
+import time
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
@@ -35,10 +36,13 @@ class FactomChainTests(unittest.TestCase):
 
     def test_make_chain_that_allredy_exist(self):
         path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
-        self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '100')
+        print self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '100')
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
-        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1, name_2)
+        time.sleep(2)
+        print self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1, name_2)
+        print self.entry_creds_wallet2
+        print self.first_address
         self.assertTrue('already exist' in self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1, name_2))
 
     def test_make_chain_and_check_balance(self):
