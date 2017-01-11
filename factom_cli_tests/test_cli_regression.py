@@ -4,18 +4,21 @@ import random
 import time
 
 from cli_objects.factom_cli_create import FactomCliCreate
+from helpers.helpers import read_data_from_json
+
 
 class FactomCliEndToEndTest(unittest.TestCase):
+    data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
-        self.first_address = self.factom_cli_create.import_address_from_factoid("Fs2DNirmGDtnAZGXqca3XHkukTNMxoMGFFQxJA3bAjJnKzzsZBMH") #TODO data pachage for that
+        self.first_address = self.factom_cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
         self.second_address = self.factom_cli_create.create_new_factoid_address()
-        words = '"salute umbrella proud setup delay ginger practice split toss jewel tuition stool"'
+        words = '"'+self.data['words']+'"'
         self.third_address = self.factom_cli_create.import_words_from_koinify_into_wallet(words)
         self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
         self.entry_creds_wallet1 = self.factom_cli_create.import_address_from_factoid(
-            'Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG')
+            self.data['ec_wallet_address'])
         self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
     def test_alocate_founds_to_factoid_walled_address(self):
@@ -48,8 +51,6 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
         balance_1 = self.factom_cli_create.check_waller_address_balance(self.entry_creds_wallet1)
         balance_2 = self.factom_cli_create.check_waller_address_balance(self.entry_creds_wallet2)
-
-        #TODO think about assertion
 
 
     def test_create_transaction_with_no_inputs_outputs_and_entry_creds(self):

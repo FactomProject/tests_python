@@ -12,7 +12,6 @@ class FactomWalletApiObjects():
         url = 'http://'+ self.wallet_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
-        print data
         r = requests.post(url, data=json.dumps(data), headers=headers)
         return r.text
 
@@ -20,7 +19,6 @@ class FactomWalletApiObjects():
         url = 'http://' + self.wallet_address + '/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
-        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
         return r.text
 
@@ -147,11 +145,11 @@ class FactomWalletApiObjects():
     def substract_fee_in_transaction(self, transaction_name, address):
         blocks = json.loads(self.send_post_request_with_params_dict('sub-fee', {'tx-name': transaction_name,
                                                                                'address': address}))
-        return blocks#["result"]
+        return blocks
 
     def sign_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('sign-transaction', {'tx-name': transaction_name}))
-        return blocks["result"]
+        return blocks
 
     def compose_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-transaction',

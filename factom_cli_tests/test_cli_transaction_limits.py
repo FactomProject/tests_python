@@ -4,22 +4,24 @@ import random
 import time
 
 from cli_objects.factom_cli_create import FactomCliCreate
+from helpers.helpers import read_data_from_json
 
 class FactomCliTransactionLimits(unittest.TestCase):
 
+
+    data = read_data_from_json('shared_test_data.json')
+
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
-        self.first_address = self.factom_cli_create.import_address_from_factoid(
-            "Fs2DNirmGDtnAZGXqca3XHkukTNMxoMGFFQxJA3bAjJnKzzsZBMH")
+        self.first_address = self.factom_cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
         self.second_address = self.factom_cli_create.create_new_factoid_address()
-        words = '"salute umbrella proud setup delay ginger practice split toss jewel tuition stool"'
+        words = '"' + self.data['words'] + '"'
         self.third_address = self.factom_cli_create.import_words_from_koinify_into_wallet(words)
         self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
         self.entry_creds_wallet1 = self.factom_cli_create.import_address_from_factoid(
-            'Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG')
+            self.data['ec_wallet_address'])
         self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
-    #todo check same with adding transaction feee
     def test_transaction_limits_0(self):
         balance1 = self.factom_cli_create.check_waller_address_balance(self.first_address)
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
