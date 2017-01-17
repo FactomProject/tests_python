@@ -41,8 +41,6 @@ class FactomChainObjects(FactomBaseObject):
 
     def add_entries_to_chain(self, ecadress, file_data, chain_id, *external_ids):
         ext_to_string = ' '.join(['-n ' + s for s in external_ids])
-        #print ''.join(
-        #    ('cat ',file_data,' | ', self._factom_cli_command, self._factom_add_entries, ' -c ', chain_id , ext_to_string + ' ', ecadress))
         text = send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_add_entries, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text

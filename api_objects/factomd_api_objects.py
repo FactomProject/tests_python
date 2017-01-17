@@ -13,7 +13,6 @@ class FactomApiObjects():
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print data
         return r.text, r.status_code
 
     def send_get_request_with_method(self, method):
@@ -21,7 +20,6 @@ class FactomApiObjects():
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print data
         return r.text
 
     def get_directory_block_head(self):
@@ -140,7 +138,6 @@ class FactomApiObjects():
         return blocks['result']['factoidtransaction']
 
     def get_pending_transactions_by_address(self, address):
-        #todo sprawdz czy ec i factoid
         '''
         Gets pending transaction by wallet address
         :param address: wallet adress
@@ -174,7 +171,6 @@ class FactomApiObjects():
         :param factoid_address: str address
         :return: int - balance
         '''
-        print self.send_get_request_with_params_dict('factoid-balance', {'address': factoid_address})
         blocks = json.loads(self.send_get_request_with_params_dict('factoid-balance', {'address': factoid_address})[0])
         return blocks['result']['balance']
 
