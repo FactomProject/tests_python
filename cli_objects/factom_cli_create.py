@@ -83,6 +83,10 @@ class FactomCliCreate(FactomBaseObject):
         transacton = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_sendtx, transaction_name)))
         return transacton.split(' ')[1]
 
+    def send_transaction(self, transaction_name):
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_sendtx, transaction_name)))
+
+
     def create_entry_credit_address(self):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_new_entry_address)))
 
@@ -106,7 +110,7 @@ class FactomCliCreate(FactomBaseObject):
 
     def buy_ec(self, wallet_address, ec_wallet_address, amount):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self._factom_buy_ec, wallet_address, ' ', ec_wallet_address, ' ', amount)))
+                                                             self._factom_buy_ec, '-f ', wallet_address, ' ', ec_wallet_address, ' ', amount)))
 
     def send_factoids(self, wallet_address_one, wallet_address_two, amount):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
