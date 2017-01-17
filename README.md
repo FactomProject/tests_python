@@ -1,2 +1,2 @@
 # tests_python
-Python tests for continious integration
+Python tests for continuous integration
