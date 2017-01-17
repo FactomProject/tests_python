@@ -151,7 +151,7 @@ class FactomWalletApiObjects():
 
     def sign_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('sign-transaction', {'tx-name': transaction_name}))
-        return blocks["result"]
+      #  return blocks["result"]
 
     def compose_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-transaction',
