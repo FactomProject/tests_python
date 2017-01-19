@@ -4,6 +4,7 @@
   "factomd_2_address": "10.29.0.16:8088",
   "ec_address": "Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG",
   "test_file_path": "../test_data/test_prod",
-  "time_to_sleep": 160
+  "time_to_sleep": 160,
+  "prod_ec": "EC3PH2S2iXP4WpfoLuU5ETWRNfNZnmNUF5epWoFweYmBx9m4xK3z"
 
 }
