@@ -25,6 +25,7 @@ class FactomCliCreate(FactomBaseObject):
     _factom_buy_ec = "buyec "
     _factom_send_factoids = "sendfct "
 
+
     def import_address_from_factoid(self, address_to_import_from):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_importaddress,
                                                              address_to_import_from)))

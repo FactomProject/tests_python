@@ -50,7 +50,6 @@ class FactomChainObjects(FactomBaseObject):
             (self._factom_cli_command, self._factom_add_entries, ' -c ', chain_id , ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text.split('\n')[2].split(' ')[1]
 
-
     def get_entries_by_hash(self, hash):
         text = send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_get_entry, ' ', hash)))

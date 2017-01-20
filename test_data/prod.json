@@ -1,7 +1,7 @@
 {
   "wallet_address": "10.32.0.9:8089",
   "factomd_1_address": "10.29.0.5:8088",
-  "factomd_2_address": "10.29.0.16:8088",
+  "factomd_2_address": "10.29.0.11:8088",
   "ec_address": "Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG",
   "test_file_path": "../test_data/test_prod",
   "time_to_sleep": 160,
