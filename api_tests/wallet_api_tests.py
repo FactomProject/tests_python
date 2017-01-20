@@ -22,7 +22,6 @@ class FactomWalletApiTest(unittest.TestCase):
     def test_alocate_founds_to_factoid_walled_address(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))
 
-
         self.wallet_api_objects.create_new_transaction(transaction_name)
         self.wallet_api_objects.add_factoid_input_to_transaction(transaction_name, self.first_address, 100000000)
         self.wallet_api_objects.add_factoid_output_to_transaction(transaction_name, self.second_address, 100000000)
@@ -42,4 +41,48 @@ class FactomWalletApiTest(unittest.TestCase):
 
         self.assertTrue('Error totalling Outputs: Amount is out of range' in
                         self.wallet_api_objects.sign_transaction(transaction_name)['error']['data'])
+
+    def test_list_transactions_api_call(self):
+        self.assertTrue('transactions' in self.wallet_api_objects.list_all_transactions_in_factoid_blockchain(),
+                        'Transactions are not listed')
+
+    def test_list_transaction_by_id(self):
+        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+
+        self.wallet_api_objects.create_new_transaction(transaction_name)
+        self.wallet_api_objects.add_factoid_input_to_transaction(transaction_name, self.first_address, 100000000)
+        self.wallet_api_objects.add_factoid_output_to_transaction(transaction_name, self.second_address, 100000000)
+        self.wallet_api_objects.substract_fee_in_transaction(transaction_name, self.second_address)
+        self.wallet_api_objects.sign_transaction(transaction_name)
+        transaction = self.wallet_api_objects.compose_transaction(transaction_name)
+        txid = self.factomd_api_objects.submit_factoid_by_transaction(transaction)['txid']
+        time.sleep(10)
+        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)['transactions'][0]['inputs'][0]['amount']
+                        == 100000000, 'Transaction is not listed')
+
+    def test_list_current_working_transactions_in_wallet(self):
+        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+
+        self.wallet_api_objects.create_new_transaction(transaction_name)
+        self.assertTrue(transaction_name in self.wallet_api_objects.list_current_working_transactions_in_wallet())
+
+    def test_delete_transaction(self):
+        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+
+        self.wallet_api_objects.create_new_transaction(transaction_name)
+        self.assertTrue(transaction_name in self.wallet_api_objects.list_current_working_transactions_in_wallet())
+
+        self.wallet_api_objects.delete_transaction(transaction_name)
+        self.assertFalse(transaction_name in self.wallet_api_objects.list_current_working_transactions_in_wallet())
+
+    def test_alocate_founds_to_ec_walled_address(self):
+        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))
+
+        self.wallet_api_objects.create_new_transaction(transaction_name)
+        self.wallet_api_objects.add_factoid_input_to_transaction(transaction_name, self.first_address, 100000000)
+        self.wallet_api_objects.add_entry_credits_output_to_transaction(transaction_name, self.second_address, 100000000)
+        self.wallet_api_objects.substract_fee_in_transaction(transaction_name, self.second_address)
+        self.wallet_api_objects.sign_transaction(transaction_name)
+        transaction = self.wallet_api_objects.compose_transaction(transaction_name)
+        self.assertTrue("Successfully submitted" in self.factomd_api_objects.submit_factoid_by_transaction(transaction)['message'])
 
