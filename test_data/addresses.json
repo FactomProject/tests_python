@@ -1,11 +1,11 @@
 {
-  "wallet_address": "10.32.0.5:8089",
-  "factomd_address": "10.29.0.5:8088",
-  "factomd_address_0": "10.29.0.10:8088",
-  "factomd_address_1": "10.29.0.11:8088",
-  "factomd_address_2": "10.29.0.12:8088",
-  "factomd_address_3": "10.29.0.13:8088",
-  "factomd_address_4": "10.29.0.14:8088",
-  "factomd_address_5": "10.29.0.15:8088",
-  "factomd_address_6": "10.29.0.16:8088"
+  "wallet_address": "10.41.0.215:8089",
+  "factomd_address": "10.41.0.5:8088",
+  "factomd_address_0": "10.41.0.10:8088",
+  "factomd_address_1": "10.41.0.11:8088",
+  "factomd_address_2": "10.41.0.12:8088",
+  "factomd_address_3": "10.41.0.13:8088",
+  "factomd_address_4": "10.41.0.14:8088",
+  "factomd_address_5": "10.41.0.15:8088",
+  "factomd_address_6": "10.41.0.16:8088"
 }

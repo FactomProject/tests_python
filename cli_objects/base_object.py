@@ -9,7 +9,7 @@ class FactomBaseObject():
     factomd_address_2 = data['factomd_address_2']
 
     _gopath = os.environ['GOPATH']
-    _factom_cli_command = _gopath + '/src/github.com/FactomProject/factom-cli/factom-cli -w ' \
+    _factom_cli_command = '/home/veena/go/bin/factom-cli -w ' \
                                     ''+wallet_address+' -s '+factomd_address+' '
-    _factom_cli_command_custom = _gopath + '/src/github.com/FactomProject/factom-cli/factom-cli -w ' \
+    _factom_cli_command_custom = '/home/veena/go/bin/factom-cli -w ' \
                                     ''+wallet_address+' -s '
