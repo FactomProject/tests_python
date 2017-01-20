@@ -56,7 +56,7 @@ class FactomChainObjects(FactomBaseObject):
 
     def get_admin_block_height(self, height):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_abheight, height)))
-        print self._factom_cli_command
+       # print "factom_cli_command in get_admin_block_height command %s" % self._factom_cli_command
         return text
 
     def get_directory_block_height(self, height):
