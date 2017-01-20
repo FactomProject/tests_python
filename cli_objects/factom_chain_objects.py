@@ -6,6 +6,10 @@ class FactomChainObjects(FactomBaseObject):
     _factom_get_head = 'get head '
     _factom_get_heights = 'get heights'
     _factom_add_entries = ' addentry '
+    _factom_get_fbheight = 'get fbheight '
+    _factom_get_abheight = 'get abheight '
+    _factom_get_dbheight = 'get dbheight '
+    _factom_get_ecbheight = 'get ecbheight '
 
     def make_chain_from_binary_file(self, ecadress, file_data, *external_ids):
         '''
@@ -45,6 +49,20 @@ class FactomChainObjects(FactomBaseObject):
             (self._factom_cli_command, self._factom_add_entries, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
 
+    def get_factoid_block_height(self, height):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_fbheight, height)))
+        return text
+        #return text.split('\n')[0].split(' ')[1]
 
+    def get_admin_block_height(self, height):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_abheight, height)))
+       # print "factom_cli_command in get_admin_block_height command %s" % self._factom_cli_command
+        return text
 
+    def get_directory_block_height(self, height):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_dbheight, height)))
+        return text
 
+    def get_entrycredit_block_height(self, height):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_ecbheight, height)))
+        return text
