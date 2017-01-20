@@ -36,8 +36,8 @@ class FactomApiObjects():
         :param keymr: key mr of block
         :return: list of dicts with entries
         """
-        blocks = json.loads(self.send_get_request_with_params_dict('directory-block', {'keymr': keymr}))
-        return blocks["result"]["entryblocklist"]
+        blocks = json.loads(self.send_get_request_with_params_dict('directory-block', {'keymr': keymr})[0])
+        return blocks["result"]["entryblocklist"][0]
 
     def get_heights(self):
         '''
@@ -62,7 +62,7 @@ class FactomApiObjects():
         :param height: int - height
         :return: dblock dict
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('dblock-by-height', {'height': height}))
+        blocks = json.loads(self.send_get_request_with_params_dict('dblock-by-height', {'height': height})[0])
         return blocks['result']['dblock']
 
     def get_admin_block_by_height(self, height):

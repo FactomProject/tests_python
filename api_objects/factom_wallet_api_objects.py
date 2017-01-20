@@ -115,8 +115,8 @@ class FactomWalletApiObjects():
         return blocks["result"]
 
     def list_current_working_transactions_in_wallet(self):
-        blocks = json.loads(self.send_get_request_with_method('tmp-transactions'))
-        return blocks['result']
+        blocks = self.send_get_request_with_method('tmp-transactions')
+        return blocks
 
     def delete_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('delete-transaction', {'tx-name': transaction_name}))
