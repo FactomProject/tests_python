@@ -4,7 +4,6 @@ import random
 import time
 
 from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_multiple_nodes import FactomHeightObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import create_random_string, read_data_from_json
 
@@ -17,7 +16,6 @@ class FactomHeightTests(unittest.TestCase):
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
-        self.factom_multiple_nodes = FactomHeightObjects()
         self.factom_cli_create = FactomCliCreate()
 
     def test_check_admin_block_height(self):

@@ -10,6 +10,8 @@ class FactomChainObjects(FactomBaseObject):
     _factom_get_abheight = 'get abheight '
     _factom_get_dbheight = 'get dbheight '
     _factom_get_ecbheight = 'get ecbheight '
+    _factom_get_walletheight = ' get walletheight '
+    _factom_list_transactions = ' listtxs '
 
     def make_chain_from_binary_file(self, ecadress, file_data, *external_ids):
         '''
@@ -64,4 +66,12 @@ class FactomChainObjects(FactomBaseObject):
 
     def get_entrycredit_block_height(self, height):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_ecbheight, height)))
+        return text
+
+    def get_wallet_height(self):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_walletheight)))
+        return text.split('\n')[0].split(' ')[1]
+
+    def get_all_transactions(self):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_list_transactions)))
         return text
