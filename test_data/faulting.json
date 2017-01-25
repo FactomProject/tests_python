@@ -1,0 +1,6 @@
+{
+  "audit": "i3",
+  "federated": "i2",
+  "default_server_address": "http://10.41.0.205/i0",
+  "time_to_wait": 300
+}

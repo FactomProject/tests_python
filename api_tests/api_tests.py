@@ -21,6 +21,5 @@ class FactomChainTests(unittest.TestCase):
 
     def test_get_blocks_by_heights(self):
         heights = self.factom_api.get_heights()
-        print heights
         directory_block_height = heights['directoryblockheight']
         self.assertTrue('keymr' in self.factom_api.get_directory_block_by_height(directory_block_height))
