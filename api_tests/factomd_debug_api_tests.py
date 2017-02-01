@@ -1,6 +1,7 @@
 from api_objects.factomd_debug_api_objects import FactomDebugApiObjects
 import unittest
 
+
 class FactomDebugAPITests(unittest.TestCase):
 
     def setUp(self):
@@ -10,6 +11,10 @@ class FactomDebugAPITests(unittest.TestCase):
     def test_get_holding_messages_in_queue(self):
         holding_queue_msgs = self.factomd_debug_api.get_holding_queue()
         print(holding_queue_msgs)
+
+    def test_get_federated_servers(self):
+        federated_servers = self.factomd_debug_api.get_federated_servers()
+        print federated_servers
 
     def test_get_audit_servers(self):
         audit_servers = self.factomd_debug_api.get_audit_servers()
@@ -22,3 +27,4 @@ class FactomDebugAPITests(unittest.TestCase):
     def test_get_predictive_fer(self):
         predictive_fer = self.factomd_debug_api.get_predictive_fer()
         print predictive_fer
+

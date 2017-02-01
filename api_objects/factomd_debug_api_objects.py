@@ -30,6 +30,14 @@ class FactomDebugApiObjects():
         holding_queue = json.loads(self.send_get_request_with_method('holding-queue'))
         return holding_queue
 
+    def get_federated_servers(self):
+        '''
+        Get the list of the federated servers
+        :return: the list of federated servers
+        '''
+        federated_servers = json.loads(self.send_get_request_with_method('federated-servers'))
+        return federated_servers
+
     def get_audit_servers(self):
         '''
         Get the list of the audit servers
