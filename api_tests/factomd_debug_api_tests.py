@@ -12,7 +12,7 @@ class FactomDebugAPITests(unittest.TestCase):
         print(holding_queue_msgs)
 
     def test_get_audit_servers(self):
-        audit_servers =  self.factomd_debug_api.get_audit_servers()
+        audit_servers = self.factomd_debug_api.get_audit_servers()
         print audit_servers
 
     def test_get_network_info(self):
@@ -21,3 +21,4 @@ class FactomDebugAPITests(unittest.TestCase):
 
     def test_get_predictive_fer(self):
         predictive_fer = self.factomd_debug_api.get_predictive_fer()
+        print predictive_fer
