@@ -12,6 +12,7 @@ from helpers.helpers import create_random_string, read_data_from_json
 @attr(fast=True)
 class FactomChainTests(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
+    TIME_TO_WAIT = 5
     
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
@@ -43,7 +44,7 @@ class FactomChainTests(unittest.TestCase):
         self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '100')
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
-        time.sleep(5)
+        time.sleep(self.TIME_TO_WAIT)
         self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1, name_2)
 
         self.assertTrue('already exist' in self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1, name_2))

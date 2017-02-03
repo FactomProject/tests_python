@@ -22,10 +22,10 @@ class FactomTestFaulting(unittest.TestCase):
         :return:
         '''
         self.assertTrue(
-            '888888271203752870ae online' in get_data_dump_from_server(self.data['default_server_address']))
+            self.data['audit_1_hash'] + ' online' in get_data_dump_from_server(self.data['default_server_address']))
 
         time.sleep(self.data['time_to_wait'])
-        self.assertTrue('888888271203752870ae offline' in get_data_dump_from_server(self.data['default_server_address']))
+        self.assertTrue(self.data['audit_1_hash'] + ' offline' in get_data_dump_from_server(self.data['default_server_address']))
 
     def test_fault_federated_server(self):
         '''
@@ -33,12 +33,12 @@ class FactomTestFaulting(unittest.TestCase):
         :return:
         '''
         self.assertTrue(
-            ' 888888a21d5ac004defa online' in get_data_dump_from_server(
+            self.data['audit_2_hash'] + 'online' in get_data_dump_from_server(
                 self.data['default_server_address']))
         send_command_to_cli_and_receive_text(self._faulting_command + self.data['federated'])
         time.sleep(self.data['time_to_wait'])
         self.assertTrue(
-            '888888271203752870ae offline' and ' 888888e238492b2d723d offline' in get_data_dump_from_server(self.data['default_server_address']))
+            self.data['audit_1_hash'] + ' offline' and  self.data['master_hash'] + ' offline' in get_data_dump_from_server(self.data['default_server_address']))
 
 
 
