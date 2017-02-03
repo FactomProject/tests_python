@@ -2,11 +2,14 @@ import unittest
 import os
 import time
 
+from nose.plugins.attrib import attr
+
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
 
 from helpers.helpers import create_random_string, read_data_from_json
 
+@attr(fast=True)
 class FactomChainTests(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
     

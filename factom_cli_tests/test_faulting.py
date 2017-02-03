@@ -1,14 +1,13 @@
 import unittest
-import string
-import random
 import time
-import requests
+
+from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from helpers.helpers import read_data_from_json
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
-
+@attr(slow=True)
 class FactomTestFaulting(unittest.TestCase):
     data = read_data_from_json('faulting.json')
     _faulting_command = 'docker stop factom-factomd-'

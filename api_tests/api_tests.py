@@ -1,12 +1,9 @@
 from api_objects.factomd_api_objects import FactomApiObjects
 import unittest
-import os
 
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_chain_objects import FactomChainObjects
+from nose.plugins.attrib import attr
 
-from helpers.helpers import create_random_string
-
+@attr(fast=True)
 class FactomChainTests(unittest.TestCase):
 
     def setUp(self):
