@@ -1,12 +1,9 @@
 from api_objects.factomd_api_objects import FactomApiObjects
 import unittest
-import os
 
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_chain_objects import FactomChainObjects
+from nose.plugins.attrib import attr
 
-from helpers.helpers import create_random_string
-
+@attr(fast=True)
 class FactomChainTests(unittest.TestCase):
 
     def setUp(self):
@@ -21,6 +18,5 @@ class FactomChainTests(unittest.TestCase):
 
     def test_get_blocks_by_heights(self):
         heights = self.factom_api.get_heights()
-        print heights
         directory_block_height = heights['directoryblockheight']
         self.assertTrue('keymr' in self.factom_api.get_directory_block_by_height(directory_block_height))

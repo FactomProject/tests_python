@@ -3,10 +3,13 @@ import string
 import random
 import time
 
+from nose.plugins.attrib import attr
+
 from api_objects.factom_wallet_api_objects import FactomWalletApiObjects
 from api_objects.factomd_api_objects import FactomApiObjects
 from helpers.helpers import read_data_from_json
 
+@attr(fast=True)
 class FactomWalletApiTest(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
