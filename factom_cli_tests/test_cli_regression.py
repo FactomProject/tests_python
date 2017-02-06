@@ -100,9 +100,11 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_foactoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.add_foactoid_input_to_transaction_in_wallet(transaction_name, self.first_address, str(float(self.ecrate) * 8))
+        self.factom_cli_create.set_acconut_to_add_fee_from_transaction_input(transaction_name, self.first_address)
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
         self.assertTrue(transaction_name in self.factom_cli_create.list_local_transactions(), 'Transaction was created')
         transaction_id = self.factom_cli_create.send_transaction_and_recive_transaction_id(transaction_name)
+        print "transaction id %s" % transaction_id
         self._wait_for_ack(transaction_id, 60)
         balance1_after = self.factom_cli_create.check_waller_address_balance(self.first_address)
         self.assertTrue(abs(float(balance1_after) - (float(balance1) - float(self.ecrate) * 8)) <= 0.001, 'Balance is not substracted '
@@ -204,6 +206,8 @@ class FactomCliEndToEndTest(unittest.TestCase):
     def _wait_for_ack(self, transaction_id, time_to_wait):
         status = 'not found'
         i = 0
+        print transaction_id
+        transaction_id = transaction_id.replace("TxID: ","")
         while "TransactionACK" not in status and i < time_to_wait:
             status = self.factom_cli_create.request_transaction_acknowledgement(transaction_id)
             time.sleep(1)

@@ -59,5 +59,5 @@ class FactomDebugApiObjects():
         Get the predicted future exchange rate
         :return: Get the predicted future exchange rate
         '''
-        predictive_info = json.loads(self.send_get_request_with_method('predictive-info'))
-        return predictive_info
+        predictive_fer = json.loads(self.send_get_request_with_method('predictive-fer'))
+        return predictive_fer

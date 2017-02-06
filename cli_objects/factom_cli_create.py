@@ -4,7 +4,7 @@ from base_object import FactomBaseObject
 class FactomCliCreate(FactomBaseObject):
     _factom_importaddress = "importaddress "
     _factom_newfctaddress = "newfctaddress "
-    _factom_importwords = "importwords "
+    _factom_importwords = "importkoinify "
     _factom_balance = "balance "
     _factom_ecrate = "ecrate"
     _factom_newtx = "newtx "
@@ -77,15 +77,16 @@ class FactomCliCreate(FactomBaseObject):
 
 
     def request_transaction_acknowledgement(self, transaction_hash):
+        print transaction_hash
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_ack, transaction_hash)))
 
     def send_transaction_and_recive_transaction_id(self, transaction_name):
         transacton = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_sendtx, transaction_name)))
+        print "transaction received %s" %transacton
         return transacton.split(' ')[1]
 
     def send_transaction(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_sendtx, transaction_name)))
-
 
     def create_entry_credit_address(self):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_new_entry_address)))
