@@ -16,14 +16,14 @@ class FactomTestFaulting(unittest.TestCase):
         self.factom_cli_create = FactomCliCreate()
 
 
-    def test_fault_audit_server(self):
+    def _fault_audit_server(self):
         '''
         Test that checking if you audit server is faulted and if network is not stalled after
         :return:
         '''
         self.assertTrue(
             self.data['audit_1_hash'] + ' online' in get_data_dump_from_server(self.data['default_server_address']))
-
+        send_command_to_cli_and_receive_text(self._faulting_command + self.data['audit'])
         time.sleep(self.data['time_to_wait'])
         self.assertTrue(self.data['audit_1_hash'] + ' offline' in get_data_dump_from_server(self.data['default_server_address']))
 
@@ -33,7 +33,7 @@ class FactomTestFaulting(unittest.TestCase):
         :return:
         '''
         self.assertTrue(
-            self.data['audit_2_hash'] + 'online' in get_data_dump_from_server(
+            self.data['audit_2_hash'] + ' online' in get_data_dump_from_server(
                 self.data['default_server_address']))
         send_command_to_cli_and_receive_text(self._faulting_command + self.data['federated'])
         time.sleep(self.data['time_to_wait'])
