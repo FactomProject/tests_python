@@ -36,7 +36,7 @@ class FactomDebugApiObjects():
         :return: the list of federated servers
         '''
         federated_servers = json.loads(self.send_get_request_with_method('federated-servers'))
-        return federated_servers
+        return federated_servers["result"]["FederatedServers"]
 
     def get_audit_servers(self):
         '''
