@@ -7,5 +7,7 @@
   "factomd_address_3": "10.41.0.13:8088",
   "factomd_address_4": "10.41.0.14:8088",
   "factomd_address_5": "10.41.0.15:8088",
-  "factomd_address_6": "10.41.0.16:8088"
+  "factomd_address_6": "10.41.0.16:8088",
+  "factomd_address_prod1": "52.161.27.174:8088",
+  "factomd_address_prod2": "mattdev2984.cloudapp.net:8088"
 }

@@ -10,6 +10,8 @@ class FactomChainObjects(FactomBaseObject):
     _factom_get_abheight = 'get abheight '
     _factom_get_dbheight = 'get dbheight '
     _factom_get_ecbheight = 'get ecbheight '
+    _factom_get_entryblock = 'get eblock '
+    _factom_get_entryhash = 'get entry '
 
     def make_chain_from_binary_file(self, ecadress, file_data, *external_ids):
         '''
@@ -64,4 +66,12 @@ class FactomChainObjects(FactomBaseObject):
 
     def get_entrycredit_block_height(self, height):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_ecbheight, height)))
+        return text
+
+    def get_entry_block(self,keymr):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entryblock, keymr)))
+        return text
+
+    def get_entryhash(self,entryhash):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entryhash, entryhash)))
         return text
