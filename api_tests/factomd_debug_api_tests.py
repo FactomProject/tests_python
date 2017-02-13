@@ -1,12 +1,14 @@
 from api_objects.factomd_debug_api_objects import FactomDebugApiObjects
 import unittest
 import re
+from helpers.helpers import read_data_from_json
 
 class FactomDebugAPITests(unittest.TestCase):
 
     def setUp(self):
         self.factomd_debug_api = FactomDebugApiObjects()
-
+        data = read_data_from_json('addresses.json')
+        self.factomd_address = data['factomd_address_prod1']
 
     def test_get_holding_messages_in_queue(self):
         holding_queue_msgs = self.factomd_debug_api.get_holding_queue()
@@ -14,6 +16,7 @@ class FactomDebugAPITests(unittest.TestCase):
         print(holding_queue_msgs)
 
     def get_federated_servers(self):
+        self.factomd_debug_api.change_factomd_address(self.factomd_address)
         federated_servers = self.factomd_debug_api.get_federated_servers()
         self.assertFalse(re.search('Method not found',str(federated_servers)), "get federated server is not found")
         fed_list = []
@@ -38,19 +41,31 @@ class FactomDebugAPITests(unittest.TestCase):
         self.assertFalse(re.search('Method not found',str(predictive_fer)), "get predictive fer is not found")
         print predictive_fer
 
-    def test_parse_federated_audit_servers(self):
-        with open('/home/veena/Factom/tests_python/datadump.txt', 'rt') as in_file:
+    def test_audit_servers(self,authority):
+        self.parse_federated_audit_servers("Audit")
+
+
+    def test_federated_servers(self,authority):
+        self.parse_federated_audit_servers("Fed")
+
+
+    def parse_federated_audit_servers(self,authority):
+        with open('/home/factom/Factom/tests_python/datadump.txt', 'rt') as in_file:
             output = in_file.read()
             found = True
-            result = self.find_between(str(output),'FederatedServersStart===','FederatedServersEnd')
+            if authority == "Fed":
+                result = self.find_between(str(output),'FederatedServersStart===','FederatedServersEnd')
+                fed_audit_list = self.get_federated_servers()
+            else:
+                result = self.find_between(str(output), 'AuditServersStart===', 'AuditServersEnd')
+                fed_audit_list = self.test_get_audit_servers()
             server_list = result.split("\\n")
-            fed_list = self.get_federated_servers()
-            self.assertTrue(len(fed_list) == int(server_list[0]),"number of federated servers is not matching")
+            self.assertTrue(len(fed_audit_list) == int(server_list[0]),"servers is not matching")
             server_list.remove(server_list[0])
             server_list.remove(server_list[len(server_list)-1])
             for servers in server_list:
                 found = False
-                for chains in fed_list:
+                for chains in fed_audit_list:
                     if re.search(servers,str(chains)):
                         found = True
                         break
@@ -63,3 +78,8 @@ class FactomDebugAPITests(unittest.TestCase):
             return (s[start:end]).replace(" ","")
         except ValueError:
             return ""
+
+
+    def test_get_configuration(self):
+        configuration = self.factomd_debug_api.get_configuration()
+        print configuration

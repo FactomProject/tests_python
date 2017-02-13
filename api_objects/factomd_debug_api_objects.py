@@ -8,11 +8,15 @@ class FactomDebugApiObjects():
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
 
+    def change_factomd_address(self, value):
+         self.factomd_address = value
+
     def send_get_request_with_params_dict(self, method, params_dict):
         url = 'http://'+self.factomd_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
+        print r.text
         return r.text, r.status_code
 
     def send_get_request_with_method(self, method):
@@ -20,6 +24,7 @@ class FactomDebugApiObjects():
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
+        print r.text
         return r.text
 
     def get_holding_queue(self):
@@ -61,3 +66,11 @@ class FactomDebugApiObjects():
         '''
         predictive_fer = json.loads(self.send_get_request_with_method('predictive-fer'))
         return predictive_fer
+
+    def get_configuration(self):
+        '''
+        Get the predicted future exchange rate
+        :return: Get the predicted future exchange rate
+        '''
+        configuration = json.loads(self.send_get_request_with_method('configuration'))
+        return configuration
