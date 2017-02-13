@@ -9,14 +9,13 @@ from helpers.helpers import read_data_from_json
 import ast
 import re
 
-@attr(fast=True)
-class FactomHeightTests(unittest.TestCase):
+@attr(production=True)
+class FactomEntryTests(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
     '''
     data = read_data_from_json('addresses.json')
-    factomd_address = data['factomd_address']
-    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
+    factomd_address = data['factomd_address_prod2']
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
@@ -41,6 +40,7 @@ class FactomHeightTests(unittest.TestCase):
                     for entryhash in entryblocklist:
                         entryhash = entryhash.replace("EntryHash","")
                         entrycontents = self.factom_chain_object.get_entryhash(entryhash)
+                        print entrycontents
                         if (entrycontents == "Entry not found"):
                             entrycount += 1
         self.assertTrue(entrycount == 0, "Missing entries in the block chain")
