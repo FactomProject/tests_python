@@ -209,6 +209,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         i = 0
         while "TransactionACK" not in status and i < time_to_wait:
             status = self.factom_cli_create.request_transaction_acknowledgement(transaction_id)
+            transaction_id = transaction_id.replace("TxID: ", "")
             time.sleep(1)
             i += 1
 

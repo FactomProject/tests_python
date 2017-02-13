@@ -4,7 +4,7 @@ from base_object import FactomBaseObject
 class FactomCliCreate(FactomBaseObject):
     _factom_importaddress = "importaddress "
     _factom_newfctaddress = "newfctaddress "
-    _factom_importwords = "importkonify "
+    _factom_importwords = "importkoinify "
     _factom_balance = "balance "
     _factom_ecrate = "ecrate"
     _factom_newtx = "newtx "
