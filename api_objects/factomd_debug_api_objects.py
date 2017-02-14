@@ -67,8 +67,26 @@ class FactomDebugApiObjects():
 
     def get_configuration(self):
         '''
-        Get the predicted future exchange rate
-        :return: Get the predicted future exchange rate
+        Get the configuration from the config file
+        :return: Get the configuration from the config file
         '''
         configuration = json.loads(self.send_get_request_with_method('configuration'))
         return configuration
+
+    def get_droprate(self):
+        '''
+        Get the drop rate of factomd
+        :return: Get the drop rate of factomd
+        '''
+        droprate = json.loads(self.send_get_request_with_method('drop-rate'))
+        return droprate
+
+
+    def get_currentminute(self):
+        '''
+        Get the current minute of factomd
+        :return: Get the current minute of factomd
+        '''
+        currentminute = json.loads(self.send_get_request_with_method('current-minute'))
+        return currentminute["result"]
+
