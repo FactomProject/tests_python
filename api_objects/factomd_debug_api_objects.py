@@ -16,7 +16,6 @@ class FactomDebugApiObjects():
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print r.text
         return r.text, r.status_code
 
     def send_get_request_with_method(self, method):
@@ -24,7 +23,6 @@ class FactomDebugApiObjects():
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print r.text
         return r.text
 
     def get_holding_queue(self):
@@ -49,7 +47,7 @@ class FactomDebugApiObjects():
         :return: the list of audit servers
         '''
         audit_servers = json.loads(self.send_get_request_with_method('audit-servers'))
-        return audit_servers
+        return audit_servers["result"]["AuditServers"]
 
     def get_network_info(self):
         '''

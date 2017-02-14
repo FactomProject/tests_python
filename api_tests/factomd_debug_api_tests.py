@@ -8,7 +8,7 @@ class FactomDebugAPITests(unittest.TestCase):
     def setUp(self):
         self.factomd_debug_api = FactomDebugApiObjects()
         data = read_data_from_json('addresses.json')
-        self.factomd_address = data['factomd_address_prod1']
+        self.factomd_address = data['factomd_address']
 
     def test_get_holding_messages_in_queue(self):
         holding_queue_msgs = self.factomd_debug_api.get_holding_queue()
@@ -26,10 +26,15 @@ class FactomDebugAPITests(unittest.TestCase):
                     fed_list.append(server)
         return fed_list
 
-    def test_get_audit_servers(self):
+    def get_audit_servers(self):
         audit_servers = self.factomd_debug_api.get_audit_servers()
         self.assertFalse(re.search('Method not found',str(audit_servers)), "get audit server is not found")
-        print audit_servers
+        audit_list = []
+        for auditservers in audit_servers:
+            for server in auditservers.values():
+                if re.search((r'.{64}$'), str(server)):
+                    audit_list.append(server)
+        return audit_list
 
     def test_get_network_info(self):
         network_info = self.factomd_debug_api.get_network_info()
@@ -41,11 +46,11 @@ class FactomDebugAPITests(unittest.TestCase):
         self.assertFalse(re.search('Method not found',str(predictive_fer)), "get predictive fer is not found")
         print predictive_fer
 
-    def test_audit_servers(self,authority):
+    def test_audit_servers(self):
         self.parse_federated_audit_servers("Audit")
 
 
-    def test_federated_servers(self,authority):
+    def test_federated_servers(self):
         self.parse_federated_audit_servers("Fed")
 
 
@@ -58,7 +63,8 @@ class FactomDebugAPITests(unittest.TestCase):
                 fed_audit_list = self.get_federated_servers()
             else:
                 result = self.find_between(str(output), 'AuditServersStart===', 'AuditServersEnd')
-                fed_audit_list = self.test_get_audit_servers()
+                result = result.replace("online","")
+                fed_audit_list = self.get_audit_servers()
             server_list = result.split("\\n")
             self.assertTrue(len(fed_audit_list) == int(server_list[0]),"servers is not matching")
             server_list.remove(server_list[0])
@@ -78,7 +84,6 @@ class FactomDebugAPITests(unittest.TestCase):
             return (s[start:end]).replace(" ","")
         except ValueError:
             return ""
-
 
     def test_get_configuration(self):
         configuration = self.factomd_debug_api.get_configuration()
