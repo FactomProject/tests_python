@@ -3,10 +3,12 @@ import string
 import random
 import time
 
+from nose.plugins.attrib import attr
+
 from cli_objects.factom_cli_create import FactomCliCreate
 from helpers.helpers import read_data_from_json
 
-
+@attr(fast=True)
 class FactomCliEndToEndTest(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
@@ -100,7 +102,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_foactoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.add_foactoid_input_to_transaction_in_wallet(transaction_name, self.first_address, str(float(self.ecrate) * 8))
-        self.factom_cli_create.set_acconut_to_add_fee_from_transaction_input(transaction_name, self.first_address)
+        self.factom_cli_create.set_acconut_to_add_fee_from_transaction_input(transaction_name,self.first_address)
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
         self.assertTrue(transaction_name in self.factom_cli_create.list_local_transactions(), 'Transaction was created')
         transaction_id = self.factom_cli_create.send_transaction_and_recive_transaction_id(transaction_name)
@@ -210,6 +212,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         transaction_id = transaction_id.replace("TxID: ","")
         while "TransactionACK" not in status and i < time_to_wait:
             status = self.factom_cli_create.request_transaction_acknowledgement(transaction_id)
+            transaction_id = transaction_id.replace("TxID: ", "")
             time.sleep(1)
             i += 1
 

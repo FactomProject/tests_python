@@ -1,15 +1,17 @@
 import unittest
-import string
-import random
-import time
+
+from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
-from helpers.helpers import create_random_string, read_data_from_json
+from helpers.helpers import read_data_from_json
 
 
-#testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
+@attr(fast=True)
 class FactomHeightTests(unittest.TestCase):
+    '''
+    testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
+    '''
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
     factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]

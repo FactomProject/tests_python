@@ -3,9 +3,12 @@ import string
 import random
 import time
 
+from nose.plugins.attrib import attr
+
 from cli_objects.factom_cli_create import FactomCliCreate
 from helpers.helpers import read_data_from_json
 
+@attr(fast=True)
 class FactomCliTransactionLimits(unittest.TestCase):
 
 
