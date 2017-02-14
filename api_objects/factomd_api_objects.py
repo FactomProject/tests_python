@@ -8,6 +8,9 @@ class FactomApiObjects():
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
 
+    def change_factomd_address(self, value):
+         self.factomd_address = value
+
     def send_get_request_with_params_dict(self, method, params_dict):
         url = 'http://'+self.factomd_address+'/v2'
         headers = {'content-type': 'text/plain'}
@@ -73,7 +76,7 @@ class FactomApiObjects():
         :param height: int - height
         :return: dblock dict
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('ablock-by-height', {'height': height}))
+        blocks = json.loads(self.send_get_request_with_params_dict('ablock-by-height', {'height': height})[0])
         return blocks['result']['ablock']
 
     def get_entry_credit_block_by_height(self, height):
@@ -82,7 +85,7 @@ class FactomApiObjects():
         :param height: int - height
         :return: ecblock dict
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('ecblock-by-height', {'height': height}))
+        blocks = json.loads(self.send_get_request_with_params_dict('ecblock-by-height', {'height': height})[0])
         return blocks['result']['ecblock']
 
     def get_factoid_block_by_height(self, height):
@@ -91,7 +94,7 @@ class FactomApiObjects():
         :param height: int - height
         :return: fblock dict
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('fblock-by-height', {'height': height}))
+        blocks = json.loads(self.send_get_request_with_params_dict('fblock-by-height', {'height': height})[0])
         return blocks['result']['fblock']
 
     def get_receipt_by_hash(self, hash):
