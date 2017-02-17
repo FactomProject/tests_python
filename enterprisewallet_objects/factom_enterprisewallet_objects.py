@@ -18,12 +18,16 @@ class EnterpriseWalletObjects():
     balances = 'balances'
     deladdress = 'delete-address'
     addressnamechange = 'address-name-change'
-    displayprivatekey= 'display-private-key'
-    newfctaddress='generate-new-address-factoid'
-    newecaddress='generate-new-address-ec'
+    displayprivatekey = 'display-private-key'
+    newfctaddress ='generate-new-address-factoid'
+    newecaddress ='generate-new-address-ec'
+    importaddress = 'new-address'
+    importkoinify = 'import-koinify'
+    newexternaladdress = 'new-external-address'
 
     def send_post_request(self,request, payload):
         r = requests.post("http://localhost:8091/POST?request=" + request + "&json=" + payload)
+        print "http://localhost:8091/POST?request=" + request + "&json=" + payload
         print r.text
         return r.text
 
@@ -79,7 +83,7 @@ class EnterpriseWalletObjects():
 
     def display_private_key(self,address):
         payload = '{"Address":"' + address + '"}'
-        result = self.send_post_request(self.display_private_key,payload)
+        result = self.send_post_request(self.displayprivatekey,payload)
         return result
 
     def generate_new_factoid_address(self,name):
@@ -90,4 +94,19 @@ class EnterpriseWalletObjects():
     def generate_new_entrycredit_address(self,name):
         payload = name
         result = self.send_post_request(self.newecaddress,payload)
-        print result
+        return result
+
+    def import_address_private_key(self,name,privatekey):
+        payload = '{"Name":"' + name + '","Secret":"' + privatekey + '"}'
+        result = self.send_post_request(self.importaddress,payload)
+        return result
+
+    def import_koinify_address(self,name,koinify):
+        payload = '{"Name":"' + name + '","Koinify":"' + koinify + '"}'
+        result = self.send_post_request(self.importkoinify,payload)
+        return result
+
+    def import_new_external_address(self,name,address):
+        payload = '{"Name":"' + name + '","Public":"' + address + '"}'
+        result = self.send_post_request(self.newexternaladdress,payload)
+        return result

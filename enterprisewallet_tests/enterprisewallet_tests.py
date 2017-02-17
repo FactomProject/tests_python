@@ -10,8 +10,10 @@ class FactomEnterpriseWalletTests(unittest.TestCase):
     def setUp(self):
         self.enterprisewallet = EnterpriseWalletObjects()
         data = read_data_from_json('shared_test_data.json')
+        self.privatekey = data['factoid_wallet_address']
         self.address = data['factoid_public_wallet_address']
         self.deladdress = data['enterprise_wallet_address']
+        self.koinifywords = data['words']
 
     def test_get_status_enterprise_wallet(self):
         result = self.enterprisewallet.get_status_enterprise_wallet()
@@ -62,4 +64,21 @@ class FactomEnterpriseWalletTests(unittest.TestCase):
     def test_generate_new_ec_address(self):
         name = "NEW-EC-ADDRESS-01"
         result = self.enterprisewallet.generate_new_entrycredit_address(name)
+        print result
+
+    def test_import_address_from_private_key(self):
+        name = "IMPORT-ADDRESS-01"
+        result = self.enterprisewallet.import_address_private_key(name,self.privatekey)
+        print result
+
+
+    def test_import_koinify_address(self):
+        name = "KOINIFY-ADDRESS"
+        result = self.enterprisewallet.import_koinify_address(name,self.koinifywords)
+        print result
+
+
+    def test_import_new_external_address(self):
+        name = "NEW-EXTERNAL-ADDRESS"
+        result = self.enterprisewallet.import_new_external_address(name,self.address)
         print result
