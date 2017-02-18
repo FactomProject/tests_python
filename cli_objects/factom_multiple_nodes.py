@@ -40,4 +40,3 @@ class FactomHeightObjects(FactomBaseObject):
     def get_all_transactions(self):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_list_transactions)))
         return text
-
