@@ -25,14 +25,16 @@ class EnterpriseWalletSettingsObjects():
         for settings_value in settings:
             value_str = value_str + "," + settings_value
         value_str = value_str.lstrip(",")
-        payload = '{"Values":[' + value_str + '],"FactomdLocation":"' + address + '"}'
-        result = self.entwallet_objects.send_post_request(self.adjustsetting,payload)
+        payload = (('request', self.adjustsetting), (
+        'json', '{"Values":[' + value_str + '],"FactomdLocation":"' + address + '"}'))
+        result = self.entwallet_objects.send_post_request(payload)
         return result
 
     def get_seed(self,seed):
         if seed != "":
-            payload = '{"Seed":"' + seed + '"}'
-        result = self.entwallet_objects.send_post_request(self.getseed,payload)
+            payload = (('request', self.getseed), (
+        'json', '{"Seed":"' + seed + '"}'))
+        result = self.entwallet_objects.send_post_request(payload)
         return result
 
 

@@ -59,7 +59,6 @@ class EnterpriseWalletAddressBookTests(unittest.TestCase):
     def test_import_address_from_private_key(self):
         name = "IMPORT-ADDRESS-01"
         result = self.entwallet_addressbook_objects.import_address_private_key(name,self.privatekey)
-        #payload = {"request": "new-address", "json": { 'Name' : self.name, 'Secret' : self.privatekey}}
         print result
 
 

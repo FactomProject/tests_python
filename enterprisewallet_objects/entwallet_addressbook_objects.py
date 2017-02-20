@@ -25,8 +25,9 @@ class EnterpriseWalletAddressBookObjects():
         return result
 
     def get_address(self,address):
-        payload = '{"Address":"' + address + '"}'
-        result = self.enterprisewallet.send_post_request(self.getaddress,payload)
+        payload =(('request', self.getaddress), (
+        'json',  '{"Address":"' + address + '"}'))
+        result = self.enterprisewallet.send_post_request(payload)
         return result
 
     def get_address_only(self):
@@ -38,46 +39,52 @@ class EnterpriseWalletAddressBookObjects():
         return result
 
     def change_address_name(self,address,name):
-        payload = '{"Address":"' + address + '","Name":"' + name + '"}'
-        result = self.enterprisewallet.send_post_request(self.addressnamechange,payload)
+        payload = (('request', self.addressnamechange), (
+        'json', '{"Address":"' + address + '","Name":"' + name + '"}'))
+        result = self.enterprisewallet.send_post_request(payload)
         return result
 
     def delete_address(self,address):
-        payload = '{"Address":"' + address + '"}'
-        result = self.enterprisewallet.send_post_request(self.deladdress,payload)
-        if result.find("Not a post valid request"):
+        payload = (('request', self.deladdress), (
+        'json', '{"Address":"' + address + '"}'))
+        result = self.enterprisewallet.send_post_request(payload)
+        if result['Error'] != "Not a post valid request":
             self.status = False
             result = "Failed"
         return result
 
     def display_private_key(self,address):
-        payload = '{"Address":"' + address + '"}'
-        result = self.enterprisewallet.send_post_request(self.displayprivatekey,payload)
+        payload = (('request', self.displayprivatekey), (
+        'json', '{"Address":"' + address + '"}'))
+        result = self.enterprisewallet.send_post_request(payload)
         return result
 
     def generate_new_factoid_address(self,name):
-        payload = name
-        result = self.enterprisewallet.send_post_request(self.newfctaddress,payload)
+        payload = (('request', self.newfctaddress), (
+        'json',  name))
+        result = self.enterprisewallet.send_post_request(payload)
         return result
 
     def generate_new_entrycredit_address(self,name):
-        payload = name
-        result = self.enterprisewallet.send_post_request(self.newecaddress,payload)
+        payload = (('request', self.newecaddress), (
+        'json', name))
+        result = self.enterprisewallet.send_post_request(payload)
         return result
 
     def import_address_private_key(self,name,privatekey):
-        #payload = '{"Name":"' + name + '","Secret":"' + privatekey + '"}'
-        payload = {"request": self.importaddress, "json": {'Name': name, 'Secret': privatekey}}
-        result = self.enterprisewallet.send_post_request_new(payload)
-        print result
+        payload = (('request', self.importaddress), (
+        'json', '{"Name":"'+ name + ' ","Secret":"' + privatekey + '"}'))
+        result = self.enterprisewallet.send_post_request(payload)
         return result
 
     def import_koinify_address(self,name,koinify):
-        payload = '{"Name":"' + name + '","Koinify":"' + koinify + '"}'
-        result = self.enterprisewallet.send_post_request(self.importkoinify,payload)
+        payload = (('request', self.importkoinify), (
+        'json', '{"Name":"' + name + '","Koinify":"' + koinify + '"}'))
+        result = self.enterprisewallet.send_post_request(payload)
         return result
 
     def import_new_external_address(self,name,address):
-        payload = '{"Name":"' + name + '","Public":"' + address + '"}'
-        result = self.enterprisewallet.send_post_request(self.newexternaladdress,payload)
+        payload = (('request', self.newexternaladdress), (
+        'json', '{"Name":"' + name + '","Public":"' + address + '"}'))
+        result = self.enterprisewallet.send_post_request(payload)
         return result
