@@ -13,7 +13,8 @@ class EnterpriseWalletObjects():
         self.url = 'http://'+ enterprisewallet_address + '/POST?'
 
     def send_post_request(self, payload):
-        r = requests.post(self.url, params=payload)
+        r = requests.post(self.url, params=urllib.urlencode(payload))
+        print r.url
         output = json.loads(r.text)
         return output
 
