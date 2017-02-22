@@ -1,7 +1,6 @@
 import unittest
 import os
 
-from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import create_random_string, read_data_from_json, wait_for_ack
