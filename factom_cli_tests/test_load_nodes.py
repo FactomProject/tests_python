@@ -37,7 +37,7 @@ class FactomLoadNodes(unittest.TestCase):
                 with open('output_file', 'wb') as fout:
                     fout.write(os.urandom(randint(100, 5000)))
                     path = fout.name
-                chain_id = self.factom_chain_object.force_make_chain_from_binary_file_and_receiv_chain_id(self.entry_creds_wallet1, path, name_1, name_2)
+                chain_id = self.factom_chain_object.force_make_chain_from_binary_file_and_receive_chain_id(self.entry_creds_wallet1, path, name_1, name_2)
 
                 for i in range(120):
                     with open('output_file', 'wb') as fout:
