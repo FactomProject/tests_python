@@ -48,10 +48,10 @@ class FactomCliEndToEndTest(unittest.TestCase):
             p3.start()
             p4.start()
 
-        balance_after_1 = cli_one.check_waller_address_balance(third_address)
-        balance_after_2 = cli_two.check_waller_address_balance(third_address)
-        balance_after_3 = cli_three.check_waller_address_balance(third_address)
-        balance_after_4 = cli_four.check_waller_address_balance(third_address)
+        balance_after_1 = cli_one.check_wallet_address_balance(third_address)
+        balance_after_2 = cli_two.check_wallet_address_balance(third_address)
+        balance_after_3 = cli_three.check_wallet_address_balance(third_address)
+        balance_after_4 = cli_four.check_wallet_address_balance(third_address)
         self.assertTrue(balance_after_1 == balance_after_2 and
                         balance_after_2 == balance_after_3 and balance_after_3 == balance_after_4,
                         'Balances are different')
