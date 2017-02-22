@@ -9,22 +9,36 @@ from helpers.helpers import read_data_from_json
 import ast
 import re
 
-@attr(production=True)
+
 class FactomEntryTests(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
     '''
     data = read_data_from_json('addresses.json')
-    factomd_address = data['factomd_address_prod2']
+    factomd_address_prod = data['factomd_address_prod2']
+    factomd_address_ansible = data['factomd_address']
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
         self.factom_multiple_nodes = FactomHeightObjects()
         self.factom_cli_create = FactomCliCreate()
 
-    def test_missing_entries(self):
+    @attr(production=True)
+    def test_production_entries(self):
+        self._missing_entries(self.factomd_address_prod)
+
+    @attr(fast=True)
+    def test_ansible_entries(self):
+        self._missing_entries(self.factomd_address_ansible)
+
+
+    def _missing_entries(self, factomd_address):
+        self.factom_cli_create.change_factomd_address(factomd_address)
+        self.factom_multiple_nodes.change_factomd_address(factomd_address)
+        self.factom_chain_object.change_factomd_address(factomd_address)
         directory_block_head = self.factom_chain_object.get_directory_block_height_from_head()
         #count the number of times entry is not found
+
         entrycount = 0
         for x in range(0, int(directory_block_head)):
             directory_block_height = self.factom_chain_object.get_directory_block_height(str(x))
@@ -40,7 +54,6 @@ class FactomEntryTests(unittest.TestCase):
                     for entryhash in entryblocklist:
                         entryhash = entryhash.replace("EntryHash","")
                         entrycontents = self.factom_chain_object.get_entryhash(entryhash)
-                        print entrycontents
                         if (entrycontents == "Entry not found"):
                             entrycount += 1
-        self.assertTrue(entrycount == 0, "Missing entries in the block chain")
+        self.assertTrue(entrycount == 0, "Missing entries in the block chain, missing entries: "+ str(entrycount))
