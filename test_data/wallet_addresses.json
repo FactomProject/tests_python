@@ -1,10 +1,12 @@
 {
   "factoid_wallet_address": "Fs2DNirmGDtnAZGXqca3XHkukTNMxoMGFFQxJA3bAjJnKzzsZBMH",
+  "factoid_public_wallet_address": "FA3EPZYqodgyEGXNMbiZKE5TS2x2J9wF8J9MvPZb52iGR78xMgCb",
   "ec_wallet_address": "Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG",
+  "ec_public_wallet_address": "EC2DKSYyRcNWf7RS963VFYgMExoHRYLHVeCfQ9PGPmNzwrcmgm2r",
   "test_file_path": "../test_data/testfile",
   "words": "salute umbrella proud setup delay ginger practice split toss jewel tuition stool",
-  "factoid_public_wallet_address": "FA3EPZYqodgyEGXNMbiZKE5TS2x2J9wF8J9MvPZb52iGR78xMgCb",
   "enterprise_wallet_address": "Fs1zMdyGzVxZL4FuMapa3ReXwjm3ttDbUQbh14e6DamjPqdpt2nx",
   "external_address": "FA3RaFz9Vm2aaFQkVBLbbvLsaQ1YLUUf51b8tUXQ8HL8RD1Qtpt7",
-  "ec_public_wallet_address": "EC2DKSYyRcNWf7RS963VFYgMExoHRYLHVeCfQ9PGPmNzwrcmgm2r"
+  "fct_wallet_address_2": "Fs1mxY2pcnA3bjEtNX4wcvx9L8jtRkeqMREwm1NT7qfHYJCcsKv4",
+  "fct_public_wallet_address_2": "FA22VVmnWbuQGJV69CfSaT4P4ddW3iD2SXJPDc8H1Jim6o476kzp"
 }

@@ -11,6 +11,7 @@ class EnterpriseWalletObjects():
         self.url_get = 'http://'+ enterprisewallet_address + '/GET?request='
         self.url_post = 'http://'+ enterprisewallet_address + '/POST?request='
         self.url = 'http://'+ enterprisewallet_address + '/POST?'
+        
 
     def send_post_request(self, payload):
         r = requests.post(self.url, params=urllib.urlencode(payload))
