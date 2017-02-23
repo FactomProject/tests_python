@@ -16,7 +16,10 @@ class FactomEntryTests(unittest.TestCase):
     '''
     data = read_data_from_json('addresses.json')
     factomd_address_prod = data['factomd_address_prod2']
-    factomd_address_ansible = data['factomd_address']
+    factomd_address_ansible = data['factomd_address_1']
+    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'],
+                                   data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'],
+                                   data['factomd_address_6']]
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
@@ -24,12 +27,13 @@ class FactomEntryTests(unittest.TestCase):
         self.factom_cli_create = FactomCliCreate()
 
     @attr(production=True)
-    def test_production_entries(self):
+    def notest_production_entries(self):
         self._missing_entries(self.factomd_address_prod)
 
     @attr(fast=True)
     def test_ansible_entries(self):
-        self._missing_entries(self.factomd_address_ansible)
+        for factomd_address_custom in self.factomd_address_custom_list:
+            self._missing_entries(factomd_address_custom)
 
 
     def _missing_entries(self, factomd_address):
@@ -54,6 +58,9 @@ class FactomEntryTests(unittest.TestCase):
                     for entryhash in entryblocklist:
                         entryhash = entryhash.replace("EntryHash","")
                         entrycontents = self.factom_chain_object.get_entryhash(entryhash)
-                        if (entrycontents == "Entry not found"):
-                            entrycount += 1
+                        #if (entrycontents == "Entry not found"):
+                         #   entrycount += 1
+                        self.assertFalse(entrycontents == "Entry not found", ("missing entries %d" % entrycount))
+
+        print "total entrycount %d" %entrycount
         self.assertTrue(entrycount == 0, "Missing entries in the block chain, missing entries: "+ str(entrycount))
