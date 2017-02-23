@@ -9,7 +9,7 @@ class EnterpriseWalletTransactionsbjects():
         self.transactions = 'related-transactions'
         self.maketransactions = 'make-transaction'
         self.sendtransactions = 'send-transaction'
-
+        self.getneededinput = 'get-needed-input'
 
     def get_transactions_from_enterprisewallet(self):
         result = self.entwallet_objects.send_get_request(self.transactions)
@@ -24,6 +24,14 @@ class EnterpriseWalletTransactionsbjects():
          payload = (('request', self.sendtransactions),('json', inputstring))
          result = self.entwallet_objects.send_post_request(payload)
          return result
+
+    def get_needed_input(self,inputstring):
+        payload = (('request', self.get_needed_input()), ('json', inputstring))
+        result = self.entwallet_objects.send_post_request(payload)
+        return result
+
+
+
 
 
 

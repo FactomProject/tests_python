@@ -75,3 +75,12 @@ class EnterpriseWalletTransactionTests(unittest.TestCase):
         balance = before_transaction_balance + self.posttransaction.outputamounts
         self.assertTrue(float(balance) == float(after_transaction_balance), "Transaction amount is not matching %s %s" % (
             balance, after_transaction_balance))
+
+
+    def test_get_needed_input(self):
+        self.posttransaction.transtype = "factoid"
+        self.posttransaction.outputaddresses = self.outputaddress
+        self.posttransaction.outputamounts = 2
+        inputstring = self.posttransaction.make_inputparameter()
+        result = self.entwallet_transactions_objects.get_needed_input(inputstring)
+        print result
