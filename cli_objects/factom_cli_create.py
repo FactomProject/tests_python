@@ -1,4 +1,5 @@
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
+from helpers.helpers import wait_for_ack
 from base_object import FactomBaseObject
 
 class FactomCliCreate(FactomBaseObject):
@@ -110,7 +111,13 @@ class FactomCliCreate(FactomBaseObject):
 
     def buy_ec(self, wallet_address, ec_wallet_address, amount):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self._factom_buy_ec, '-f ', wallet_address, ' ', ec_wallet_address, ' ', amount)))
+                                                             self._factom_buy_ec, ' -f ', wallet_address,
+                                                             ' ', ec_wallet_address, ' ', amount)))
+
+    def buy_ec_noforce(self, wallet_address, ec_wallet_address, amount):
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
+                                                             self._factom_buy_ec, ' -T ', wallet_address,
+                                                             ' ', ec_wallet_address, ' ', amount)))
 
     def send_factoids(self, wallet_address_one, wallet_address_two, amount):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
