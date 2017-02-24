@@ -12,17 +12,19 @@ class FactomDebugApiObjects():
          self.factomd_address = value
 
     def send_get_request_with_params_dict(self, method, params_dict):
-        url = 'http://'+self.factomd_address+'/v2'
+        url = 'http://'+self.factomd_address+'/debug'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
         return r.text, r.status_code
 
     def send_get_request_with_method(self, method):
-        url = 'http://' + self.factomd_address + '/v2'
+        url = 'http://' + self.factomd_address + '/debug'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
+
+        print r.text
         return r.text
 
     def get_holding_queue(self):
@@ -81,6 +83,13 @@ class FactomDebugApiObjects():
         droprate = json.loads(self.send_get_request_with_method('drop-rate'))
         return droprate
 
+    def set_droprate(self,droprate):
+        '''
+        Set the drop rate of factomd node
+        :return: Set the drop rate of factomd node
+        '''
+        delay = json.loads(self.send_get_request_with_params_dict('droprate', {'droprate': droprate})[0])
+        return delay
 
     def get_currentminute(self):
         '''
@@ -90,3 +99,26 @@ class FactomDebugApiObjects():
         currentminute = json.loads(self.send_get_request_with_method('current-minute'))
         return currentminute["result"]
 
+    def get_summary(self):
+        '''
+        Get the summary of factomd
+        :return: Get the summary of factomd
+        '''
+        summary = json.loads(self.send_get_request_with_method('summary'))
+        return summary
+
+    def get_delay(self):
+        '''
+        Get the delay of factomd node
+        :return: Get the delay of factomd
+        '''
+        delay = json.loads(self.send_get_request_with_method('delay'))
+        return delay
+
+    def set_delay(self,delay):
+        '''
+        Set the delay of factomd node
+        :return: Set the delay of factomd node
+        '''
+        delay = json.loads(self.send_get_request_with_params_dict('delay', {'delay': delay})[0])
+        return delay

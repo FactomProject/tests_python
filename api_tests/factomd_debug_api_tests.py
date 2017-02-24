@@ -65,27 +65,25 @@ class FactomDebugAPITests(unittest.TestCase):
         found = True
         if authority == "Fed":
             result = self.find_between(str(output),'FederatedServersStart===','FederatedServersEnd')
-            print result
             fed_audit_list = self.get_federated_servers()
-            print fed_audit_list
         else:
             result = self.find_between(str(output), 'AuditServersStart===', 'AuditServersEnd')
             result = result.replace("online","")
             fed_audit_list = self.get_audit_servers()
         server_list = result.split("\\n")
-        self.assertTrue(len(fed_audit_list) == int(server_list[0]),"servers is not matching")
-        server_list.remove(server_list[0])
-        server_list.remove(server_list[len(server_list)-1])
-        for servers in server_list:
-            found = False
-            if servers.endswith("F"):
-                servers = servers.replace("F","")
-                print servers
-            for fed_audit in fed_audit_list:
-                if re.search(servers,str(fed_audit)):
-                    found = True
-                    break
-        self.assertTrue(found, "federated server identity is not matching")
+        if len(fed_audit_list) > 0 and len(server_list) > 0:
+            self.assertTrue(len(fed_audit_list) == int(server_list[0]),"servers is not matching")
+            server_list.remove(server_list[0])
+            server_list.remove(server_list[len(server_list)-1])
+            for servers in server_list:
+                found = False
+                if servers.endswith("F"):
+                    servers = servers.replace("F","")
+                for fed_audit in fed_audit_list:
+                    if re.search(servers,str(fed_audit)):
+                        found = True
+                        break
+            self.assertTrue(found, "federated server identity is not matching")
 
     def find_between(self, s, first, last):
         try:
@@ -107,7 +105,7 @@ class FactomDebugAPITests(unittest.TestCase):
 
     def test_currentminute(self):
         currentminute = self.factomd_debug_api.get_currentminute()
-        print "current minute is %d" % currentminute
+        print "current minute is %d" % currentminute['Minute']
 
 
     def test_current_minute_on_all_nodes(self):
@@ -118,16 +116,34 @@ class FactomDebugAPITests(unittest.TestCase):
           currentminute_1 = self.factomd_debug_api.get_currentminute()
           if (currentminute == currentminute_1):
               print "current minute on node - %s and node %s is %d" % (
-              self.factomd_address, factomd_address_custom, currentminute)
+              self.factomd_address, factomd_address_custom, currentminute['Minute'])
           else:
-            print "mismatch in node %s (%d) and %s (%d) " % (self.factomd_address, currentminute, factomd_address_custom, currentminute_1)
+            print "mismatch in node %s (%d) and %s (%d) " % (self.factomd_address, currentminute['Minute'], factomd_address_custom, currentminute_1['Minute'])
             #try again before giving up
             time.sleep(5)
             currentminute = self.factomd_debug_api.get_currentminute()
             currentminute_1 = self.factomd_debug_api.get_currentminute()
             self.assertTrue(currentminute == currentminute_1,
-                                "mismatch in node %s and %s" % (self.factomd_address, factomd_address_custom))
+                                "mismatch in node %s (%d) and %s (%d) " % (self.factomd_address,currentminute['Minute'], factomd_address_custom, currentminute_1['Minute']))
 
     def get_raw_data(self):
         result = get_data_dump_from_server(self.controlpanel['default_server_address'])
+        return result
+
+
+    def test_summary(self):
+        result = self.factomd_debug_api.get_summary()
+        print result
+
+    def test_get_delay(self):
+        result = self.factomd_debug_api.get_delay()
+        print result
+
+
+    def test_set_delay(self):
+        result = self.factomd_debug_api.set_delay('200')
+        return result
+
+    def test_set_droprate(self):
+        result = self.factomd_debug_api.set_droprate('10')
         return result
