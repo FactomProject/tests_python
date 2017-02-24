@@ -18,7 +18,7 @@ class FactomEntryTests(unittest.TestCase):
 
     factomd_address_prod = data['factomd_address_prod2']
     factomd_address_ansible = data['factomd_address']
-    factomd_address_custom_list = [data['factomd_address'],data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'],
+    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'],
                                    data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'],
                                    data['factomd_address_6']]
 
@@ -36,7 +36,7 @@ class FactomEntryTests(unittest.TestCase):
     def test_ansible_entries(self):
         for factomd_address_custom in self.factomd_address_custom_list:
             self._missing_entries(factomd_address_custom)
-            print "total entrycount missing = %d on the server = %s" % self.entrycount, factomd_address_custom
+            print "total entrycount missing = %d on the server = %s" % (self.entrycount, factomd_address_custom)
             self.entrycount = 0
 
 
@@ -66,3 +66,12 @@ class FactomEntryTests(unittest.TestCase):
 
         return self.entrycount
         #self.assertTrue(entrycount == 0, "Missing entries in the block chain, missing entries: "+ str(entrycount))
+
+
+    def test_get_heights_of_all_nodes(self):
+        for factomd_address_custom in self.factomd_address_custom_list:
+            self.factom_chain_object.change_factomd_address(factomd_address_custom)
+            result = self.factom_chain_object.get_heights()
+            print "height of server : %s" % factomd_address_custom
+            print result
+

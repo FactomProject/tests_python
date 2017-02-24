@@ -86,3 +86,7 @@ class FactomChainObjects(FactomBaseObject):
     def get_entryhash(self,entryhash):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entryhash, entryhash)))
         return text
+
+    def get_heights(self):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_heights)))
+        return text
