@@ -27,6 +27,7 @@ def wait_for_ack(self, transaction_id, time_to_wait):
         status = self.factom_cli_create.request_transaction_acknowledgement(transaction_id)
         time.sleep(1)
         i += 1
+    return status
 
 
 
