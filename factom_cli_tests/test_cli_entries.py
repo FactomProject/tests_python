@@ -32,6 +32,8 @@ class FactomCliTransactionTest(unittest.TestCase):
         tx_id = text.split('\n')[0].split(' ')[1]
         wait_for_ack(self, tx_id,20)
 
+        self.factom_chain_object.get_allentries(chain_id)
+
         balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
 
         # write entries
@@ -75,6 +77,26 @@ class FactomCliTransactionTest(unittest.TestCase):
         # balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
         # print 'balance_last', balance_last
         # print 'balance_1st', balance_1st
+
+        os.remove(path)
+
+    def test_compose_entry(self):
+        # create chain
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+
+        with open('output_file', 'wb') as fout:
+            fout.write(os.urandom(10))
+            path = fout.name
+        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1, path, name_1, name_2)
+        chain_id = text.split('\n')[1].split(' ')[1]
+
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        text = self.factom_chain_object.compose_entry_from_binary_file(self.entry_creds_wallet1, path, chain_id,
+                                                                       name_1, name_2)
+        self.assertTrue("commit-entry" in text)
+        self.assertTrue("reveal-entry" in text)
 
         os.remove(path)
 
