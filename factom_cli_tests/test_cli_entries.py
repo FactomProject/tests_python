@@ -1,5 +1,5 @@
 import unittest
-import os
+import os, binascii
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
@@ -23,43 +23,58 @@ class FactomCliTransactionTest(unittest.TestCase):
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
 
-        i = 1
+        i = 1016
         with open('output_file', 'wb') as fout:
             fout.write(os.urandom(i))
             path = fout.name
-
-        text = self.factom_chain_object.force_make_chain_from_binary_file(self.entry_creds_wallet1, path, name_1, name_2)
+        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1, path, name_1, name_2)
         chain_id = text.split('\n')[1].split(' ')[1]
         tx_id = text.split('\n')[0].split(' ')[1]
         wait_for_ack(self, tx_id,20)
 
-        balance_last = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
+        balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
 
         # write entries
-        while i < 10241:
-            # write smallest entry for fee amount
-            name_1 = create_random_string(5)
-            name_2 = create_random_string(5)
-            tx_id = self.factom_chain_object.force_add_entries_to_chain_and_receive_tx_id(self.entry_creds_wallet1, path, chain_id, name_1, name_2)
-            wait_for_ack(self, tx_id,20)
-            balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
-            self.assertEqual(int(balance_last), int(balance_1st) + (i - 1) / 1024 + 1, 'Incorrect charge for entry')
-
-            i += 1023
+        while i < 10234:
             # write largest entry for fee amount
-            with open('output_file', 'a') as fout:
-                fout.write(os.urandom(1023))
-            tx_id = self.factom_chain_object.force_add_entries_to_chain_and_receive_tx_id(self.entry_creds_wallet1, path, chain_id, name_1, name_2)
-            wait_for_ack(self, tx_id,20)
+            name_1 = create_random_string(2)
+            name_2 = create_random_string(2)
+            tx_id = self.factom_chain_object.add_entries_to_chain_and_receive_tx_id(self.entry_creds_wallet1,
+                                                                                          path, chain_id, name_1,
+                                                                                          name_2)
+            wait_for_ack(self, tx_id, 20)
             balance_last = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
-            self.assertEqual(int(balance_1st), int(balance_last) + (i - 1) / 1024 + 1, 'Incorrect charge for entry')
+            self.assertEqual(int(balance_1st), int(balance_last) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
 
+            # write smallest entry for fee amount
             i += 1
             with open('output_file', 'a') as fout:
                 fout.write(os.urandom(1))
+            if i == 10233:
+                break
+            name_1 = binascii.b2a_hex(os.urandom(2))
+            name_2 = binascii.b2a_hex(os.urandom(2))
+            tx_id = self.factom_chain_object.add_entries_to_chain_with_hex_ext_and_receive_tx_id(self.entry_creds_wallet1, path, chain_id, name_1, name_2)
+            wait_for_ack(self, tx_id,20)
+            balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
+            self.assertEqual(int(balance_last), int(balance_1st) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
 
-        name_1 = create_random_string(5)
-        name_2 = create_random_string(5)
-        self.assertTrue("Entry of 10241 bytes is too large" in self.factom_chain_object.force_add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, name_1, name_2))
+            i += 1023
+            with open('output_file', 'a') as fout:
+                fout.write(os.urandom(1023))
+
+        # write too large entry
+        name_1 = create_random_string(2)
+        name_2 = create_random_string(2)
+        # print 'i', i
+        # print 'filesize', os.path.getsize(path)
+
+        self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, name_1, name_2))
+        # self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, name_1, name_2)
+        # wait_for_ack(self, tx_id, 20)
+        # balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
+        # print 'balance_last', balance_last
+        # print 'balance_1st', balance_1st
 
         os.remove(path)
+

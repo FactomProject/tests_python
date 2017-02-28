@@ -1,5 +1,4 @@
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
-from helpers.helpers import wait_for_ack
 from base_object import FactomBaseObject
 
 class FactomCliCreate(FactomBaseObject):
@@ -25,6 +24,7 @@ class FactomCliCreate(FactomBaseObject):
     _factom_remove_tx = "rmtx "
     _factom_buy_ec = "buyec "
     _factom_send_factoids = "sendfct "
+    _factom_wallet_backup_wallet = "backupwallet"
 
     def import_address_from_factoid(self, address_to_import_from):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_importaddress,
@@ -123,5 +123,9 @@ class FactomCliCreate(FactomBaseObject):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
                                                              self._factom_send_factoids, wallet_address_one, ' ',
                                                              wallet_address_two, ' ', amount)))
+    def backup_wallet(self):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
+                                                             self._factom_wallet_backup_wallet)))
+        return text
 
 

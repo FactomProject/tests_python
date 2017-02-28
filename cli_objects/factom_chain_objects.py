@@ -10,6 +10,7 @@ class FactomChainObjects(FactomBaseObject):
     _factom_get_abheight = 'get abheight '
     _factom_get_dbheight = 'get dbheight '
     _factom_get_ecbheight = 'get ecbheight '
+    _factom_wallet_backup_wallet = 'backupwallet'
 
     def make_chain_from_binary_file(self, ecadress, file_data, *external_ids):
         '''
@@ -62,14 +63,38 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' -q ',
                                                              ext_to_string + ' ', ecadress, ' < ', file_data)))
 
+    def add_entries_to_chain(self, ecaddress, file_data, chain_id, *external_ids):
+        ext_to_string = ' '.join(['-e ' + s for s in external_ids])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -c ', chain_id , ' ', ext_to_string + ' ',
+             ecaddress, ' < ', file_data)))
+        return text
+
+    def add_entries_to_chain_and_receive_tx_id(self, ecaddress, file_data, chain_id, *external_ids):
+        ext_to_string = ' '.join(['-e ' + s for s in external_ids])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -c ', chain_id , ' ', ext_to_string + ' ',
+             ecaddress, ' < ', file_data)))
+        return text.split('\n')[0].split(' ')[1]
+
+    def add_entries_to_chain_with_hex_ext_and_receive_tx_id(self, ecaddress, file_data, chain_id, *external_ids):
+        ext_to_string = ' '.join(['-x ' + s for s in external_ids])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -c ', chain_id , ' ', ext_to_string + ' ',
+             ecaddress, ' < ', file_data)))
+        return text.split('\n')[0].split(' ')[1]
+
     def force_add_entries_to_chain(self, ecaddress, file_data, chain_id, *external_ids):
-        ext_to_string = ' '.join(['-n ' + s for s in external_ids])
+        ext_to_string = ' '.join(['-e ' + s for s in external_ids])
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ',
              ecaddress, ' < ', file_data)))
         return text
 
     def force_add_entries_to_chain_and_receive_tx_id(self, ecaddress, file_data, chain_id, *external_ids):
-        ext_to_string = ' '.join(['-n ' + s for s in external_ids])
+        ext_to_string = ' '.join(['-e ' + s for s in external_ids])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ',
+             ecaddress, ' < ', file_data)))
+        return text.split('\n')[0].split(' ')[1]
+
+    def force_add_entries_to_chain_with_hex_ext_and_receive_tx_id(self, ecaddress, file_data, chain_id, *external_ids):
+        ext_to_string = ' '.join(['-x ' + s for s in external_ids])
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ',
              ecaddress, ' < ', file_data)))
         return text.split('\n')[0].split(' ')[1]
@@ -81,12 +106,6 @@ class FactomChainObjects(FactomBaseObject):
     def get_directory_block_height_from_head(self):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_heights)))
         return text.split('\n')[0].split(' ')[1]
-
-    def add_entries_to_chain(self, ecaddress, file_data, chain_id, *external_ids):
-        ext_to_string = ' '.join(['-n ' + s for s in external_ids])
-        text = send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_add_entries, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ', ecaddress, ' < ', file_data)))
-        return text
 
     def get_factoid_block_height(self, height):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_fbheight, height)))
@@ -104,3 +123,4 @@ class FactomChainObjects(FactomBaseObject):
     def get_entrycredit_block_height(self, height):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_ecbheight, height)))
         return text
+
