@@ -4,6 +4,8 @@ import json
 import os
 import time
 
+from random import randint
+
 def create_random_string(char_nr):
     return ''.join(random.choice(string.ascii_letters) for _ in range(char_nr))
 
@@ -27,6 +29,9 @@ def wait_for_ack(self, transaction_id, time_to_wait):
         status = self.factom_cli_create.request_transaction_acknowledgement(transaction_id)
         time.sleep(1)
         i += 1
+
+def create_random_number(digits):
+    return randint(10**(digits-1), (10**digits)-1)
 
 
 
