@@ -1,6 +1,4 @@
 import unittest
-import os, binascii
-
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
