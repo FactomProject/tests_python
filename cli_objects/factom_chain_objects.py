@@ -14,6 +14,8 @@ class FactomChainObjects(FactomBaseObject):
     _factom_add_entries = ' addentry '
     _factom_get_allentries = ' get allentries '
     _factom_wallet_backup_wallet = 'backupwallet'
+    _factom_get_entryblock = 'get eblock '
+    _factom_get_entryhash = 'get entry '
 
     def make_chain_from_binary_file(self, ecadress, file_data, *external_ids):
         '''
@@ -27,20 +29,9 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
 
-    def make_chain_from_binary_file_with_hex_ext(self, ecadress, file_data, hex_ext):
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' -h ', hex_ext,
-                                                             ecadress, ' < ', file_data)))
-        return text
-
     def force_make_chain_from_binary_file(self, ecadress, file_data, *external_ids):
         ext_to_string = ' '.join(['-n ' + s for s in external_ids])
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' -f ', ext_to_string + ' ', ecadress, ' < ', file_data)))
-        return text
-
-    def make_chain_from_binary_file_and_receive_tx_id(self, ecadress, file_data, *external_ids):
-        ext_to_string = ' '.join(['-n ' + s for s in external_ids])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' -T ', ext_to_string + ' ', ecadress, ' < ', file_data)))
-        # return text.split('\n')[0].split(' ')[1]
         return text
 
     def force_make_chain_from_binary_file_and_receive_tx_id(self, ecadress, file_data, *external_ids):
@@ -143,3 +134,10 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_ecbheight, height)))
         return text
 
+    def get_entry_block(self,keymr):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entryblock, keymr)))
+        return text
+
+    def get_entryhash(self,entryhash):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entryhash, entryhash)))
+        return text

@@ -25,7 +25,7 @@ class FactomLoadNodes(unittest.TestCase):
         self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
 
-    def make_chain_and_check_balance(self):
+    def test_make_chain_and_check_balance(self):
         for i in xrange(10):
             path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
             self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet1, '100')

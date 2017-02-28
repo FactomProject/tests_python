@@ -99,4 +99,3 @@ class FactomCliTransactionTest(unittest.TestCase):
         self.assertTrue("reveal-entry" in text)
 
         os.remove(path)
-
