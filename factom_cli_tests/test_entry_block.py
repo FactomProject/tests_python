@@ -1,4 +1,5 @@
 import unittest
+import math
 
 from nose.plugins.attrib import attr
 
@@ -8,7 +9,10 @@ from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
 import ast
 import re
-
+import datetime
+import timeit
+import __builtin__
+__builtin__.__dict__.update(locals())
 
 class FactomEntryTests(unittest.TestCase):
     '''
@@ -22,6 +26,7 @@ class FactomEntryTests(unittest.TestCase):
                                    data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'],
                                    data['factomd_address_6']]
 
+
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
         self.factom_multiple_nodes = FactomHeightObjects()
@@ -29,7 +34,7 @@ class FactomEntryTests(unittest.TestCase):
         self.missingentrycount = 0
 
     #@attr(production=True)
-    def test_production_entries(self):
+    def notest_production_entries(self):
         self.missingentrycount = self._missing_entries(self.factomd_address_prod)
         print self.missingentrycount
 
@@ -76,4 +81,22 @@ class FactomEntryTests(unittest.TestCase):
             result = self.factom_chain_object.get_heights()
             print "height of server : %s" % factomd_address_custom
             print result
+
+    def test_fetch_entries(self):
+        delta = []
+        entryhash = "0503fe82359416fc8caecc4a33fbbe94b78f02929e91cbbd022a3c5cab685f6b"
+        self.factom_chain_object.change_factomd_address(self.factomd_address_prod)
+        for j in range(1,100):
+            starttime = datetime.datetime.now()
+            print "Iteration %d, time before for loop begins %s" % (j, str(starttime))
+            for x in range(1,10000 ):
+                result = self.factom_chain_object.get_entryhash(entryhash)
+            endtime = datetime.datetime.now()
+            print "Iteration %d, time after for loop begins %s" % (j, str(endtime))
+            diff = (endtime - starttime).total_seconds()
+            delta.append(diff)
+            print diff
+        print delta
+        print "average %f for CLI test" % (math.fsum(delta)/len(delta))
+
 

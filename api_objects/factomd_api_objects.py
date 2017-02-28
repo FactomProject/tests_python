@@ -116,7 +116,7 @@ class FactomApiObjects():
         :param hash:
         :return: chainid, content, extids
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry', {'hash': hash}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry', {'hash': hash})[0])
         return blocks['result']
 
     def get_pending_entries(self):
@@ -244,3 +244,5 @@ class FactomApiObjects():
         blocks = json.loads(self.send_get_request_with_params_dict('send-raw-message', {'message': message}))
         return blocks['result']
 
+    def change_factomd_address(self, value):
+        self.factomd_address = value
