@@ -6,7 +6,7 @@ from helpers.helpers import create_random_string
 
 from nose.plugins.attrib import attr
 
-@attr(fast=True)
+@attr(apiplus=True)
 class FactomChainTests(unittest.TestCase):
     BLOCKCHAIN_TIME = 40
 
