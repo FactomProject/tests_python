@@ -23,7 +23,6 @@ class FactomDebugApiObjects():
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
-
         print r.text
         return r.text
 
@@ -122,3 +121,11 @@ class FactomDebugApiObjects():
         '''
         delay = json.loads(self.send_get_request_with_params_dict('delay', {'delay': delay})[0])
         return delay
+
+    def reload_configuration(self):
+        conf = json.loads(self.send_get_request_with_method('reload-configuration'))
+        return conf
+
+    def get_process_list(self):
+        processlist =  json.loads(self.send_get_request_with_method('process-list'))
+        return processlist
