@@ -1,0 +1,27 @@
+import requests
+import json
+
+class HarmonyStorageMiscObjects():
+
+    main_address = 'http://localhost:4000'
+    storage = '/storage'
+    doc_types = '/doc_types'
+
+
+    def get_document_from_storage(self, id):
+        r = requests.get(self.main_address + self.storage + '/' + id)
+        return json.loads(r.text) #todo save and load binary
+
+    def upload_document_to_storage(self, file_path, filename):
+        payload={'file': filename}
+        files = {filename: open(file_path, 'rb')}
+        r =requests.post(self.main_address + self.storage, json=payload, files=files)
+        return json.loads(r.text)
+
+    def get_all_doc_types(self):
+        r = requests.get(self.main_address + self.doc_types)
+        return json.loads(r.text)
+
+    def get_doc_type_by_id(self, doc_id):
+        r = requests.get(self.main_address + self.doc_types + '/' + doc_id)
+        return json.loads(r.text)

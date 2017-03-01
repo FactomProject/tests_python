@@ -1,0 +1,12 @@
+{"user1": {
+    "username": "joelh",
+    "password": "hunter2",
+    "first_name": "Joel",
+    "last_name": "Evans",
+    "email": "joel@factom.com",
+    "active": true,
+    "permissions": {
+        "view_access": true,
+        "notifications": true
+    }
+}}

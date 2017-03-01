@@ -2,4 +2,7 @@
             "last_name": "Jones"},
 "name_2":  {"first_name": "Mary",
                        "last_name": "Stone"},
-"address": "707 Fairpark Lane, Sugar Land, TX 77459"}
+"address": "707 Fairpark Lane, Sugar Land, TX 77459",
+"permission_start_date": "2017-01-01T12:00:00Z",
+"permission_end_date": "2017-03-01T12:00:00Z",
+"permission_end_date2": "2017-03-01T12:00:00Z"}
