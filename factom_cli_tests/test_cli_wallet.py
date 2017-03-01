@@ -1,7 +1,6 @@
 import unittest
 
 from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
 from nose.plugins.attrib import attr
 
@@ -11,7 +10,11 @@ class FactomCliTransactionTest(unittest.TestCase):
 
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
-        self.factom_chain_object = FactomChainObjects()
+
+    def test_wallet_address_balance_remote(self):
+        text = self.factom_cli_create.check_wallet_address_balance_remote('factom.michaeljbeam.me')
+        self.assertTrue("fct" in text)
+        self.assertTrue("ec" in text)
 
     def test_backup_wallet(self):
         text = self.factom_cli_create.backup_wallet()

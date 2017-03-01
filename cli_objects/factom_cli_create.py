@@ -44,6 +44,10 @@ class FactomCliCreate(FactomBaseObject):
     def check_wallet_address_balance(self, address):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_balance, address)))
 
+    def check_wallet_address_balance_remote(self, address):
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_balance, '-r ',
+                                                             address)))
+
     def get_factom_change_entry_credit_conversion_rate(self):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_ecrate)))
 

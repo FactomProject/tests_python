@@ -6,6 +6,7 @@ from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
+from api_objects.factomd_api_objects import FactomApiObjects
 
 from helpers.helpers import create_random_string, read_data_from_json
 
@@ -17,6 +18,7 @@ class FactomChainTests(unittest.TestCase):
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
         self.factom_chain_object = FactomChainObjects()
+        self.factomd_api_objects = FactomApiObjects()
         self.first_address = self.factom_cli_create.import_address_from_factoid(
             self.data['factoid_wallet_address'])
         self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
@@ -61,6 +63,10 @@ class FactomChainTests(unittest.TestCase):
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         text = self.factom_chain_object.compose_chain_from_binary_file(self.entry_creds_wallet1, path, name_1, name_2)
+        start = text.find('"message":"') + 11
+        end = text.find('"},"method', start)
+        print text[start:end]
+        self.factomd_api_objects.commit_chain_by_message(text[start:end])
         self.assertTrue("commit-chain" in text)
         self.assertTrue("reveal-chain" in text)
 

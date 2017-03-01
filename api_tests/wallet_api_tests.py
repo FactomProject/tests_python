@@ -78,7 +78,7 @@ class FactomWalletApiTest(unittest.TestCase):
         self.wallet_api_objects.delete_transaction(transaction_name)
         self.assertFalse(transaction_name in self.wallet_api_objects.list_current_working_transactions_in_wallet())
 
-    def test_alocate_founds_to_ec_walled_address(self):
+    def test_allocate_funds_to_ec_wallet_address(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))
 
         self.wallet_api_objects.create_new_transaction(transaction_name)

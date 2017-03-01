@@ -5,7 +5,8 @@ import random
 from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
-from helpers.helpers import read_data_from_json, wait_for_ack
+from helpers.helpers import read_data_from_json
+from helpers.factom_cli_methods import wait_for_ack
 
 @attr(fast=True)
 class FactomCliEndToEndTest(unittest.TestCase):
