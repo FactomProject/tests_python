@@ -6,6 +6,7 @@ class HarmonyStorageMiscObjects():
     main_address = 'http://localhost:4000'
     storage = '/storage'
     doc_types = '/doc_types'
+    sessions = '/sessions'
 
 
     def get_document_from_storage(self, id):
@@ -25,3 +26,9 @@ class HarmonyStorageMiscObjects():
     def get_doc_type_by_id(self, doc_id):
         r = requests.get(self.main_address + self.doc_types + '/' + doc_id)
         return json.loads(r.text)
+
+    def login_as_user(self, username, password):
+        payload = {"username": username, "password": password}
+        r = requests.post(self.main_address + self.sessions, json=payload)
+        return r.headers['authorization']
+

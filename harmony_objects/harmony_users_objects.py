@@ -7,22 +7,26 @@ class HarmonyUsersObjects():
     users = '/users'
     reset = '/passwordr_reset' #not ready, use when auth created
 
-    def list_all_users(self):
-        r = requests.get(self.main_address + self.users)
+    def list_all_users(self, auth_header):
+        headers = {'authorization': auth_header}
+        r = requests.get(self.main_address + self.users, headers=headers)
         return json.loads(r.text)
 
-    def get_user_data(self, user_id):
-        r = requests.get(self.main_address + self.users + '/' + user_id)
+    def get_user_data(self, auth_header, user_id):
+        headers = {'authorization': auth_header}
+        r = requests.get(self.main_address + self.users + '/' + user_id, headers=headers)
         return json.loads(r.text)
 
-    def create_new_user(self, user_data_json):
+    def create_new_user(self, auth_header, user_data_json):
+        headers = {'authorization': auth_header}
         payload = user_data_json
-        r = requests.post(self.main_address + self.users, json=payload)
+        r = requests.post(self.main_address + self.users, json=payload, headers=headers)
         return json.loads(r.text)
 
-    def update_user_data(self, user_id, user_data_json):
+    def update_user_data(self, auth_header, user_id, user_data_json):
+        headers = {'authorization': auth_header}
         payload = user_data_json
-        r = requests.put(self.main_address + self.users + '/' + user_id, json=payload)
+        r = requests.put(self.main_address + self.users + '/' + user_id, json=payload, headers=headers)
         return json.loads(r.text)
 
 
