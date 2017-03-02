@@ -13,6 +13,7 @@ from random import randint
 @attr(load=True)
 class FactomLoadNodes(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
+    addresses = read_data_from_json('addresses.json')
 
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
@@ -23,9 +24,11 @@ class FactomLoadNodes(unittest.TestCase):
         self.entry_creds_wallet1 = self.factom_cli_create.import_address_from_factoid(
             self.data['ec_wallet_address'])
         self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
+        #self.factomd = self.data['factomd_address']
 
 
     def test_make_chain_and_check_balance(self):
+        #self.factom_cli_create.change_factomd_address(self.factomd)
         for i in xrange(10):
             path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
             self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet1, '100')
@@ -47,6 +50,7 @@ class FactomLoadNodes(unittest.TestCase):
                     name_2 = create_random_string(5)
                     self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, name_1, name_2)
                     os.remove(path)
+                    time.sleep(1)
             time.sleep(5)
         time.sleep(30)
 

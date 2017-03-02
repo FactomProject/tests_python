@@ -8,7 +8,7 @@ from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
 import ast
 import re
-
+import time
 
 class FactomEntryTests(unittest.TestCase):
     '''
@@ -18,7 +18,7 @@ class FactomEntryTests(unittest.TestCase):
 
     factomd_address_prod = data['factomd_windows_laptop']
     factomd_address_ansible = data['factomd_address']
-    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'],
+    factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'],
                                    data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'],
                                    data['factomd_address_6']]
 
@@ -29,7 +29,7 @@ class FactomEntryTests(unittest.TestCase):
         self.missingentrycount = 0
 
     #@attr(production=True)
-    def test_production_entries(self):
+    def notest_production_entries(self):
         self.missingentrycount = self._missing_entries(self.factomd_address_prod)
         print self.missingentrycount
 
@@ -70,10 +70,14 @@ class FactomEntryTests(unittest.TestCase):
         #self.assertTrue(entrycount == 0, "Missing entries in the block chain, missing entries: "+ str(entrycount))
 
 
-    def notest_get_heights_of_all_nodes(self):
-        for factomd_address_custom in self.factomd_address_custom_list:
-            self.factom_chain_object.change_factomd_address(factomd_address_custom)
-            result = self.factom_chain_object.get_heights()
-            print "height of server : %s" % factomd_address_custom
-            print result
+    def test_get_heights_of_all_nodes(self):
+        for x in range(1, 50):
+            for factomd_address_custom in self.factomd_address_custom_list:
+                self.factom_chain_object.change_factomd_address(factomd_address_custom)
+                result = self.factom_chain_object.get_heights()
+                print "height of server  : %s" % factomd_address_custom
+                print result
+            print "-------------------------------------------------------------------------------------------------"
+            time.sleep(5)
+
 
