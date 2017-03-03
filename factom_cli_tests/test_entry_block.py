@@ -6,9 +6,11 @@ from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_multiple_nodes import FactomHeightObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
+from helpers.mail import send_email
 import ast
 import re
 import time
+import datetime
 
 class FactomEntryTests(unittest.TestCase):
     '''
@@ -71,13 +73,21 @@ class FactomEntryTests(unittest.TestCase):
 
 
     def test_get_heights_of_all_nodes(self):
-        for x in range(1, 50):
+        msg = ""
+        for x in range(0, 5):
             for factomd_address_custom in self.factomd_address_custom_list:
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 result = self.factom_chain_object.get_heights()
-                print "height of server  : %s" % factomd_address_custom
-                print result
-            print "-------------------------------------------------------------------------------------------------"
-            time.sleep(5)
+                #print "height of server  : %s" % factomd_address_custom
+                output = ("height of server  : %s" % factomd_address_custom) + "\n" + result
+                #print result
+                msg =   msg + "\n" +  output + "\n"
+            msg = msg + "\n" + "-------------------------------------------------------------------------------------------------"
+            time.sleep(3)
+            msg =  msg + "\n" + "datetime:" + str(datetime.datetime.now()) + "\n"
+            print msg
+            send_email(msg)
+            msg = ""
+
 
 
