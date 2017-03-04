@@ -25,6 +25,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         MAX_ENTRY_SIZE_MINUS_7 = 10233
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
+        firstentry_ext_id = name_1
 
         i = ONE_K_MINUS_8
         with open('output_file', 'wb') as fout:
@@ -72,7 +73,14 @@ class FactomCliTransactionTest(unittest.TestCase):
 
         self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, name_1, name_2))
 
-        self.factom_chain_object.get_allentries(chain_id)
+        # validate get firstentry command
+        self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry(chain_id))
+
+        # validate get firstentry_with_entryhash command
+        self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry_with_entryhash(chain_id))
+
+        # validate get allentries command
+        self.assertTrue("Entry [0]" in self.factom_chain_object.get_allentries(chain_id))
 
         os.remove(path)
 

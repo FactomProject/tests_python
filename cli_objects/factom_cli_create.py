@@ -113,9 +113,19 @@ class FactomCliCreate(FactomBaseObject):
                                                              self._factom_add_transaction_ec_output, transaction_name,
                                                              ' ', wallet_address, ' ', amount)))
 
-    def buy_ec(self, wallet_address, ec_wallet_address, amount):
+    def force_buy_ec(self, wallet_address, ec_wallet_address, amount):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
                                                              self._factom_buy_ec, '-f ', wallet_address, ' ', ec_wallet_address, ' ', amount)))
+
+    def buy_ec(self, wallet_address, ec_wallet_address, amount):
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
+                                                             self._factom_buy_ec, ' ', wallet_address, ' ',
+                                                             ec_wallet_address, ' ', amount)))
+
+    def buy_ec_return_tx_id(self, wallet_address, ec_wallet_address, amount):
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
+                                                             self._factom_buy_ec, ' -T ', wallet_address, ' ',
+                                                             ec_wallet_address, ' ', amount)))
 
     def send_factoids(self, wallet_address_one, wallet_address_two, amount):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
