@@ -37,7 +37,6 @@ class ApiplusApiObjects():
     def create_entry_in_chain(self, chain_id, content, *external_ids):
         ids = list(external_ids)
         payload = {'content': content, 'external_ids': ids}
-        print payload
         r = requests.post(self.apiplus_address + self.chains + '/' + chain_id + self.entries, json=payload)
         return json.loads(r.text)
 
