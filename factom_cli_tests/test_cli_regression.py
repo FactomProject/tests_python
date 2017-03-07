@@ -5,7 +5,8 @@ import random
 from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
-from helpers.helpers import read_data_from_json, wait_for_ack
+from helpers.helpers import read_data_from_json
+from helpers.factom_cli_methods import wait_for_ack
 
 @attr(fast=True)
 class FactomCliEndToEndTest(unittest.TestCase):
@@ -162,15 +163,15 @@ class FactomCliEndToEndTest(unittest.TestCase):
     def test_buy_entry_creds(self):
         value_of_etc = 150
         balance_1 = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
-        transaction_id = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet1, str(value_of_etc))
+        transaction_id = self.factom_cli_create.force_buy_ec(self.first_address, self.entry_creds_wallet1, str(value_of_etc))
         wait_for_ack(self, transaction_id, 60)
         balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
         self. assertEqual(int(balance_1_after), int(balance_1) + value_of_etc, 'EC were not bought')
 
     def test_buy_entry_credits_with_wrong_accounts(self):
         value_of_etc = 150
-        self.assertTrue('not a Factoid' in self.factom_cli_create.buy_ec('wrong_address', self.entry_creds_wallet1, str(value_of_etc)))
-        self.assertTrue('not an Entry' in self.factom_cli_create.buy_ec(self.first_address, 'wrong_address', str(value_of_etc)))
+        self.assertTrue('not a Factoid' in self.factom_cli_create.force_buy_ec('wrong_address', self.entry_creds_wallet1, str(value_of_etc)))
+        self.assertTrue('not an Entry' in self.factom_cli_create.force_buy_ec(self.first_address, 'wrong_address', str(value_of_etc)))
 
     def test_send_factoids(self):
         value_of_factoids = 1
@@ -201,4 +202,4 @@ class FactomCliEndToEndTest(unittest.TestCase):
         print second_ec_address
 
         for x in xrange(10000):
-            print self.factom_cli_create.buy_ec(self.first_address, second_ec_address, '1')
+            print self.factom_cli_create.force_buy_ec(self.first_address, second_ec_address, '1')
