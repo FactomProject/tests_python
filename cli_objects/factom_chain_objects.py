@@ -12,6 +12,7 @@ class FactomChainObjects(FactomBaseObject):
     _factom_get_ecbheight = 'get ecbheight '
     _factomd_compose_entry = 'composeentry '
     _factom_add_entries = ' addentry '
+    _factom_get_chainhead = ' get chainhead '
     _factom_get_firstentry = ' get firstentry '
     _factom_get_allentries = ' get allentries '
     _factom_wallet_backup_wallet = 'backupwallet'
@@ -42,6 +43,11 @@ class FactomChainObjects(FactomBaseObject):
 
     def make_chain_from_binary_file_return_tx_id(self, ecadress, file_data, *external_ids):
         ext_to_string = ' '.join(['-n ' + s for s in external_ids])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' -T ', ext_to_string + ' ', ecadress, ' < ', file_data)))
+        return text
+
+    def make_chain_from_binary_file_with_hex_ext_return_tx_id(self, ecadress, file_data, *external_ids):
+        ext_to_string = ' '.join(['-h ' + s for s in external_ids])
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' -T ', ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
 
@@ -107,6 +113,17 @@ class FactomChainObjects(FactomBaseObject):
              ecaddress, ' < ', file_data)))
         return text.split('\n')[0].split(' ')[1]
 
+    def force_add_entries_to_chain_by_ext_id(self, ecaddress, file_data, chain_external_id, external_id):
+        # can't use multiple ext ids because there are two kinds used
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -f', ' -n ', chain_external_id, ' -e ', external_id + ' ', ecaddress, ' < ', file_data)))
+        return text
+
+    def force_add_entries_to_chain_by_ext_id_and_receive_tx_id(self, ecaddress, file_data, chain_external_id,
+                                                               external_id):
+        # can't use multiple ext ids because there are two kinds used
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -f', ' -n ', chain_external_id, ' -e ', external_id + ' ', ecaddress, ' < ', file_data)))
+        return text.split('\n')[0].split(' ')[1]
+
     def force_add_entries_to_chain_with_hex_ext_and_receive_tx_id(self, ecaddress, file_data, chain_id, *external_ids):
         ext_to_string = ' '.join(['-x ' + s for s in external_ids])
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ',
@@ -117,6 +134,11 @@ class FactomChainObjects(FactomBaseObject):
         ext_to_string = ' '.join(['-e ' + s for s in external_ids])
         text = send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factomd_compose_entry, ' -c ', chain_id , ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
+        return text
+
+    def get_chainhead(self, chain_id):
+        text = send_command_to_cli_and_receive_text(''.join(
+            (self._factom_cli_command, self._factom_get_chainhead, chain_id)))
         return text
 
     def get_firstentry(self, chain_id):

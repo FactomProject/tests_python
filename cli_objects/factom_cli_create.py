@@ -91,7 +91,6 @@ class FactomCliCreate(FactomBaseObject):
     def send_transaction(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_sendtx, transaction_name)))
 
-
     def create_entry_credit_address(self):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_new_entry_address)))
 
