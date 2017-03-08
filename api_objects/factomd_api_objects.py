@@ -196,7 +196,6 @@ class FactomApiObjects():
         :param transaction: str, transaction hash
         :return:
         '''
-        print transaction
         blocks = json.loads(self.send_get_request_with_params_dict('factoid-submit', {'transaction':
                                                                                              transaction})[0])
         return blocks['result']
