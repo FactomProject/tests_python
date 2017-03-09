@@ -9,7 +9,7 @@ from cli_objects.factom_chain_objects import FactomChainObjects
 from api_objects.factomd_api_objects import FactomApiObjects
 
 from helpers.helpers import create_random_string, read_data_from_json
-from helpers.factom_cli_methods import wait_for_ack
+from helpers.general_test_methods import wait_for_ack
 
 @attr(fast=True)
 class FactomChainTests(unittest.TestCase):
@@ -73,14 +73,12 @@ class FactomChainTests(unittest.TestCase):
         tx_id = self.factom_chain_object.force_make_chain_from_binary_file_return_tx_id(self.entry_creds_wallet2,
                                                                                         path,
                                                                                         name_1, name_2)
-        wait_for_ack(self, tx_id,20)
+        wait_for_ack(tx_id, 20)
         self.assertTrue("TransactionACK" in self.factom_cli_create.request_transaction_acknowledgement(tx_id))
 
     def test_quiet_make_chain(self):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '100')
-        # name_1 = create_random_string(5)
-        # name_2 = create_random_string(5)
         name_1 = 'aaaaa'
         name_2 = 'bbbbb'
         self.factom_chain_object.quiet_make_chain_from_binary_file(self.entry_creds_wallet2, path,
@@ -102,6 +100,9 @@ class FactomChainTests(unittest.TestCase):
         seq = self.factom_chain_object.get_sequence_number_from_head()
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
         self.assertTrue(seq == directory_block_height, 'Directory block is not equal to sequence')
+
+
+
 
 
 
