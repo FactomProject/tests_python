@@ -24,11 +24,14 @@ class FactomChainObjects(FactomBaseObject):
         :param ecadress:
         :param file_data:
         :param external_ids:
-        :return:
+        :return: text
         '''
         ext_to_string = ' '.join(['-n ' + s for s in external_ids])
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
+
+    def parse_chain_data(self, chain_text):
+        return dict(item.split(": ") for item in chain_text.split('\n'))
 
     def make_chain_from_binary_file_return_chain_id(self, ecadress, file_data, *external_ids):
         ext_to_string = ' '.join(['-n ' + s for s in external_ids])
