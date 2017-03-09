@@ -112,8 +112,6 @@ class FactomChainTests(unittest.TestCase):
          '''
 
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
-        # name_1 = create_random_string(5)
-        # name_2 = create_random_string(5)
         name_1 = 'aaaaa'
         name_2 = 'bbbbb'
         self.factom_chain_object.quiet_make_chain_from_binary_file(self.entry_creds_wallet2, path,
