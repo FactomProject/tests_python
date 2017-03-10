@@ -207,6 +207,7 @@ class FactomApiObjects():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message})[0])
+        print blocks
         return blocks['result']
 
     def reveal_chain_by_entry(self, entry):

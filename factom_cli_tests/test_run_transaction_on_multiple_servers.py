@@ -1,10 +1,13 @@
 import unittest
-from multiprocessing import Process
+import os
 
+from multiprocessing import Process
 from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
-from helpers.helpers import read_data_from_json
+from api_objects.factomd_api_objects import FactomApiObjects
+from cli_objects.factom_chain_objects import FactomChainObjects
+from helpers.helpers import read_data_from_json, create_random_string
 
 @attr(fast=True)
 class FactomCliEndToEndTest(unittest.TestCase):
@@ -55,6 +58,43 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.assertTrue(balance_after_1 == balance_after_2 and
                         balance_after_2 == balance_after_3 and balance_after_3 == balance_after_4,
                         'Balances are different')
+
+    def test_compose_chain(self):
+        factom_chain_object = FactomChainObjects()
+        factomd_api_1 = FactomApiObjects()
+        factomd_api_2 = FactomApiObjects()
+        factomd_api_2.factomd_address = self.addresses['factomd_address_4']
+        factomd_api_3 = FactomApiObjects()
+        factomd_api_3.factomd_address = self.addresses['factomd_address_5']
+        factomd_api_4 = FactomApiObjects()
+        factomd_api_4.factomd_address = self.addresses['factomd_address_6']
+        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        text=''
+        for i in range(100):
+            text = factom_chain_object.compose_chain_from_binary_file(self.entry_creds_wallet1, path, name_1,
+                                                                      name_2)
+            start = text.find('"message":"') + 11
+            end = text.find('"},"method', start)
+            message = text[start:end]
+            p1 = Process(
+                target=self._send_chain_by_message(factomd_api_1, message))
+            p2 = Process(
+                target=self._send_chain_by_message(factomd_api_2, message))
+            p3 = Process(
+                target=self._send_chain_by_message(factomd_api_3, message))
+            p4 = Process(
+                target=self._send_chain_by_message(factomd_api_4, message))
+            p1.start()
+            p2.start()
+            p3.start()
+            p4.start()
+
+        print text
+
+    def _send_chain_by_message(self, api, message):
+        text = api.commit_chain_by_message(message)
 
 
     def _send_factoid_transaction_on_cli_object(self, cli, address_from, address_to, amount):
