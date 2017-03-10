@@ -3,7 +3,7 @@ import json
 
 class HarmonyLoansObjects():
 
-    main_address = 'http://localhost:4000'
+    main_address = 'https://harmony-api-dev.factom.com'
     loans = '/loans'
     permissions = '/permissions'
     files = '/files'
@@ -81,6 +81,12 @@ class HarmonyLoansObjects():
         headers = {'authorization': auth_header}
         r = requests.delete(self.main_address + self.loans + '/' + loan_id + self.permissions + '/' + permission_id,
                             headers=headers)
+
+    def get_loan_permission_data(self, auth_header, loan_id, permission_id):
+        headers = {'authorization': auth_header}
+        r = requests.get(self.main_address + self.loans + '/' + loan_id + self.permissions + '/' + permission_id,
+                            headers=headers)
+        return json.loads(r.text)
 
 
 

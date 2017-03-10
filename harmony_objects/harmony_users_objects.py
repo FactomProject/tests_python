@@ -3,7 +3,7 @@ import json
 
 class HarmonyUsersObjects():
 
-    main_address = 'http://localhost:4000'
+    main_address = 'https://harmony-api-dev.factom.com'
     users = '/users'
     reset = '/passwordr_reset' #not ready, use when auth created
 

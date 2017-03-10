@@ -3,7 +3,7 @@ import json
 
 class HarmonyStorageMiscObjects():
 
-    main_address = 'http://localhost:4000'
+    main_address = 'https://harmony-api-dev.factom.com'
     storage = '/storage'
     doc_types = '/doc_types'
     sessions = '/sessions'

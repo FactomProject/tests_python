@@ -119,7 +119,7 @@ class FactomChainTests(unittest.TestCase):
                                                    ['access_from']))
 
     def test_update_load_permission_data(self):
-        header = self.storage_and_misc_api.login_as_user("joel", "joel")
+        header = self._login_as_user_and_receive_header()
         loan_id = self._create_loan_and_receive_id(header)
         # user cration
         user_name = create_random_string(10)
@@ -138,7 +138,7 @@ class FactomChainTests(unittest.TestCase):
         self.assertTrue(new_end_data == perm_after['access_to'])
 
     def test_delete_permission(self):
-        header = self.storage_and_misc_api.login_as_user("joel", "joel")
+        header = self._login_as_user_and_receive_header()
         loan_id = self._create_loan_and_receive_id(header)
         # user cration
         user_name = create_random_string(10)
@@ -154,11 +154,18 @@ class FactomChainTests(unittest.TestCase):
         perm = self.loans_api.create_new_loan_permission(header, loan_id, user_id, self.data['permission_start_date'],
                                                          self.data['permission_end_date'])
         perm_id = perm['id']
+        self.loans_api.delete_loan_permission_data(header, loan_id, perm_id)
+        self.assertEqual('Page not found', self.loans_api.get_loan_permission_data(header,
+                                                                                   loan_id, perm_id)['errors']['detail'])
+
+    #def test_create_loan_file(self):
+
+
 
 
 
     def _login_as_user_and_receive_header(self):
-        return self.storage_and_misc_api.login_as_user("joel", "joel")
+        return self.storage_and_misc_api.login_as_user(self.data['username'], self.data['password'])
 
     def _create_loan_and_receive_id(self, header):
         number = create_random_number(18)
