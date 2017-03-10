@@ -4,12 +4,13 @@ import os, binascii
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import create_random_string, read_data_from_json
-from helpers.factom_cli_methods import wait_for_ack
+from helpers.general_test_methods import wait_for_ack
 from nose.plugins.attrib import attr
 
 @attr(fast=True)
 class FactomCliTransactionTest(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
+    path = ''
 
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
@@ -45,6 +46,11 @@ class FactomCliTransactionTest(unittest.TestCase):
 
         os.remove(path)
 
+    def tearDown(self):
+        if self.path:
+            os.remove(self.path)
+
+
     def test_verify_entry_costs(self):
         # create chain
         ONE_K_MINUS_8 = 1016
@@ -56,11 +62,12 @@ class FactomCliTransactionTest(unittest.TestCase):
         i = ONE_K_MINUS_8
         with open('output_file', 'wb') as fout:
             fout.write(os.urandom(i))
-            path = fout.name
-        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1, path, name_1, name_2)
-        chain_id = text.split('\n')[1].split(' ')[1]
-        tx_id = text.split('\n')[0].split(' ')[1]
-        wait_for_ack(self, tx_id,20)
+            self.path = fout.name
+        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1, self.path, name_1, name_2)
+        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        chain_id = chain_dict['ChainID']
+        tx_id = chain_dict['CommitTxID']
+        wait_for_ack(tx_id,20)
 
         balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
 
@@ -70,9 +77,9 @@ class FactomCliTransactionTest(unittest.TestCase):
             name_1 = create_random_string(2)
             name_2 = create_random_string(2)
             tx_id = self.factom_chain_object.add_entries_to_chain_and_receive_tx_id(self.entry_creds_wallet1,
-                                                                                          path, chain_id, name_1,
+                                                                                    self.path, chain_id, name_1,
                                                                                           name_2)
-            wait_for_ack(self, tx_id, 20)
+            wait_for_ack(tx_id, 20)
             balance_last = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
             self.assertEqual(int(balance_1st), int(balance_last) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
 
@@ -84,8 +91,8 @@ class FactomCliTransactionTest(unittest.TestCase):
                 break
             name_1 = binascii.b2a_hex(os.urandom(2))
             name_2 = binascii.b2a_hex(os.urandom(2))
-            tx_id = self.factom_chain_object.add_entries_to_chain_with_hex_ext_and_receive_tx_id(self.entry_creds_wallet1, path, chain_id, name_1, name_2)
-            wait_for_ack(self, tx_id,20)
+            tx_id = self.factom_chain_object.add_entries_to_chain_with_hex_ext_and_receive_tx_id(self.entry_creds_wallet1, self.path, chain_id, name_1, name_2)
+            wait_for_ack(tx_id,20)
             balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
             self.assertEqual(int(balance_last), int(balance_1st) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
 
@@ -97,7 +104,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         name_1 = create_random_string(2)
         name_2 = create_random_string(2)
 
-        self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, name_1, name_2))
+        self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, self.path, chain_id, name_1, name_2))
 
         # validate get firstentry command
         self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry(chain_id))
@@ -108,7 +115,6 @@ class FactomCliTransactionTest(unittest.TestCase):
         # validate get allentries command
         self.assertTrue("Entry [0]" in self.factom_chain_object.get_allentries(chain_id))
 
-        os.remove(path)
 
     def test_compose_entry(self):
         # create chain
@@ -117,15 +123,15 @@ class FactomCliTransactionTest(unittest.TestCase):
 
         with open('output_file', 'wb') as fout:
             fout.write(os.urandom(10))
-            path = fout.name
-        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1, path, name_1, name_2)
-        chain_id = text.split('\n')[1].split(' ')[1]
+            self.path = fout.name
+        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1, self.path, name_1, name_2)
+        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        chain_id = chain_dict['ChainID']
 
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
-        text = self.factom_chain_object.compose_entry_from_binary_file(self.entry_creds_wallet1, path, chain_id,
+        text = self.factom_chain_object.compose_entry_from_binary_file(self.entry_creds_wallet1, self.path, chain_id,
                                                                        name_1, name_2)
         self.assertTrue("commit-entry" in text)
         self.assertTrue("reveal-entry" in text)
 
-        os.remove(path)
