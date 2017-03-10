@@ -74,7 +74,7 @@ class FactomChainTests(unittest.TestCase):
         tx_id = self.factom_chain_object.make_chain_from_binary_file_with_hex_ext_return_tx_id(self.entry_creds_wallet2,
                                                                                         path,
                                                                                         name_1, name_2)
-        wait_for_ack(self, tx_id,20)
+        wait_for_ack(tx_id, 20)
         self.assertTrue("TransactionACK" in self.factom_cli_create.request_transaction_acknowledgement(tx_id))
 
     def test_make_chain_return_chain_id(self):
@@ -82,7 +82,6 @@ class FactomChainTests(unittest.TestCase):
              This test will only succeed the 1st time it is run as afterwards the chain will already exist.
              This structure is necessary because there is no other way to determine the success of the chain creation without a tx_id.
         '''
-
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = 'ggggg'
         name_2 = 'hhhhh'
@@ -110,7 +109,6 @@ class FactomChainTests(unittest.TestCase):
               This test will only succeed the 1st time it is run as afterwards the chain will already exist.
               This structure is necessary because there is no other way to determine the success of the chain creation without a tx_id.
          '''
-
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         # self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '100')
         # c5632447fbe91c07a132b488697483d1aba69604
