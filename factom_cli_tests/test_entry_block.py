@@ -1,17 +1,20 @@
 import unittest
 import logging
-
-from nose.plugins.attrib import attr
-
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_multiple_nodes import FactomHeightObjects
-from cli_objects.factom_chain_objects import FactomChainObjects
-from helpers.helpers import read_data_from_json
-from helpers.mail import send_email
 import ast
 import re
 import time
 import datetime
+import os
+import threading
+
+from random import randint
+from nose.plugins.attrib import attr
+from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_multiple_nodes import FactomHeightObjects
+from cli_objects.factom_chain_objects import FactomChainObjects
+from helpers.mail import send_email
+from helpers.helpers import create_random_string, read_data_from_json
+from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
 class FactomEntryTests(unittest.TestCase):
     '''
@@ -24,6 +27,11 @@ class FactomEntryTests(unittest.TestCase):
     factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'],
                                    data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'],
                                    data['factomd_address_6']]
+    data = read_data_from_json('faulting.json')
+    _stop_command = 'docker stop factom-factomd-i'
+    _start_command = 'docker start factom-factomd-i'
+    _delete_database = 'sudo rm -r /var/lib/docker/volumes/factom_base_factomd_data-i'
+    _path_database = '/_data/m2/custom-database'
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
@@ -74,7 +82,7 @@ class FactomEntryTests(unittest.TestCase):
         self.assertTrue(entrycount == 0, "Missing entries in the block chain, missing entries: "+ str(entrycount))
 
     @attr(height=True)
-    def test_get_heights_of_all_nodes(self):
+    def _get_heights_of_all_nodes(self):
         msg = ""
         for x in range(0, 1000):
             for factomd_address_custom in self.factomd_address_custom_list:
@@ -93,6 +101,27 @@ class FactomEntryTests(unittest.TestCase):
             #send_email(msg)
             msg = ""
 
+
+
+    def test_entry_synch_followers(self):
+        '''
+        Test to synch blocks when audit servers and followers are rebooted
+        :return:
+        '''
+
+        #entry_load =  threading.Thread(target= 'print "hello world"')
+        #entry_load.start()
+
+        for i in range(13,17):
+            print i
+            send_command_to_cli_and_receive_text(self._delete_database + str(i) + self._path_database)
+        print "Restarting..."
+        for i in range(13,17):
+            print i
+            send_command_to_cli_and_receive_text(self._stop_command + str(i))
+            time.sleep(10)
+            send_command_to_cli_and_receive_text(self._start_command + str(i))
+            self._get_heights_of_all_nodes()
 
 
 
