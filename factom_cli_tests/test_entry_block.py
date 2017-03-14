@@ -1,4 +1,5 @@
 import unittest
+import logging
 
 from nose.plugins.attrib import attr
 
@@ -30,12 +31,12 @@ class FactomEntryTests(unittest.TestCase):
         self.factom_cli_create = FactomCliCreate()
         self.missingentrycount = 0
 
-    #@attr(production=True)
+    @attr(production=True)
     def notest_production_entries(self):
         self.missingentrycount = self._missing_entries(self.factomd_address_prod)
         print self.missingentrycount
 
-    @attr(fast=True)
+    @attr(entry=True)
     def notest_ansible_entries(self):
         for factomd_address_custom in self.factomd_address_custom_list:
             self._missing_entries(factomd_address_custom)
@@ -66,28 +67,32 @@ class FactomEntryTests(unittest.TestCase):
                         if (self.entrycontents == "Entry not found"):
                             self.entrycount += 1
                         totalentries += 1
-                        #self.assertFalse(entrycontents == "Entry not found", ("missing entries %d" % entrycount))
+                        self.assertFalse(self.entrycontents == "Entry not found", ("missing entries %d" % totalentries))
         print "totalentries %d" % totalentries
+        logging.getLogger('cli_command').info(totalentries)
         return self.entrycount
-        #self.assertTrue(entrycount == 0, "Missing entries in the block chain, missing entries: "+ str(entrycount))
+        self.assertTrue(entrycount == 0, "Missing entries in the block chain, missing entries: "+ str(entrycount))
 
-
+    @attr(height=True)
     def test_get_heights_of_all_nodes(self):
         msg = ""
-        for x in range(0, 5):
+        for x in range(0, 1000):
             for factomd_address_custom in self.factomd_address_custom_list:
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 result = self.factom_chain_object.get_heights()
                 #print "height of server  : %s" % factomd_address_custom
-                output = ("height of server  : %s" % factomd_address_custom) + "\n" + result
+                server = factomd_address_custom.replace(":8088","")
+                output = ("SERVER          : %s" % server) + "\n" + result
                 #print result
                 msg =   msg + "\n" +  output + "\n"
             msg = msg + "\n" + "-------------------------------------------------------------------------------------------------"
-            time.sleep(3)
+            time.sleep(5)
             msg =  msg + "\n" + "datetime:" + str(datetime.datetime.now()) + "\n"
+            logging.getLogger('Height').info(msg)
             print msg
-            send_email(msg)
+            #send_email(msg)
             msg = ""
+
 
 
 
