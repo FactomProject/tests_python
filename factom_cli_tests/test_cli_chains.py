@@ -43,6 +43,17 @@ class FactomChainTests(unittest.TestCase):
         self.assertTrue(
             'Not enough Entry Credits' in self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2,
                                                                                                path, '2', '2'))
+    def test_make_chain(self):
+        # make 1st chain
+        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        name_1 = self.data['known_chain_3_name']
+        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1)
+        chain_ext_id = name_1
+        hex_ext_id = binascii.hexlify(chain_ext_id)
+        ext_id = self.data['known_chain_3_ext_id']
+        self.factom_chain_object.add_entry_to_chain_by_hex_ext_id(
+            self.entry_creds_wallet2, path,
+                                                                                 hex_ext_id, ext_id)
 
     def test_make_chain_that_already_exist(self):
         # make 1st chain
@@ -79,19 +90,21 @@ class FactomChainTests(unittest.TestCase):
 
     def test_make_chain_return_chain_id(self):
         '''
-             This test will only succeed the 1st time it is run as afterwards the chain will already exist.
-             This structure is necessary because there is no other way to determine the success of the chain creation without a tx_id.
+        This test will only be effective the 1st time it is run as afterwards the chain will already exist.
+        This structure is necessary because there is no other way to determine the success of the chain creation without a tx_id.
         '''
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
-        name_1 = 'ggggg'
-        name_2 = 'hhhhh'
+        name_1 = self.data['known_chain_2_name_1']
+        name_2 = self.data['known_chain_2_name_2']
 
         chain_id = self.factom_chain_object.make_chain_from_binary_file_return_chain_id(self.entry_creds_wallet2,
                                                                                                path,
                                                                                                name_1, name_2)
-        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(
-            '26b9dbc42cbcfd81f22e494db40286a9a38c64188ffef382900a7f8d3eaf261'))
-        self.assertTrue("EntryHash 26b9dbc42cbcfd81f22e494db40286a9a38c64188ffef382900a7f8d3eaf261" in self.factom_chain_object.get_chainhead(chain_id))
+        if ' ' in chain_id:
+            chain_id = chain_id.split()[1]
+        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(self.data[
+                                                                                            'known_chain_2_entry_hash']))
+        self.assertTrue("EntryHash: " +  self.data['known_entry_hash_2'] in self.factom_chain_object.get_firstentry(chain_id))
 
     def test_force_make_chain(self):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
@@ -106,17 +119,17 @@ class FactomChainTests(unittest.TestCase):
 
     def test_quiet_make_chain(self):
         '''
-              This test will only succeed the 1st time it is run as afterwards the chain will already exist.
-              This structure is necessary because there is no other way to determine the success of the chain creation without a tx_id.
+        This test will be effective the 1st time it is run as afterwards the chain will already exist.
+        This structure is necessary because there is no other way to determine the success of the chain creation without a tx_id.
          '''
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
-        # self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '100')
-        # c5632447fbe91c07a132b488697483d1aba69604
-        name_1 = 'aaaaa'
-        name_2 = 'bbbbb'
+        name_1 = self.data['known_chain_1_name_1']
+        name_2 = self.data['known_chain_1_name_2']
         self.factom_chain_object.quiet_make_chain_from_binary_file(self.entry_creds_wallet2, path,
                                                                            name_1, name_2)
-        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash('98aacf26dca2b7672146230a2fe3a731bc1c7001b7a12cc9b16cd282458bc4a5'))
+        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(self.data['known_chain_1_entry_hash']))
+        self.assertTrue("EntryHash: " +  self.data['known_entry_hash_1'] in self.factom_chain_object.get_firstentry_by_ext_id(
+            name_1, name_2))
 
     def test_compose_chain(self):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
