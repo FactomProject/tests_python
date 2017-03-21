@@ -15,6 +15,7 @@ from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.mail import send_email
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
+import re
 
 class FactomEntryTests(unittest.TestCase):
     '''
@@ -24,9 +25,8 @@ class FactomEntryTests(unittest.TestCase):
 
     factomd_address_prod = data['factomd_windows_laptop']
     factomd_address_ansible = data['factomd_address']
-    factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'],
-                                   data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'],
-                                   data['factomd_address_6']]
+    factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2']]
+    factomd_followers_list = [data['factomd_address_2']]
     data = read_data_from_json('faulting.json')
     _stop_command = 'docker stop factom-factomd-i'
     _start_command = 'docker start factom-factomd-i'
@@ -82,7 +82,7 @@ class FactomEntryTests(unittest.TestCase):
         self.assertTrue(entrycount == 0, "Missing entries in the block chain, missing entries: "+ str(entrycount))
 
     @attr(height=True)
-    def _get_heights_of_all_nodes(self):
+    def notest_get_heights_of_all_nodes(self):
         msg = ""
         for x in range(0, 1000):
             for factomd_address_custom in self.factomd_address_custom_list:
@@ -94,16 +94,16 @@ class FactomEntryTests(unittest.TestCase):
                 #print result
                 msg =   msg + "\n" +  output + "\n"
             msg = msg + "\n" + "-------------------------------------------------------------------------------------------------"
-            time.sleep(5)
             msg =  msg + "\n" + "datetime:" + str(datetime.datetime.now()) + "\n"
             logging.getLogger('Height').info(msg)
+            time.sleep(3)
             print msg
             #send_email(msg)
             msg = ""
 
 
 
-    def test_entry_synch_followers(self):
+    def _entry_synch_followers(self):
         '''
         Test to synch blocks when audit servers and followers are rebooted
         :return:
@@ -112,16 +112,44 @@ class FactomEntryTests(unittest.TestCase):
         #entry_load =  threading.Thread(target= 'print "hello world"')
         #entry_load.start()
 
-        for i in range(13,17):
+        for i in range(12,13):
             print i
             send_command_to_cli_and_receive_text(self._delete_database + str(i) + self._path_database)
         print "Restarting..."
-        for i in range(13,17):
+        for i in range(12,13):
             print i
             send_command_to_cli_and_receive_text(self._stop_command + str(i))
             time.sleep(10)
             send_command_to_cli_and_receive_text(self._start_command + str(i))
-            self._get_heights_of_all_nodes()
+
+
+    def test_sync_entry_height(self):
+        #call the method to delete the database and restart the followers
+        self._entry_synch_followers()
+        #calculate the time taken for the followers to sync to the leader height
+        starttime = time.time()
+        found = True
+        for factomd_address_custom in self.factomd_followers_list:
+            while(found):
+                self.factom_chain_object.change_factomd_address(factomd_address_custom)
+                height = self.factom_chain_object.get_heights()
+                while height.find("connection refused"):
+                    height = self.factom_chain_object.get_heights()
+                    break
+                m1 = re.search(r'LeaderHeight: \d+',height)
+                if m1:
+                    leaderheight = m1.group(0)
+                    leaderheight = leaderheight.replace("LeaderHeight: ","")
+                m2 = re.search(r'EntryHeight: \d+',height)
+                if m2:
+                    entryheight = m2.group(0)
+                    entryheight = entryheight.replace("EntryHeight: ","")
+                if (leaderheight == entryheight) and leaderheight != str(0):
+                    endtime = time.time()
+                    timediff = endtime - starttime
+                    print "timetaken to sync entry height to leader height %f" %timediff
+                    found = True
+                    break
 
 
 
