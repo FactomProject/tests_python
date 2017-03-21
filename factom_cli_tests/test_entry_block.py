@@ -15,6 +15,7 @@ from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.mail import send_email
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
+from factom_cli_tests.loadnodes import LoadNodes
 import re
 
 class FactomEntryTests(unittest.TestCase):
@@ -25,8 +26,8 @@ class FactomEntryTests(unittest.TestCase):
 
     factomd_address_prod = data['factomd_windows_laptop']
     factomd_address_ansible = data['factomd_address']
-    factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2']]
-    factomd_followers_list = [data['factomd_address_2']]
+    factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
+    factomd_followers_list = [data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
     data = read_data_from_json('faulting.json')
     _stop_command = 'docker stop factom-factomd-i'
     _start_command = 'docker start factom-factomd-i'
@@ -37,6 +38,7 @@ class FactomEntryTests(unittest.TestCase):
         self.factom_chain_object = FactomChainObjects()
         self.factom_multiple_nodes = FactomHeightObjects()
         self.factom_cli_create = FactomCliCreate()
+        self.factom_load_nodes = LoadNodes()
         self.missingentrycount = 0
 
     @attr(production=True)
@@ -103,7 +105,7 @@ class FactomEntryTests(unittest.TestCase):
 
 
 
-    def _entry_synch_followers(self):
+    def entry_synch_followers(self):
         '''
         Test to synch blocks when audit servers and followers are rebooted
         :return:
@@ -112,20 +114,19 @@ class FactomEntryTests(unittest.TestCase):
         #entry_load =  threading.Thread(target= 'print "hello world"')
         #entry_load.start()
 
-        for i in range(12,13):
+        for i in range(13,17):
             print i
             send_command_to_cli_and_receive_text(self._delete_database + str(i) + self._path_database)
         print "Restarting..."
-        for i in range(12,13):
+        for i in range(13,17):
             print i
             send_command_to_cli_and_receive_text(self._stop_command + str(i))
-            time.sleep(10)
             send_command_to_cli_and_receive_text(self._start_command + str(i))
 
 
-    def test_sync_entry_height(self):
+    def sync_entry_height(self):
         #call the method to delete the database and restart the followers
-        self._entry_synch_followers()
+        self.entry_synch_followers()
         #calculate the time taken for the followers to sync to the leader height
         starttime = time.time()
         found = True
@@ -144,6 +145,10 @@ class FactomEntryTests(unittest.TestCase):
                 if m2:
                     entryheight = m2.group(0)
                     entryheight = entryheight.replace("EntryHeight: ","")
+                    elapsedtime =  time.time() - starttime
+                if elapsedtime > 6000:
+                    print "node hasn't synced for more than 5 mins, hence exiting"
+                    break
                 if (leaderheight == entryheight) and leaderheight != str(0):
                     endtime = time.time()
                     timediff = endtime - starttime
@@ -151,5 +156,14 @@ class FactomEntryTests(unittest.TestCase):
                     found = True
                     break
 
+
+    def loadtest(self):
+        self.factom_load_nodes.make_chain_and_check_balance()
+        return
+
+    def test_load_with_height_check(self):
+        t = threading.Thread(target=self.loadtest)
+        t.start()
+        self.sync_entry_height()
 
 
