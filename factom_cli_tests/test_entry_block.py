@@ -26,6 +26,7 @@ class FactomEntryTests(unittest.TestCase):
 
     factomd_address_prod = data['factomd_windows_laptop']
     factomd_address_ansible = data['factomd_address']
+    factomd_local =  data['localhost']
     factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
     factomd_followers_list = [data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
     data = read_data_from_json('faulting.json')
@@ -105,7 +106,7 @@ class FactomEntryTests(unittest.TestCase):
 
 
 
-    def entry_synch_followers(self):
+    def restart_followers(self):
         '''
         Test to synch blocks when audit servers and followers are rebooted
         :return:
@@ -118,6 +119,7 @@ class FactomEntryTests(unittest.TestCase):
             print i
             send_command_to_cli_and_receive_text(self._delete_database + str(i) + self._path_database)
         print "Restarting..."
+        logging.getLogger('cli_command').info("Restarting")
         for i in range(13,17):
             print i
             send_command_to_cli_and_receive_text(self._stop_command + str(i))
@@ -126,12 +128,13 @@ class FactomEntryTests(unittest.TestCase):
 
     def sync_entry_height(self):
         #call the method to delete the database and restart the followers
-        self.entry_synch_followers()
+        #self.restart_followers()
         #calculate the time taken for the followers to sync to the leader height
         starttime = time.time()
         found = True
         for factomd_address_custom in self.factomd_followers_list:
             while(found):
+                time.sleep(10)
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 height = self.factom_chain_object.get_heights()
                 while height.find("connection refused"):
@@ -145,14 +148,15 @@ class FactomEntryTests(unittest.TestCase):
                 if m2:
                     entryheight = m2.group(0)
                     entryheight = entryheight.replace("EntryHeight: ","")
-                    elapsedtime =  time.time() - starttime
-                if elapsedtime > 6000:
-                    print "node hasn't synced for more than 5 mins, hence exiting"
-                    break
+                    #elapsedtime =  time.time() - starttime
+                #if elapsedtime > 6000:
+                    #print "node hasn't synced for more than 5 mins, hence exiting"
+                    #break
                 if (leaderheight == entryheight) and leaderheight != str(0):
                     endtime = time.time()
                     timediff = endtime - starttime
                     print "timetaken to sync entry height to leader height %f" %timediff
+                    logging.getLogger('cli_command').info("timetaken to sync entry height to leader height %f" %timediff)
                     found = True
                     break
 
@@ -161,9 +165,13 @@ class FactomEntryTests(unittest.TestCase):
         self.factom_load_nodes.make_chain_and_check_balance()
         return
 
+    @attr(entrysync=True)
     def test_load_with_height_check(self):
         t = threading.Thread(target=self.loadtest)
         t.start()
         self.sync_entry_height()
+
+    def notest_entry_fetch(self):
+        self.factom_load_nodes.make_chain_and_check_balance()
 
 
