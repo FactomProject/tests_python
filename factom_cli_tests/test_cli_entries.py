@@ -38,33 +38,35 @@ class FactomCliTransactionTest(unittest.TestCase):
             fout.write(os.urandom(1))
             path = fout.name
 
-        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1, path, name_1)
+        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1)
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['CommitTxID']
+        chain_id = chain_dict['ChainID']
         wait_for_ack(tx_id, self.ACK_WAIT_TIME)
 
-        # entry by chain external id return chain id
-        chain_ext_id = name_1
+        # make entry return tx id
         ext_id = create_random_string(5)
+        tx_id = self.factom_chain_object.add_entry_to_chain_return_tx_id(self.entry_creds_wallet2, path,
+                                                                                            chain_id, ext_id)
+        # any error message will contain a capital letter
+        self.assertTrue(not any(map(str.isupper, tx_id)), "tx_id not returned")
+
+        # make entry by chain external id return chain id
+        chain_ext_id = name_1
         chain_id = self.factom_chain_object.add_entry_to_chain_by_ext_id_return_chain_id(self.entry_creds_wallet2, path,
                                                                            chain_ext_id, ext_id)
-        print 'chain_id', chain_id
-        # self.assertTrue("TransactionACK" in self.factom_cli_create.request_transaction_acknowledgement(tx_id))
 
         # force entry by chain external id
-        print 'new line'
         chain_ext_id = name_1
         ext_id = create_random_string(5)
-        print 'pre-text'
         text = self.factom_chain_object.force_add_entry_to_chain_by_ext_id(self.entry_creds_wallet2, path,
                                                                            chain_ext_id, ext_id)
-        print 'post-text'
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['CommitTxID']
         wait_for_ack(tx_id, self.ACK_WAIT_TIME)
         self.assertTrue("TransactionACK" in self.factom_cli_create.request_transaction_acknowledgement(tx_id))
 
-        # entry by hex external id
+        # make entry by hex external id
         hex_ext_id = binascii.hexlify(chain_ext_id)
         ext_id = create_random_string(5)
         text = self.factom_chain_object.add_entry_to_chain_by_hex_ext_id(self.entry_creds_wallet2, path,
@@ -74,26 +76,35 @@ class FactomCliTransactionTest(unittest.TestCase):
         wait_for_ack(tx_id, self.ACK_WAIT_TIME)
         self.assertTrue("TransactionACK" in self.factom_cli_create.request_transaction_acknowledgement(tx_id))
 
-    def test_quiet_make_entry(self):
+    def test_quiet_make_entries(self):
         '''
         This test will only be effective the 1st time it is run as afterwards the chain will already exist.
         This structure is necessary because there is no other way to determine the success of the chain creation without a tx_id.
          '''
-        # make known chain
+        # create known chain
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = self.data['known_chain_3_name']
-        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1)
+        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1)
+        chain_id = self.data['known_chain_3_chain_id']
 
         # quiet entry by hex external id
         chain_ext_id = name_1
         hex_ext_id = binascii.hexlify(chain_ext_id)
-        ext_id = self.data['known_chain_3_ext_id']
+        ext_id = self.data['known_chain_3_ext_id_1']
         self.factom_chain_object.quiet_add_entry_to_chain_by_hex_ext_id(self.entry_creds_wallet2, path, hex_ext_id, ext_id)
         self.assertTrue(
-            "Entry not found" not in self.factom_chain_object.get_entryhash(self.data['known_chain_3_chain_hash']))
+            "Entry not found" not in self.factom_chain_object.get_entryhash(self.data['known_chain_3_chain_hash']),
+            "Entry not created")
         self.assertTrue(
-        "EntryHash: " + self.data['known_chain_3_entry_hash'] in self.factom_chain_object.get_firstentry_by_ext_id(
-            chain_ext_id))
+        "EntryHash: " + self.data['known_chain_3_entry_hash_1'] in self.factom_chain_object.get_allentries(chain_id), "Entry hash incorrect")
+
+        # make entry return entry hash
+        ext_id = self.data['known_chain_3_ext_id_2']
+        self.factom_chain_object.quiet_add_entry_to_chain_by_hex_ext_id(self.entry_creds_wallet2, path, hex_ext_id, ext_id)
+        self.factom_chain_object.add_entry_to_chain_return_entry_hash(self.entry_creds_wallet2, path,
+                                                                      chain_id, ext_id)
+        self.assertTrue(
+        "EntryHash: " + self.data['known_chain_3_entry_hash_1'] in self.factom_chain_object.get_allentries(chain_id))
 
     def test_verify_entry_costs(self):
         # create chain
@@ -115,7 +126,7 @@ class FactomCliTransactionTest(unittest.TestCase):
 
         balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
 
-        # write entries
+        # make entries
         while i < MAX_ENTRY_SIZE_MINUS_7:
             # write largest entry for fee amount
             name_1 = create_random_string(2)
@@ -128,7 +139,7 @@ class FactomCliTransactionTest(unittest.TestCase):
             balance_last = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
             self.assertEqual(int(balance_1st), int(balance_last) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
 
-            # write smallest entry for fee amount
+            # make smallest entry for fee amount
             i += 1
             with open('output_file', 'a') as fout:
                 fout.write(os.urandom(1))
@@ -147,7 +158,7 @@ class FactomCliTransactionTest(unittest.TestCase):
             with open('output_file', 'a') as fout:
                 fout.write(os.urandom(1023))
 
-        # write too large entry
+        # make too large entry
         name_1 = create_random_string(2)
         name_2 = create_random_string(2)
 
