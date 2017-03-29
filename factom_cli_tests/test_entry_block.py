@@ -61,6 +61,7 @@ class FactomEntryTests(unittest.TestCase):
         self.factom_chain_object.change_factomd_address(factomd_address)
         directory_block_head = self.factom_chain_object.get_directory_block_height_from_head()
         totalentries = 0
+        self.entrycount = 0
         for x in range(0, int(directory_block_head)):
             directory_block_height = self.factom_chain_object.get_directory_block_height(str(x))
             directory_block_height = ast.literal_eval(directory_block_height)
@@ -166,12 +167,12 @@ class FactomEntryTests(unittest.TestCase):
         return
 
     @attr(entrysync=True)
-    def test_load_with_height_check(self):
+    def notest_load_with_height_check(self):
         t = threading.Thread(target=self.loadtest)
         t.start()
         self.sync_entry_height()
 
-    def notest_entry_fetch(self):
+    def test_entry_fetch(self):
         self.factom_load_nodes.make_chain_and_check_balance()
 
 

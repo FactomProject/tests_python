@@ -8,7 +8,7 @@ from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
 
 
-@attr(fast=True)
+@attr(checkheight=True)
 class FactomHeightTests(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
