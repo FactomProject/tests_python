@@ -11,7 +11,7 @@ class FactomCliTransactionTest(unittest.TestCase):
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
 
-    def test_wallet_address_balance_remote(self):
+    def wallet_address_balance_remote(self):
         text = self.factom_cli_create.check_wallet_address_balance_remote('factom.michaeljbeam.me')
         self.assertTrue("fct" in text)
         self.assertTrue("ec" in text)
