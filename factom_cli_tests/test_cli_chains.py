@@ -24,10 +24,15 @@ class FactomChainTests(unittest.TestCase):
             self.data['factoid_wallet_address'])
         self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
         self.entry_creds_wallet0 = self.factom_cli_create.create_entry_credit_address()
-        self.entry_creds_wallet1 = self.factom_cli_create.import_address_from_factoid(
+        self.entry_creds_wallet = self.factom_cli_create.import_address_from_factoid(
             self.data['ec_wallet_address'])
-        self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.force_buy_ec(self.first_address, self.entry_creds_wallet2, '1000')
+        self.entry_creds_wallet1000 = self.factom_cli_create.create_entry_credit_address()
+        text = self.factom_cli_create.force_buy_ec(self.first_address, self.entry_creds_wallet1000, '1000')
+        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        tx_id = chain_dict['TxID']
+        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
+        self.entry_creds_wallet10 = self.factom_cli_create.create_entry_credit_address()
+        text = self.factom_cli_create.force_buy_ec(self.first_address, self.entry_creds_wallet10, '10')
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id, self.ACK_WAIT_TIME)
@@ -50,27 +55,32 @@ class FactomChainTests(unittest.TestCase):
         name_2 = create_random_string(5)
         self.assertTrue(
             'Not enough Entry Credits' in self.factom_chain_object.make_chain_from_binary_file(
-                self.entry_creds_wallet0, path, name_1, name_2, "Insufficient entry credits not detected"))
+                self.entry_creds_wallet0, path, name_1, name_2), "Insufficient entry credits not detected")
 
     def test_make_chain(self):
         # make 1st chain
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = self.data['known_chain_3_name']
-        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1)
-        chain_ext_id = name_1
-        hex_ext_id = binascii.hexlify(chain_ext_id)
-        ext_id = self.data['known_chain_3_ext_id']
-        self.factom_chain_object.add_entry_to_chain_by_hex_ext_id(self.entry_creds_wallet2, path, hex_ext_id, ext_id)
+        balance = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1000)
+        print 'balance', balance
+        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1000, path, name_1)
+        balance = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1000)
+        print 'balance', balance
 
     def test_make_chain_that_already_exist(self):
         # make 1st chain
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
-        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1, name_2)
+        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1000, path, name_1, name_2)
 
         # try to make duplicate chain
-        self.assertTrue('already exist' in self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet2, path, name_1, name_2), "Duplicate chain not detected")
+        self.assertTrue('already exists' in self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1000, path, name_1, name_2), "Duplicate chain not detected")
+
+        # try to compose duplicate chain
+
+        self.assertTrue("already exists" in self.factom_chain_object.compose_chain_from_binary_file(
+        self.entry_creds_wallet1000, path, name_1, name_2), "Compose duplicate chain not rejected")
 
     def test_make_chain_and_check_balance(self):
         CHAIN_AND_1K_ENTRY_COST = 12
@@ -78,9 +88,9 @@ class FactomChainTests(unittest.TestCase):
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
 
-        balance_before = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2)
-        self.factom_chain_object.make_chain_from_binary_file_return_entry_hash(self.entry_creds_wallet2, path, name_1, name_2)
-        balance_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2)
+        balance_before = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1000)
+        self.factom_chain_object.make_chain_from_binary_file_return_entry_hash(self.entry_creds_wallet1000, path, name_1, name_2)
+        balance_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1000)
 
         self.assertEqual(int(balance_before), int(balance_after) + CHAIN_AND_1K_ENTRY_COST, 'Incorrect charge for chain creation')
 
@@ -89,8 +99,8 @@ class FactomChainTests(unittest.TestCase):
         name_1 = binascii.b2a_hex(os.urandom(2))
         name_2 = binascii.b2a_hex(os.urandom(2))
 
-        tx_id = self.factom_chain_object.make_chain_from_binary_file_with_hex_ext_return_tx_id(self.entry_creds_wallet2,
-                                                                                        path, name_1, name_2)
+        tx_id = self.factom_chain_object.make_chain_from_binary_file_with_hex_ext_return_tx_id(self.entry_creds_wallet1000,
+                                                                                               path, name_1, name_2)
         wait_for_ack(tx_id, 20)
         self.assertTrue("TransactionACK" in self.factom_cli_create.request_transaction_acknowledgement(tx_id),
                         "Chain not created")
@@ -104,10 +114,11 @@ class FactomChainTests(unittest.TestCase):
         name_1 = self.data['known_chain_2_name_1']
         name_2 = self.data['known_chain_2_name_2']
 
-        chain_id = self.factom_chain_object.make_chain_from_binary_file_return_chain_id(self.entry_creds_wallet2,
-                                                                                               path,
-                                                                                               name_1, name_2)
+        chain_id = self.factom_chain_object.make_chain_from_binary_file_return_chain_id(self.entry_creds_wallet1000,
+                                                                                        path,
+                                                                                        name_1, name_2)
         if ' ' in chain_id:
+            # error returned
             chain_id = chain_id.split()[1]
         self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(self.data[
                                                                                             'known_chain_2_entry_hash']),
@@ -119,7 +130,7 @@ class FactomChainTests(unittest.TestCase):
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
 
-        tx_id = self.factom_chain_object.force_make_chain_from_binary_file_return_tx_id(self.entry_creds_wallet2,
+        tx_id = self.factom_chain_object.force_make_chain_from_binary_file_return_tx_id(self.entry_creds_wallet1000,
                                                                                         path,
                                                                                         name_1, name_2)
         wait_for_ack(tx_id, 20)
@@ -134,8 +145,8 @@ class FactomChainTests(unittest.TestCase):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = self.data['known_chain_1_name_1']
         name_2 = self.data['known_chain_1_name_2']
-        self.factom_chain_object.quiet_make_chain_from_binary_file(self.entry_creds_wallet2, path,
-                                                                           name_1, name_2)
+        self.factom_chain_object.quiet_make_chain_from_binary_file(self.entry_creds_wallet1000, path,
+                                                                   name_1, name_2)
         self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(self.data['known_chain_1_entry_hash']))
         self.assertTrue("EntryHash: " +  self.data['known_chain_1_entry_hash'] in self.factom_chain_object.get_firstentry_by_ext_id(
             name_1, name_2))
@@ -144,27 +155,40 @@ class FactomChainTests(unittest.TestCase):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
-        text = self.factom_chain_object.compose_chain_from_binary_file(self.entry_creds_wallet1, path, name_1, name_2)
-        balance = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
-        print 'balance', balance
+        text = self.factom_chain_object.compose_chain_from_binary_file(self.entry_creds_wallet, path, name_1, name_2)
         start = text.find('"message":"') + 11
         end = text.find('"},"method', start)
         self.factomd_api_objects.commit_chain_by_message(text[start:end])
         self.assertTrue("commit-chain" in text)
         self.assertTrue("reveal-chain" in text)
 
-    def test_compose_chain(self):
+    def test_compose_chain_with_hex_ext(self):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
-        name_1 = create_random_string(5)
-        name_2 = create_random_string(5)
-        text = self.factom_chain_object.compose_chain_from_binary_file(self.entry_creds_wallet1, path, name_1, name_2)
-        balance = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
-        print 'balance', balance
+        name_1 = binascii.b2a_hex(os.urandom(2))
+        name_2 = binascii.b2a_hex(os.urandom(2))
+        text = self.factom_chain_object.compose_chain_from_binary_file_with_hex_ext(self.entry_creds_wallet, path, name_1, name_2)
         start = text.find('"message":"') + 11
         end = text.find('"},"method', start)
         self.factomd_api_objects.commit_chain_by_message(text[start:end])
         self.assertTrue("commit-chain" in text)
         self.assertTrue("reveal-chain" in text)
+
+    def test_compose_chain_with_zero_ec(self):
+        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        self.assertTrue("Entry Credit balance is zero" in self.factom_chain_object.compose_chain_from_binary_file(self.entry_creds_wallet0, path, name_1, name_2), "Zero Entry Credit balance not detected")
+
+        # force compose chain
+        self.assertTrue("curl" in self.factom_chain_object.force_compose_chain_from_binary_file(self.entry_creds_wallet0, path, name_1, name_2), "Zero Entry Credit balance compose chain not forced")
+
+    def test_compose_chain__with_not_enough_ec(self):
+        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        balance = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet10)
+        # CORRECT ERROR TEXT WHEN CODE IS FIXED
+        self.assertTrue("curl" in self.factom_chain_object.compose_chain_from_binary_file(self.entry_creds_wallet10, path, name_1, name_2), "Insufficient balance not detected")
 
     def test_check_chain_height(self):
         seq = self.factom_chain_object.get_sequence_number_from_head()
