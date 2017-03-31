@@ -5,7 +5,7 @@ from helpers.helpers import read_data_from_json
 import time
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
-class FactomDebugAPITests(unittest.TestCase):
+class FactomDebugAPInotests(unittest.TestCase):
 
     def setUp(self):
         self.factomd_debug_api = FactomDebugApiObjects()
@@ -16,7 +16,7 @@ class FactomDebugAPITests(unittest.TestCase):
                                        data['factomd_address_6']]
         self.controlpanel = read_data_from_json('faulting.json')
 
-    def test__get_holding_messages_in_queue(self):
+    def test_get_holding_messages_in_queue(self):
         holding_queue_msgs = self.factomd_debug_api.get_holding_queue()
         self.assertFalse(re.search('Method not found',str(holding_queue_msgs)),"holding message api is not found")
         print(holding_queue_msgs)
@@ -42,21 +42,21 @@ class FactomDebugAPITests(unittest.TestCase):
                     audit_list.append(server)
         return audit_list
 
-    def test__get_network_info(self):
+    def test_get_network_info(self):
         network_info = self.factomd_debug_api.get_network_info()
         self.assertFalse(re.search('Method not found',str(network_info)), "get network info is not found")
         print network_info
 
-    def test__get_predictive_fer(self):
+    def test_get_predictive_fer(self):
         predictive_fer = self.factomd_debug_api.get_predictive_fer()
         self.assertFalse(re.search('Method not found',str(predictive_fer)), "get predictive fer is not found")
         print predictive_fer
 
-    def test__audit_servers(self):
+    def test_audit_servers(self):
         self.parse_federated_audit_servers("Audit")
 
 
-    def test__federated_servers(self):
+    def test_federated_servers(self):
         self.parse_federated_audit_servers("Fed")
 
 
@@ -93,22 +93,22 @@ class FactomDebugAPITests(unittest.TestCase):
         except ValueError:
             return ""
 
-    def test__get_configuration(self):
+    def test_get_configuration(self):
         configuration = self.factomd_debug_api.get_configuration()
         print configuration
 
 
-    def test__droprate(self):
+    def test_droprate(self):
         droprate = self.factomd_debug_api.get_droprate()
         print droprate
 
 
-    def test__currentminute(self):
+    def test_currentminute(self):
         currentminute = self.factomd_debug_api.get_currentminute()
         print "current minute is %d" % currentminute['Minute']
 
 
-    def test__current_minute_on_all_nodes(self):
+    def test_current_minute_on_all_nodes(self):
       for factomd_address_custom in self.factomd_address_custom_list:
           self.factomd_debug_api.change_factomd_address(self.factomd_address)
           currentminute = self.factomd_debug_api.get_currentminute()
@@ -131,20 +131,20 @@ class FactomDebugAPITests(unittest.TestCase):
         return result
 
 
-    def test__summary(self):
+    def test_summary(self):
         result = self.factomd_debug_api.get_summary()
         print result
 
-    def test__get_delay(self):
+    def test_get_delay(self):
         result = self.factomd_debug_api.get_delay()
         print result
 
 
-    def test__set_delay(self):
+    def test_set_delay(self):
         result = self.factomd_debug_api.set_delay('200')
         print result
 
-    def test__set_droprate(self):
+    def test_set_droprate(self):
         result = self.factomd_debug_api.set_droprate('10')
         print result
 
@@ -152,6 +152,12 @@ class FactomDebugAPITests(unittest.TestCase):
         result = self.factomd_debug_api.reload_configuration()
         print result
 
-    def test__process_list(self):
+    def test_process_list(self):
         result = self.factomd_debug_api.get_process_list()
         print result
+
+    def test_messages(self):
+        print "in messages"
+        result = self.factomd_debug_api.get_messages_list()
+        print result
+

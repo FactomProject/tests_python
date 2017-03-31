@@ -23,6 +23,7 @@ class FactomDebugApiObjects():
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
+        print r.url
         print r.text
         return r.text
 
@@ -129,3 +130,7 @@ class FactomDebugApiObjects():
     def get_process_list(self):
         processlist =  json.loads(self.send_get_request_with_method('process-list'))
         return processlist
+
+    def get_messages_list(self):
+        messages = json.loads(self.send_get_request_with_method('messages'))
+        return messages
