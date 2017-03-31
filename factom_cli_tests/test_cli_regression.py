@@ -289,13 +289,15 @@ class FactomCliEndToEndTest(unittest.TestCase):
     def test_send_factoids(self):
         value_of_factoids = 1
         balance_1 = self.factom_cli_create.check_wallet_address_balance(self.second_address)
-        transaction_id = self.factom_cli_create.send_factoids(self.first_address, self.second_address, str(value_of_factoids))
-        wait_for_ack(transaction_id, 60)
+        text = self.factom_cli_create.send_factoids(self.first_address, self.second_address, str(value_of_factoids))
+        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        tx_id = chain_dict['TxID']
+        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
         balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.second_address)
         self.assertEqual(int(balance_1_after), int(balance_1) + value_of_factoids)
 
     def test_for_sof_425(self):
-        #todo change assert when fixed
+        # todo change assert when fixed
         second_address = self.factom_cli_create.create_new_factoid_address()
         third_address = self.factom_cli_create.create_new_factoid_address()
         self.factom_cli_create.send_factoids(self.first_address, second_address, '100')

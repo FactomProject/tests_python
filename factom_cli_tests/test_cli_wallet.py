@@ -19,6 +19,6 @@ class FactomCliTransactionTest(unittest.TestCase):
 
     def test_backup_wallet(self):
         text = self.factom_cli_create.backup_wallet()
-        self.assertTrue("Seed:" in text, "Seed not reported")
-        self.assertTrue("Addresses:" in text, "Addresses not reported")
-
+        self.assertTrue(self.data['words_other'] in text, "Seed not listed")
+        self.assertTrue(self.data['factoid_wallet_address'] in text, "Factoid address not listed")
+        self.assertTrue(self.data['ec_wallet_address'] in text, "Entry credit address not listed")

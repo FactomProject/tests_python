@@ -28,7 +28,7 @@ class FactomWalletApiTest(unittest.TestCase):
         self.wallet_api_objects.create_new_transaction(transaction_name)
         self.wallet_api_objects.add_factoid_input_to_transaction(transaction_name, self.first_address, 100000000)
         self.wallet_api_objects.add_factoid_output_to_transaction(transaction_name, self.second_address, 100000000)
-        self.wallet_api_objects.substract_fee_in_transaction(transaction_name, self.second_address)
+        self.wallet_api_objects.subtract_fee_in_transaction(transaction_name, self.second_address)
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         self.assertTrue("Successfully submitted" in self.factomd_api_objects.submit_factoid_by_transaction(transaction)['message'])
@@ -40,7 +40,7 @@ class FactomWalletApiTest(unittest.TestCase):
         self.wallet_api_objects.create_new_transaction(transaction_name)
         self.wallet_api_objects.add_factoid_input_to_transaction(transaction_name, self.first_address, 1)
         self.wallet_api_objects.add_factoid_output_to_transaction(transaction_name, self.second_address, 1)
-        self.wallet_api_objects.substract_fee_in_transaction(transaction_name, self.second_address)
+        self.wallet_api_objects.subtract_fee_in_transaction(transaction_name, self.second_address)
 
         self.assertTrue('Error totalling Outputs: Amount is out of range' in
                         self.wallet_api_objects.sign_transaction(transaction_name)['error']['data'])
@@ -55,7 +55,7 @@ class FactomWalletApiTest(unittest.TestCase):
         self.wallet_api_objects.create_new_transaction(transaction_name)
         self.wallet_api_objects.add_factoid_input_to_transaction(transaction_name, self.first_address, 100000000)
         self.wallet_api_objects.add_factoid_output_to_transaction(transaction_name, self.second_address, 100000000)
-        self.wallet_api_objects.substract_fee_in_transaction(transaction_name, self.second_address)
+        self.wallet_api_objects.subtract_fee_in_transaction(transaction_name, self.second_address)
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         txid = self.factomd_api_objects.submit_factoid_by_transaction(transaction)['txid']
@@ -84,7 +84,7 @@ class FactomWalletApiTest(unittest.TestCase):
         self.wallet_api_objects.create_new_transaction(transaction_name)
         self.wallet_api_objects.add_factoid_input_to_transaction(transaction_name, self.first_address, 100000000)
         self.wallet_api_objects.add_entry_credits_output_to_transaction(transaction_name, self.second_address, 100000000)
-        self.wallet_api_objects.substract_fee_in_transaction(transaction_name, self.second_address)
+        self.wallet_api_objects.subtract_fee_in_transaction(transaction_name, self.second_address)
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         self.assertTrue("Successfully submitted" in self.factomd_api_objects.submit_factoid_by_transaction(transaction)['message'])

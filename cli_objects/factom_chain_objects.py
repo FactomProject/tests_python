@@ -180,6 +180,17 @@ class FactomChainObjects(FactomBaseObject):
             (self._factom_cli_command, self._factomd_compose_entry, ' -c ', chain_id , ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
 
+    def force_compose_entry_from_binary_file(self, ecadress, file_data, chain_id, *external_ids):
+        ext_to_string = ' '.join(['-e ' + s for s in external_ids])
+        text = send_command_to_cli_and_receive_text(''.join(
+            (self._factom_cli_command, self._factomd_compose_entry, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
+        return text
+
+    def force_compose_entry_to_chain_with_hex_ext(self, ecaddress, file_data, chain_id, *external_ids):
+        ext_to_string = ' '.join(['-x ' + s for s in external_ids])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_entry, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ', ecaddress, ' < ', file_data)))
+        return text
+
     def get_chainhead(self, chain_id):
         text = send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_get_chainhead, chain_id)))
