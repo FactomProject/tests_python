@@ -119,11 +119,15 @@ class FactomCliCreate(FactomBaseObject):
         return send_command_to_cli_and_receive_text((''.join((self._factom_cli_command, self._factom_sign_transaction, ' -q ', transaction_name))))
 
     def compose_transaction_and_return_transaction_code(self, transaction_name):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_composetx, transaction_name))).split('"')[11]
-
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_composetx, transaction_name)))
+        print 'text', text
+        print 'split', text.split('"')[11]
+        return text
+    # def compose_transaction_and_return_transaction_code(self, transaction_name):
+    #     return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_composetx, transaction_name))).split('"')[11]
+    #
     def compose_transaction(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_composetx, transaction_name)))
-
 
     def request_transaction_acknowledgement(self, transaction_hash):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_ack, transaction_hash)))
