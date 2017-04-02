@@ -1,6 +1,22 @@
 {
   "factoid_wallet_address": "Fs2DNirmGDtnAZGXqca3XHkukTNMxoMGFFQxJA3bAjJnKzzsZBMH",
   "ec_wallet_address": "Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG",
+  "remote_address": "factom.michaeljbeam.me",
   "test_file_path": "../test_data/testfile",
-  "words": "salute umbrella proud setup delay ginger practice split toss jewel tuition stool"
+  "words": "salute umbrella proud setup delay ginger practice split toss jewel tuition stool",
+  "words_other": "fit column target shallow sting cradle elegant silk much senior practice math",
+  "known_chain_1_name_1": "aaaaa",
+  "known_chain_1_name_2": "bbbbb",
+  "known_chain_1_entry_hash": "98aacf26dca2b7672146230a2fe3a731bc1c7001b7a12cc9b16cd282458bc4a5",
+  "known_chain_2_name_1": "ggggg",
+  "known_chain_2_name_2": "hhhhh",
+  "known_chain_2_entry_hash": "26b9dbc42cbcfd81f22e494db40286a9a38c64188ffef382900a7f8d3eaf2691",
+  "known_chain_3_name": "aaaaa",
+  "known_chain_3_ext_id_1": "bbbbb",
+  "known_chain_3_ext_id_2": "ccccc",
+  "known_chain_3_chain_id": "bc28a60c33a6f37c5bda604baa083a78afc1b70eb8ba19d779385c607c853ec6",
+  "known_chain_3_chain_hash": "08de09ee851053f00f222fedc99a084c52b70784acf5a1cae0b3aeb48386201a",
+  "known_chain_3_entry_hash_1": "cd3270c1192ba66fe856fed0363f2689a4eb87f433c883969894ea7c330e75f3",
+  "known_chain_3_entry_hash_2": "414d5364f573cbb0e71ea1281b551574f6f8830115022d11f037188883210dac"
+
 }

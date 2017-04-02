@@ -11,13 +11,14 @@ class FactomCliTransactionTest(unittest.TestCase):
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
 
-    def wallet_address_balance_remote(self):
-        text = self.factom_cli_create.check_wallet_address_balance_remote('factom.michaeljbeam.me')
-        self.assertTrue("fct" in text)
-        self.assertTrue("ec" in text)
+    def test_wallet_address_balance_remote(self):
+        text = self.factom_cli_create.check_wallet_address_balance_remote()
+        self.assertTrue("Wallet Name Lookup is Insecure" == text, "Remote address does not exist")
+        self.assertTrue("fct" in text, "Remote factoid wallet is not present")
+        self.assertTrue("ec" in text, "Remote ec wallet is not present")
 
     def test_backup_wallet(self):
         text = self.factom_cli_create.backup_wallet()
-        self.assertTrue("Seed:" in text)
-        self.assertTrue("Addresses:" in text)
-
+        self.assertTrue(self.data['words_other'] in text, "Seed not listed")
+        self.assertTrue(self.data['factoid_wallet_address'] in text, "Factoid address not listed")
+        self.assertTrue(self.data['ec_wallet_address'] in text, "Entry credit address not listed")
