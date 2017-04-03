@@ -143,7 +143,7 @@ class FactomWalletApiObjects():
                                                                                  'address': address}))
         return blocks["result"]
 
-    def subtract_fee_in_transaction(self, transaction_name, address):
+    def substract_fee_in_transaction(self, transaction_name, address):
         blocks = json.loads(self.send_post_request_with_params_dict('sub-fee', {'tx-name': transaction_name,
                                                                                'address': address}))
         return blocks
