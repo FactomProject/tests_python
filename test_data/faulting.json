@@ -1,7 +1,7 @@
 {
-  "audit": "i3",
-  "federated": "i2",
-  "default_server_address": "http://10.41.0.205/i0",
+  "audit": "i13",
+  "federated": "i12",
+  "default_server_address": "http://10.41.0.205:9180/i10",
   "time_to_wait": 300,
   "audit_1_hash": "888888271203752870ae",
   "audit_2_hash": "888888a21d5ac004defa",
