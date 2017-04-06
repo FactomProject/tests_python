@@ -39,9 +39,3 @@ class FactomTestFaulting(unittest.TestCase):
         time.sleep(self.data['time_to_wait'])
         self.assertTrue(
             self.data['audit_1_hash'] + ' offline' and  self.data['master_hash'] + ' offline' in get_data_dump_from_server(self.data['default_server_address']))
-
-
-
-
-
-

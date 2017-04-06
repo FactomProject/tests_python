@@ -11,5 +11,3 @@ def get_data_dump_from_server(server_address):
     data = {"item": "dataDump"}
     r = requests.get(server_address + '/factomd', params=data, auth=('relay','myunreachableyou'))
     return r.text
-
-
