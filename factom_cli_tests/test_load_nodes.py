@@ -40,8 +40,8 @@ class FactomLoadNodes(unittest.TestCase):
                 name_1 = create_random_string(5)
                 name_2 = create_random_string(5)
                 names_list = ['-n', name_1, '-n', name_2]
-                chain_id = self.factom_chain_object.make_chain_from_biary(self.entry_creds_wallet1, path, names_list,
-                                                                          flag_list=chain_flags_list)
+                chain_id = self.factom_chain_object.make_chain_from_binary(self.entry_creds_wallet1, path, names_list,
+                                                                           flag_list=chain_flags_list)
 
                 for i in range(120):
                     with open('output_file', 'wb') as fout:
@@ -49,7 +49,8 @@ class FactomLoadNodes(unittest.TestCase):
                         path = fout.name
                     name_1 = create_random_string(5)
                     name_2 = create_random_string(5)
-                    self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, name_1, name_2)
+                    names_list = ['-e', name_1, '-e', name_2]
+                    self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, names_list)
                     os.remove(path)
             time.sleep(5)
         time.sleep(30)

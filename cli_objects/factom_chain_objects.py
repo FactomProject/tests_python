@@ -21,7 +21,7 @@ class FactomChainObjects(FactomBaseObject):
     def parse_chain_data(self, chain_text):
         return dict(item.split(": ") for item in chain_text.split('\n'))
 
-    def make_chain_from_biary(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
+    def make_chain_from_binary(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
         ext_to_string = ' '.join(external_id_with_flags_list)
         flags = ''
         if kwargs:
@@ -34,41 +34,17 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
 
-    def add_entries_to_chain(self, ecaddress, file_data, chain_id, *external_ids):
-        ext_to_string = ' '.join(['-e ' + s for s in external_ids])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -c ', chain_id , ' ', ext_to_string + ' ',
-             ecaddress, ' < ', file_data)))
-        return text
+    def add_entries_to_chain(self, ecaddress, file_data, chain_id, external_id_with_flags_list, **kwargs):
+        ext_to_string = ' '.join(external_id_with_flags_list)
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        return send_command_to_cli_and_receive_text(
+            ''.join((self._factom_cli_command, self._factom_add_entries, ' ', flags, ' -c ', chain_id, ' ',
+                     ext_to_string, ' ', ecaddress, ' < ', file_data)))
 
-    def add_entries_to_chain_and_receive_tx_id(self, ecaddress, file_data, chain_id, *external_ids):
-        ext_to_string = ' '.join(['-e ' + s for s in external_ids])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -c ', chain_id , ' ', ext_to_string + ' ',
-             ecaddress, ' < ', file_data)))
-        return text.split('\n')[0].split(' ')[1]
-
-    def add_entries_to_chain_with_hex_ext_and_receive_tx_id(self, ecaddress, file_data, chain_id, *external_ids):
-        ext_to_string = ' '.join(['-x ' + s for s in external_ids])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -c ', chain_id , ' ', ext_to_string + ' ',
-             ecaddress, ' < ', file_data)))
-        return text.split('\n')[0].split(' ')[1]
-
-    def force_add_entries_to_chain(self, ecaddress, file_data, chain_id, *external_ids):
-        ext_to_string = ' '.join(['-e ' + s for s in external_ids])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ',
-             ecaddress, ' < ', file_data)))
-        return text
-
-    def force_add_entries_to_chain_and_receive_tx_id(self, ecaddress, file_data, chain_id, *external_ids):
-        ext_to_string = ' '.join(['-e ' + s for s in external_ids])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ',
-             ecaddress, ' < ', file_data)))
-        return text.split('\n')[0].split(' ')[1]
-
-    def force_add_entries_to_chain_with_hex_ext_and_receive_tx_id(self, ecaddress, file_data, chain_id, *external_ids):
-        ext_to_string = ' '.join(['-x ' + s for s in external_ids])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_entries, ' -f ', ' -c ', chain_id , ' ', ext_to_string + ' ',
-             ecaddress, ' < ', file_data)))
-        return text.split('\n')[0].split(' ')[1]
+    def parse_entry_data(self, entry_text):
+        return dict(item.split(": ") for item in entry_text.split('\n'))
 
     def compose_entry_from_binary_file(self, ecadress, file_data, chain_id, *external_ids):
         ext_to_string = ' '.join(['-e ' + s for s in external_ids])

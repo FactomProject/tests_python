@@ -38,7 +38,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         with open('output_file', 'wb') as fout:
             fout.write(os.urandom(i))
             self.path = fout.name
-        text = self.factom_chain_object.make_chain_from_biary(self.entry_creds_wallet1, self.path, names_list)
+        text = self.factom_chain_object.make_chain_from_binary(self.entry_creds_wallet1, self.path, names_list)
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         chain_id = chain_dict['ChainID']
         tx_id = chain_dict['CommitTxID']
@@ -51,9 +51,10 @@ class FactomCliTransactionTest(unittest.TestCase):
             # write largest entry for fee amount
             name_1 = create_random_string(2)
             name_2 = create_random_string(2)
-            tx_id = self.factom_chain_object.add_entries_to_chain_and_receive_tx_id(self.entry_creds_wallet1,
-                                                                                    self.path, chain_id, name_1,
-                                                                                          name_2)
+            names_list = ['-e', name_1, '-e', name_2]
+            text_raw = self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1,
+                                                                     self.path, chain_id, names_list)
+            tx_id = self.factom_chain_object.parse_entry_data(text_raw)['CommitTxID']
             wait_for_ack(tx_id, 20)
             balance_last = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
             self.assertEqual(int(balance_1st), int(balance_last) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
@@ -66,8 +67,9 @@ class FactomCliTransactionTest(unittest.TestCase):
                 break
             name_1 = binascii.b2a_hex(os.urandom(2))
             name_2 = binascii.b2a_hex(os.urandom(2))
-            tx_id = self.factom_chain_object.add_entries_to_chain_with_hex_ext_and_receive_tx_id(self.entry_creds_wallet1, self.path, chain_id, name_1, name_2)
-            wait_for_ack(tx_id,20)
+            names_list = ['-x', name_1, '-x', name_2]
+            tx_id = self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, self.path, chain_id, names_list)
+            wait_for_ack(tx_id, 20)
             balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
             self.assertEqual(int(balance_last), int(balance_1st) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
 
@@ -78,8 +80,9 @@ class FactomCliTransactionTest(unittest.TestCase):
         # write too large entry
         name_1 = create_random_string(2)
         name_2 = create_random_string(2)
+        names_list = ['-e', name_1, '-e', name_2]
 
-        self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, self.path, chain_id, name_1, name_2))
+        self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, self.path, chain_id, names_list))
 
         # validate get firstentry command
         self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry(chain_id))
@@ -100,7 +103,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         with open('output_file', 'wb') as fout:
             fout.write(os.urandom(10))
             self.path = fout.name
-        text = self.factom_chain_object.make_chain_from_biary(self.entry_creds_wallet1, self.path, names_list)
+        text = self.factom_chain_object.make_chain_from_binary(self.entry_creds_wallet1, self.path, names_list)
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         chain_id = chain_dict['ChainID']
 
