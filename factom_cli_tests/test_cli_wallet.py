@@ -19,4 +19,3 @@ class FactomCliTransactionTest(unittest.TestCase):
     def test_backup_wallet(self):
         text = self.factom_cli_create.backup_wallet()
         self.assertTrue(len(text.split(' ')) == 12)
-

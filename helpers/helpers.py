@@ -18,17 +18,3 @@ def read_data_from_json(file_name):
     with open(filename) as f:
         json_data = f.read()
         return json.loads(json_data)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
