@@ -27,7 +27,10 @@ class FactomEntryTests(unittest.TestCase):
     factomd_address_prod = data['factomd_windows_laptop']
     factomd_address_ansible = data['factomd_address']
     factomd_local =  data['localhost']
-    factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
+    #factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
+    factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'],data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'],
+                                   data['factomd_address_7'], data['factomd_address_8'],
+                                   data['factomd_address_9'], data['factomd_address_10']]
     factomd_followers_list = [data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
     data = read_data_from_json('faulting.json')
     _stop_command = 'docker stop factom-factomd-i'
@@ -48,7 +51,7 @@ class FactomEntryTests(unittest.TestCase):
         print self.missingentrycount
 
     @attr(entry=True)
-    def notest_ansible_entries(self):
+    def test_ansible_entries(self):
         for factomd_address_custom in self.factomd_address_custom_list:
             self._missing_entries(factomd_address_custom)
             print "total entrycount missing = %d on the server = %s" % (self.entrycount, factomd_address_custom)
@@ -78,9 +81,10 @@ class FactomEntryTests(unittest.TestCase):
                         self.entrycontents = self.factom_chain_object.get_entryhash(entryhash)
                         if (self.entrycontents == "Entry not found"):
                             self.entrycount += 1
+                            print "server = %s, entryhash = %s" %(factomd_address,entryhash)
                         totalentries += 1
                         self.assertFalse(self.entrycontents == "Entry not found", ("missing entries %d" % totalentries))
-        print "totalentries %d" % totalentries
+        #print "totalentries %d" % totalentries
         logging.getLogger('cli_command').info(totalentries)
         return self.entrycount
         self.assertTrue(entrycount == 0, "Missing entries in the block chain, missing entries: "+ str(entrycount))
@@ -172,7 +176,7 @@ class FactomEntryTests(unittest.TestCase):
         t.start()
         self.sync_entry_height()
 
-    def test_entry_fetch(self):
+    def notest_entry_fetch(self):
         self.factom_load_nodes.make_chain_and_check_balance()
 
 

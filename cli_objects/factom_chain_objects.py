@@ -49,6 +49,9 @@ class FactomChainObjects(FactomBaseObject):
              ecaddress, ' < ', file_data)))
         return text.split('\n')[0].split(' ')[1]
 
+    def parse_chain_data(self, chain_text):
+        return dict(item.split(": ") for item in chain_text.split('\n'))
+
     def get_sequence_number_from_head(self):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
         return text.split('\n')[3].split(' ')[1]

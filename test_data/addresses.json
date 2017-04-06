@@ -1,6 +1,6 @@
 {
   "wallet_address": "10.41.0.215:8089",
-  "factomd_address": "10.41.0.5:8088",
+  "factomd_address": "10.41.0.10:8088",
   "factomd_address_0": "10.41.0.10:8088",
   "factomd_address_1": "10.41.0.11:8088",
   "factomd_address_2": "10.41.0.12:8088",
@@ -8,8 +8,12 @@
   "factomd_address_4": "10.41.0.14:8088",
   "factomd_address_5": "10.41.0.15:8088",
   "factomd_address_6": "10.41.0.16:8088",
+  "factomd_address_7": "52.161.28.54:8088",
+  "factomd_address_8": "52.161.26.157:8088",
+  "factomd_address_9": "52.161.29.253:8088",
+  "factomd_address_10": "localhost:8088",
   "factomd_address_prod1": "52.161.27.174:8088",
-  "factomd_address_prod2": "mattdev2984.cloudapp.net:8088",
+  "factomd_address_prod2": "137.135.107.221:8088",
   "localhost": "localhost:8088",
    "factomd_windows_laptop": "192.168.1.111:8088"
 }
