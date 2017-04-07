@@ -3,6 +3,7 @@ import os
 import time
 
 from nose.plugins.attrib import attr
+from flaky import flaky
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
@@ -11,6 +12,7 @@ from api_objects.factomd_api_objects import FactomApiObjects
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack
 
+@flaky(max_runs=3, min_passes=2)
 @attr(fast=True)
 class FactomChainTests(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
