@@ -12,7 +12,7 @@ from api_objects.factomd_api_objects import FactomApiObjects
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack
 
-@flaky(max_runs=3, min_passes=2)
+@flaky(max_runs=3, min_passes=1)
 @attr(fast=True)
 class FactomChainTests(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
