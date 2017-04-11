@@ -16,16 +16,15 @@ class FactomTransactionBalanceTest(unittest.TestCase):
     wallet = read_data_from_json('shared_test_data.json')
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
-    factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'],
-                                   data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'],
-                                   data['factomd_address_5'],
-                                   data['factomd_address_6'], data['factomd_address_7'], data['factomd_address_8'],
-                                   data['factomd_address_9'], data['factomd_address_10']]
+    factomd_address_custom_list = [data['factomd_address_0'],data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'],data['factomd_address_4'],
+                                   data['factomd_address_5'],data['factomd_address_6'], data['factomd_address_7'], data['factomd_address_8'], data['factomd_address_9'], data['factomd_address_10']]
+    factomd_localhost = data['localhost']
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
         self.factom_multiple_nodes = FactomHeightObjects()
         self.factom_cli_create = FactomCliCreate()
+        #self.factom_cli_create.change_factomd_address(self.factomd_localhost)
         self.first_address = self.factom_cli_create.import_address_from_factoid(self.wallet['factoid_wallet_address'])
         self.second_address = self.factom_cli_create.create_new_factoid_address()
         words = '"'+self.wallet['words']+'"'
@@ -36,8 +35,9 @@ class FactomTransactionBalanceTest(unittest.TestCase):
         self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
     def notest_make_transactions(self):
-        value_of_factoids = 1
-        for i in range(0,100):
+        value_of_factoids = 2
+        #self.factom_cli_create.change_factomd_address(self.factomd_localhost)
+        for i in range(0,321):
             balance_1 = self.factom_cli_create.check_wallet_address_balance(self.second_address)
             text = self.factom_cli_create.send_factoids(self.first_address,self.second_address,str(value_of_factoids))
             chain_dict = self.factom_chain_object.parse_chain_data(text)
@@ -47,12 +47,21 @@ class FactomTransactionBalanceTest(unittest.TestCase):
             self.assertEqual(int(balance_1_after), int(balance_1) + value_of_factoids)
 
     def test_balance_on_nodes(self):
-        address_list = ["FA2e1Ga3MdUhorC5iG4x4HQ8kK3L6RGT4xzwkDsHjnih6U8SAXFY",
+        #address_list = ["EC2RQiX72PtBcycDVPJDTo7WS6HcybT3uiYffoB77cdV9i1DvNrL"]
+        address_list = ["FA2HDV33qbZgnYvzUu8raunaE4M8UBSwpE4MRmwTSVs9SyjYagXt",
+                        "FA3qqkhBfpiPSSnZ8HhqWuJHXL7ZtdeSgPdKo5WjLv4AEedqFrcW",
+                        "FA275GjfopyELGba7UyLnqLRieV4PAaFzFvnmaGNiXQ6f64CpHAo",
+                        "FA3hKYiZZJQRnGBKtZwgKDS2FFP3MFRZNPW32hJeFyoFNbiCtacC",
+                        "FA3dF6XV8kB46YH5C9yXC77qeUH2o7SSjgsTxVv1sEZZ9BXb9tHc",
+                        "FA2e1Ga3MdUhorC5iG4x4HQ8kK3L6RGT4xzwkDsHjnih6U8SAXFY",
                         "EC2dmFatZhymujjfRTvoesTNgKES1AqTADBMD1JE1cu2CmqFRVbF",
                         "EC2DKSYyRcNWf7RS963VFYgMExoHRYLHVeCfQ9PGPmNzwrcmgm2r",
                         "FA2jK2HcLnRdS94dEcU27rF3meoJfpUcZPSinpb7AwQvPRY6RL1Q",
                         "EC1zpfdA5BjH6ixoYsu9KmYDrjDkqp1dX17nrgnWQ9Vsckh21Bbo",
-                        "EC2RQiX72PtBcycDVPJDTo7WS6HcybT3uiYffoB77cdV9i1DvNrL"]
+                        "EC2RQiX72PtBcycDVPJDTo7WS6HcybT3uiYffoB77cdV9i1DvNrL",
+                        "FA3EPZYqodgyEGXNMbiZKE5TS2x2J9wF8J9MvPZb52iGR78xMgCb",
+                        "FA3Y1tBWnFpyoZUPr9ZH51R1gSC8r5x5kqvkXL3wy4uRvzFnuWLB"]
+
         #address = self.first_address
         for address in address_list:
             print "Address = %s" % address
@@ -65,11 +74,17 @@ class FactomTransactionBalanceTest(unittest.TestCase):
                 self.assertTrue(balance_1 == balance_2, "mismatch in balance. Balance of default server=%s, %s=%s, " % (balance_1, factomd_address_custom,balance_2))
 
     def notest_transactions_on_nodes(self):
-        address_list = ["FA3EPZYqodgyEGXNMbiZKE5TS2x2J9wF8J9MvPZb52iGR78xMgCb",
+        address_list = ["FA275GjfopyELGba7UyLnqLRieV4PAaFzFvnmaGNiXQ6f64CpHAo",
+                        "FA3hKYiZZJQRnGBKtZwgKDS2FFP3MFRZNPW32hJeFyoFNbiCtacC",
+                        "FA3dF6XV8kB46YH5C9yXC77qeUH2o7SSjgsTxVv1sEZZ9BXb9tHc",
+                        "FA2e1Ga3MdUhorC5iG4x4HQ8kK3L6RGT4xzwkDsHjnih6U8SAXFY",
                         "EC2dmFatZhymujjfRTvoesTNgKES1AqTADBMD1JE1cu2CmqFRVbF",
                         "EC2DKSYyRcNWf7RS963VFYgMExoHRYLHVeCfQ9PGPmNzwrcmgm2r",
                         "FA2jK2HcLnRdS94dEcU27rF3meoJfpUcZPSinpb7AwQvPRY6RL1Q",
-                        "EC1zpfdA5BjH6ixoYsu9KmYDrjDkqp1dX17nrgnWQ9Vsckh21Bbo"]
+                        "EC1zpfdA5BjH6ixoYsu9KmYDrjDkqp1dX17nrgnWQ9Vsckh21Bbo",
+                        "EC2RQiX72PtBcycDVPJDTo7WS6HcybT3uiYffoB77cdV9i1DvNrL",
+                        "FA3EPZYqodgyEGXNMbiZKE5TS2x2J9wF8J9MvPZb52iGR78xMgCb",
+                        "FA3Y1tBWnFpyoZUPr9ZH51R1gSC8r5x5kqvkXL3wy4uRvzFnuWLB"]
 
         #address = "EC2dmFatZhymujjfRTvoesTNgKES1AqTADBMD1JE1cu2CmqFRVbF"
         for address in address_list:

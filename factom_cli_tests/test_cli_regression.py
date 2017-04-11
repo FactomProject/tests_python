@@ -5,6 +5,7 @@ import random
 from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json, wait_for_ack
 
 @attr(fast=True)
@@ -13,6 +14,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
+        self.factom_chain_object = FactomChainObjects()
         self.first_address = self.factom_cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
         self.second_address = self.factom_cli_create.create_new_factoid_address()
         words = '"'+self.data['words']+'"'
