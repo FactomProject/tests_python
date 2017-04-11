@@ -34,6 +34,16 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
 
+    def compose_chain_from_binary_file_with_hex_ext(self, ecadress, file_data, *external_ids):
+        ext_to_string = ' '.join(['-h ' + s for s in external_ids])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, ext_to_string + ' ', ecadress, ' < ', file_data)))
+        return text
+
+    def force_compose_chain_from_binary_file(self, ecadress, file_data, *external_ids):
+        ext_to_string = ' '.join(['-n ' + s for s in external_ids])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, ' -f ', ext_to_string + ' ', ecadress, ' < ', file_data)))
+        return text
+
     def add_entries_to_chain(self, ecaddress, file_data, chain_id, external_id_with_flags_list, **kwargs):
         ext_to_string = ' '.join(external_id_with_flags_list)
         flags = ''
