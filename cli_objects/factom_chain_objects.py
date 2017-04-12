@@ -33,23 +33,7 @@ class FactomChainObjects(FactomBaseObject):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, flags, ext_to_string + ' ', ecadress, ' < ', file_data)))
-        return text
-
-    def compose_chain_from_binary_file_with_hex_ext(self, ecadress, file_data, external_id_with_flags_list, **kwargs):
-        ext_to_string = ' '.join(external_id_with_flags_list)
-        flags = ''
-        if kwargs:
-            flags = ' '.join(kwargs['flag_list'])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, flags, ext_to_string + ' ', ecadress, ' < ', file_data)))
-        return text
-
-    def force_compose_chain_from_binary_file(self, ecadress, file_data, external_id_with_flags_list, **kwargs):
-        ext_to_string = ' '.join(external_id_with_flags_list)
-        flags = ''
-        if kwargs:
-            flags = ' '.join(kwargs['flag_list'])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, ' -f ', flags, ext_to_string + ' ', ecadress, ' < ', file_data)))
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, flags, ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
 
     def add_entries_to_chain(self, ecaddress, file_data, chain_id, external_id_with_flags_list, **kwargs):

@@ -125,7 +125,7 @@ class FactomChainTests(unittest.TestCase):
         name_1 = binascii.b2a_hex(os.urandom(2))
         name_2 = binascii.b2a_hex(os.urandom(2))
         names_list = ['-h', name_1, '-h', name_2]
-        text = self.factom_chain_object.compose_chain_from_binary_file_with_hex_ext(self.entry_creds_wallet, path, names_list)
+        text = self.factom_chain_object.compose_chain_from_binary_file(self.entry_creds_wallet, path, names_list)
         start = text.find('"message":"') + 11
         end = text.find('"},"method', start)
         self.factomd_api_objects.commit_chain_by_message(text[start:end])
@@ -140,7 +140,8 @@ class FactomChainTests(unittest.TestCase):
         self.assertTrue("Not enough Entry Credits" in self.factom_chain_object.compose_chain_from_binary_file(self.entry_creds_wallet0, path, names_list), "Zero Entry Credit balance not detected")
 
         # force compose chain
-        self.assertTrue("curl" in self.factom_chain_object.force_compose_chain_from_binary_file(self.entry_creds_wallet0, path, names_list), "Zero Entry Credit balance compose chain not forced")
+        factom_flags_list = ['-f']
+        self.assertTrue("curl" in self.factom_chain_object.compose_chain_from_binary_file(self.entry_creds_wallet0, path, names_list, flag_list=factom_flags_list), "Zero Entry Credit balance compose chain not forced")
 
     def test_compose_chain__with_not_enough_ec(self):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
