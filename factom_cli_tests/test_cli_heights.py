@@ -28,7 +28,7 @@ class FactomHeightTests(unittest.TestCase):
         self.factom_multiple_nodes = FactomHeightObjects()
         self.factom_cli_create = FactomCliCreate()
 
-    def notest_check_admin_block_height(self):
+    def test_check_admin_block_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
         for factomd_address_custom in self.factomd_address_custom_list:
             for x in range(0, int(directory_block_height)):
@@ -52,7 +52,7 @@ class FactomHeightTests(unittest.TestCase):
                 self.assertTrue(directory_block_height == directory_block_height_1,
                                 "mismatch in directory block at height %d, server = %s" % ((x), factomd_address_custom))
 
-    def notest_check_entrycredit_block_height(self):
+    def test_check_entrycredit_block_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
         for factomd_address_custom in self.factomd_address_custom_list:
             for x in range(0, int(directory_block_height)):
@@ -63,7 +63,7 @@ class FactomHeightTests(unittest.TestCase):
                 self.assertTrue(entrycredit_block_height == entrycredit_block_height_1,
                                 "mismatch in entrycredit block at height %d" % (x))
 
-    def notest_check_factoid_block_height(self):
+    def test_check_factoid_block_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
         for factomd_address_custom in self.factomd_address_custom_list:
             for x in range(0, int(directory_block_height)):
@@ -74,7 +74,7 @@ class FactomHeightTests(unittest.TestCase):
                 self.assertTrue(factoid_block_height == factoid_block_height_1,
                                 "mismatch in factoid block at height %d" % (x))
 
-    def notest_wallet_height(self):
+    def test_wallet_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
         # transactions need to be listed for wallet to catch up the directory block height
         listtxs = self.factom_multiple_nodes.get_all_transactions()

@@ -25,14 +25,15 @@ class LoadNodes():
         self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
         self.entry_creds_wallet1 = self.factom_cli_create.import_address_from_factoid(
             self.data['ec_wallet_address'])
-        self.entry_creds_wallet2 = "EC2RQiX72PtBcycDVPJDTo7WS6HcybT3uiYffoB77cdV9i1DvNrL"
+        self.entry_creds_wallet2 = "EC31k5CcUpuxE5CxBk2wmbctcweL7EPSZbFQoZ79FNFaoFGiy2QL"
+
 
 
 
     def make_chain_and_check_balance(self):
         for i in xrange(200):
             path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
-            self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '100')
+            self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '1000')
 
 
             name_1 = create_random_string(5)

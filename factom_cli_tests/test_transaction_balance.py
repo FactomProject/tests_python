@@ -1,5 +1,5 @@
 import unittest
-
+import time
 from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
@@ -38,17 +38,20 @@ class FactomTransactionBalanceTest(unittest.TestCase):
         value_of_factoids = 2
         #self.factom_cli_create.change_factomd_address(self.factomd_localhost)
         for i in range(0,321):
-            balance_1 = self.factom_cli_create.check_wallet_address_balance(self.second_address)
-            text = self.factom_cli_create.send_factoids(self.first_address,self.second_address,str(value_of_factoids))
+            balance_1 = self.factom_cli_create.check_wallet_address_balance(self.third_address)
+            text = self.factom_cli_create.send_factoids(self.first_address,self.third_address,str(value_of_factoids))
             chain_dict = self.factom_chain_object.parse_chain_data(text)
             tx_id = chain_dict['TxID']
             wait_for_ack(self,tx_id, 1)
-            balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.second_address)
+            time.sleep(5)
+            balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.third_address)
             self.assertEqual(int(balance_1_after), int(balance_1) + value_of_factoids)
 
     def test_balance_on_nodes(self):
         #address_list = ["EC2RQiX72PtBcycDVPJDTo7WS6HcybT3uiYffoB77cdV9i1DvNrL"]
-        address_list = ["FA2HDV33qbZgnYvzUu8raunaE4M8UBSwpE4MRmwTSVs9SyjYagXt",
+        address_list = ["FA3Y1tBWnFpyoZUPr9ZH51R1gSC8r5x5kqvkXL3wy4uRvzFnuWLB",
+                        "FA3tS5Yem7c1WJ6iE1yF9dy98pXhjJLDP1hbLcSUn6w33rL2dRdD",
+                        "FA2HDV33qbZgnYvzUu8raunaE4M8UBSwpE4MRmwTSVs9SyjYagXt",
                         "FA3qqkhBfpiPSSnZ8HhqWuJHXL7ZtdeSgPdKo5WjLv4AEedqFrcW",
                         "FA275GjfopyELGba7UyLnqLRieV4PAaFzFvnmaGNiXQ6f64CpHAo",
                         "FA3hKYiZZJQRnGBKtZwgKDS2FFP3MFRZNPW32hJeFyoFNbiCtacC",

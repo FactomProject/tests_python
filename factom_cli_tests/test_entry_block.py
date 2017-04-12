@@ -52,7 +52,7 @@ class FactomEntryTests(unittest.TestCase):
         print self.missingentrycount
 
     @attr(entry=True)
-    def notest_ansible_entries(self):
+    def test_ansible_entries(self):
         for factomd_address_custom in self.factomd_address_custom_list:
             self._missing_entries(factomd_address_custom)
             print "total entrycount missing = %d on the server = %s" % (self.entrycount, factomd_address_custom)
@@ -177,7 +177,7 @@ class FactomEntryTests(unittest.TestCase):
         t.start()
         self.sync_entry_height()
 
-    def test_entry_fetch(self):
+    def notest_entry_fetch(self):
         self.factom_load_nodes.make_chain_and_check_balance()
 
     def notest_directory_block(self):
