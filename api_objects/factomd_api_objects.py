@@ -196,7 +196,8 @@ class FactomApiObjects():
         :param transaction: str, transaction hash
         :return:
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('factoid-submit', {'transaction': transaction})[0])
+        blocks = json.loads(self.send_get_request_with_params_dict('factoid-submit', {'transaction':
+                                                                                             transaction})[0])
         return blocks['result']
 
     def commit_chain_by_message(self, message):
@@ -205,7 +206,7 @@ class FactomApiObjects():
         :param message: str, message
         :return:
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message}))
+        blocks = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message})[0])
         return blocks['result']
 
     def reveal_chain_by_entry(self, entry):
