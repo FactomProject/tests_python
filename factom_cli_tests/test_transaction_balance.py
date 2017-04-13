@@ -37,7 +37,7 @@ class FactomTransactionBalanceTest(unittest.TestCase):
     def notest_make_transactions(self):
         value_of_factoids = 2
         #self.factom_cli_create.change_factomd_address(self.factomd_localhost)
-        for i in range(0,321):
+        for i in range(0,1000):
             balance_1 = self.factom_cli_create.check_wallet_address_balance(self.third_address)
             text = self.factom_cli_create.send_factoids(self.first_address,self.third_address,str(value_of_factoids))
             chain_dict = self.factom_chain_object.parse_chain_data(text)
@@ -45,7 +45,7 @@ class FactomTransactionBalanceTest(unittest.TestCase):
             wait_for_ack(self,tx_id, 1)
             time.sleep(5)
             balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.third_address)
-            self.assertEqual(int(balance_1_after), int(balance_1) + value_of_factoids)
+            self.assertEqual(float(balance_1_after), float(balance_1) + value_of_factoids)
 
     def test_balance_on_nodes(self):
         #address_list = ["EC2RQiX72PtBcycDVPJDTo7WS6HcybT3uiYffoB77cdV9i1DvNrL"]

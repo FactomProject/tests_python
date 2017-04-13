@@ -23,7 +23,9 @@ class FactomLoadNodes(unittest.TestCase):
         self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
         self.entry_creds_wallet1 = self.factom_cli_create.import_address_from_factoid(
             self.data['ec_wallet_address'])
-        self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
+        #self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
+        self.entry_creds_wallet2 = "EC3Km6YP1ouzUG2TTXewPJwuBHJCMCshc9Sbj6gq5XNGRn2btaQe"
+
         #self.factomd = self.data['factomd_address']
 
 
@@ -50,9 +52,9 @@ class FactomLoadNodes(unittest.TestCase):
                     name_2 = create_random_string(5)
                     self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, name_1, name_2)
                     os.remove(path)
-                    time.sleep(10)
+                    time.sleep(1)
             time.sleep(5)
-        time.sleep(15)
+        time.sleep(5)
 
 
 

@@ -25,7 +25,7 @@ class LoadNodes():
         self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
         self.entry_creds_wallet1 = self.factom_cli_create.import_address_from_factoid(
             self.data['ec_wallet_address'])
-        self.entry_creds_wallet2 = "EC31k5CcUpuxE5CxBk2wmbctcweL7EPSZbFQoZ79FNFaoFGiy2QL"
+        self.entry_creds_wallet2 = "EC3LYKyMyoqVNezfPjgqBamDfwSZsETYYtGs9YYvwdwbMwWnnSrd"
 
 
 

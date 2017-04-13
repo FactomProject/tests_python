@@ -28,7 +28,7 @@ class FactomEntryTests(unittest.TestCase):
     factomd_address_ansible = data['factomd_address']
     factomd_local =  data['localhost']
 
-    factomd_address_custom_list = [data['factomd_address_0'],data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'],data['factomd_address_4'],
+    factomd_address_custom_list = [data['factomd_address'],data['factomd_address_0'],data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'],data['factomd_address_4'],
                                    data['factomd_address_5'],data['factomd_address_6'],
                                     data['factomd_address_7'], data['factomd_address_8'],
                                    data['factomd_address_9'], data['factomd_address_10']]
