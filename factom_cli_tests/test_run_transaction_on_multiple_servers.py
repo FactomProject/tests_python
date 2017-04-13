@@ -24,7 +24,8 @@ class FactomCliEndToEndTest(unittest.TestCase):
             self.data['ec_wallet_address'])
         self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
-    def test_create_multiple_same_transactions_on_different_nodes(self):
+
+    def notest_create_multiple_same_transactions_on_different_nodes(self):
         cli_one = FactomCliCreate()
         cli_two = FactomCliCreate()
         cli_two.change_factomd_address(self.addresses['factomd_address_4'])

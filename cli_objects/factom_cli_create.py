@@ -24,7 +24,9 @@ class FactomCliCreate(FactomBaseObject):
     _factom_remove_tx = "rmtx "
     _factom_buy_ec = "buyec "
     _factom_send_factoids = "sendfct "
+    _factom_list_txs_address = "listtxs address "
     _factom_wallet_backup_wallet = "backupwallet"
+
 
     def import_address_from_factoid(self, address_to_import_from):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_importaddress,
@@ -135,5 +137,8 @@ class FactomCliCreate(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
                                                              self._factom_wallet_backup_wallet)))
         return text
+
+    def list_transactions_by_address(self,address):
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_list_txs_address, address)))
 
 

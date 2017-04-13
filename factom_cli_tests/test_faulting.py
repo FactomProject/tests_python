@@ -12,6 +12,7 @@ class FactomTestFaulting(unittest.TestCase):
     data = read_data_from_json('faulting.json')
     _faulting_command = 'docker stop factom-factomd-'
 
+
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
 
@@ -27,7 +28,7 @@ class FactomTestFaulting(unittest.TestCase):
         time.sleep(self.data['time_to_wait'])
         self.assertTrue(self.data['audit_1_hash'] + ' offline' in get_data_dump_from_server(self.data['default_server_address']))
 
-    def test_fault_federated_server(self):
+    def notest_fault_federated_server(self):
         '''
         Test that checking if federated server is faulted and if network is not stalled after
         :return:
