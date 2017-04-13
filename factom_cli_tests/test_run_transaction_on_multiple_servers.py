@@ -60,11 +60,3 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
     def _send_factoid_transaction_on_cli_object(self, cli, address_from, address_to, amount):
         cli.send_factoids(address_from, address_to,  amount)
-
-
-
-
-
-
-
-

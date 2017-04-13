@@ -16,13 +16,9 @@ class FactomHeightTests(unittest.TestCase):
     '''
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
-    #factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'],data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'],
-    #                               data['factomd_address_6'], data['factomd_address_7'], data['factomd_address_8'],
-    #                               data['factomd_address_9'], data['factomd_address_10']]
-
     factomd_address_custom_list = [data['factomd_address_0'],data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'],data['factomd_address_4'],
-                                   data['factomd_address_5'],data['factomd_address_6'], data['factomd_address_7'], data['factomd_address_8'], data['factomd_address_9'], data['factomd_address_10']]
-    factomd_address_localhost =  data['localhost']
+                                   data['factomd_address_5'],data['factomd_address_6']]
+
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
@@ -80,15 +76,7 @@ class FactomHeightTests(unittest.TestCase):
         # transactions need to be listed for wallet to catch up the directory block height
         listtxs = self.factom_multiple_nodes.get_all_transactions()
         wallet_height = self.factom_multiple_nodes.get_wallet_height()
-
         self.assertTrue(directory_block_height == wallet_height, "mismatch in wallet height")
 
-    def notest_check_directory_block_height_simulator(self):
-        self.factom_chain_object.change_factomd_address(self.factomd_address_localhost)
-        directory_block_head = self.factom_chain_object.get_directory_block_height_from_head()
-        for x in range(0, int(directory_block_head)):
-                directory_block_height = self.factom_chain_object.get_directory_block_height(str(x))
-                print directory_block_height
-                self.assertFalse(directory_block_height == 'Dblock not found', "Dblock missing = %s" %(directory_block_height))
 
 
