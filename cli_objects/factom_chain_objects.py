@@ -62,14 +62,8 @@ class FactomChainObjects(FactomBaseObject):
          :return:
          '''
         ext_to_string = ' '.join(['-n ' + s for s in external_ids])
-<<<<<<< HEAD
-        print self._factom_cli_command
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' -f ', ext_to_string + ' ', ecadress, ' < ', file_data)))
-        return text.split('\n')[1].split(' ')[1]
-=======
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' -f ', ' -C ', ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
->>>>>>> master
 
     def force_make_chain_from_binary_file_return_tx_id(self, ecadress, file_data, *external_ids):
         ext_to_string = ' '.join(['-n ' + s for s in external_ids])
