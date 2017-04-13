@@ -1,7 +1,6 @@
 {
   "factoid_wallet_address": "Fs2DNirmGDtnAZGXqca3XHkukTNMxoMGFFQxJA3bAjJnKzzsZBMH",
-  "ec_wallet_address_1": "Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG",
-  "ec_wallet_address": "Es3LGCWKhfg2tUaL4hQC8i3oLc9ieebLFBsWVc5rCL4Wip9x3j8F",
+  "ec_wallet_address": "Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG",
   "test_file_path": "../test_data/testfile",
   "words": "salute umbrella proud setup delay ginger practice split toss jewel tuition stool"
 }
