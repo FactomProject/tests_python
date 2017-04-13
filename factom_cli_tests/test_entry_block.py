@@ -133,5 +133,3 @@ class FactomEntryTests(unittest.TestCase):
         t = threading.Thread(target=self.loadtest)
         t.start()
         self.sync_entry_height()
-
-

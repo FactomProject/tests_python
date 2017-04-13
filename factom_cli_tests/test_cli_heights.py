@@ -77,6 +77,3 @@ class FactomHeightTests(unittest.TestCase):
         listtxs = self.factom_multiple_nodes.get_all_transactions()
         wallet_height = self.factom_multiple_nodes.get_wallet_height()
         self.assertTrue(directory_block_height == wallet_height, "mismatch in wallet height")
-
-
-
