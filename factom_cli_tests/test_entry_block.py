@@ -134,7 +134,7 @@ class FactomEntryTests(unittest.TestCase):
 
     def sync_entry_height(self):
         #call the method to delete the database and restart the followers
-        #self.restart_followers()
+        self.restart_followers()
         #calculate the time taken for the followers to sync to the leader height
         starttime = time.time()
         found = True
