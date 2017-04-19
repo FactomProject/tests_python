@@ -56,8 +56,10 @@ class FactomChainTests(unittest.TestCase):
         names_list = ['-n', name_1, '-n', name_2]
         self.factom_chain_object.make_chain_from_binary(self.entry_creds_wallet2, path, names_list)
 
-        self.assertTrue('already exist' in self.factom_chain_object.make_chain_from_binary(self.entry_creds_wallet2,
-                                                                                           path, names_list))
+        text = self.factom_chain_object.make_chain_from_binary(self.entry_creds_wallet2,
+                                                                                           path, names_list)
+
+        self.assertTrue('already exist' in text, text)
 
     def test_make_chain_and_check_balance(self):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
