@@ -35,6 +35,7 @@ class FactomChainTests(unittest.TestCase):
                 self.factom_cli_create.change_factomd_address(address)
                 balance.append(self.factom_cli_create.check_wallet_address_balance(w_address))
                 self.assertTrue(all(x == balance[0] for x in balance), "Wrong balance in address: " + w_address + "\n")
+                self.assertTrue(balance[0] > 0)
 
 
 

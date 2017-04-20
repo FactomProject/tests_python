@@ -72,6 +72,7 @@ class FactomChainTests(unittest.TestCase):
 
         balance_before = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2)
         self.factom_chain_object.make_chain_from_binary(self.entry_creds_wallet2, path, names_list, flag_list=chain_flag_list)
+        time.sleep(10)
         balance_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2)
 
         self.assertEqual(int(balance_before), int(balance_after) + 12, 'Incorrect charge for chain creation')

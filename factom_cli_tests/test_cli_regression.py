@@ -1,6 +1,7 @@
 import unittest
 import string
 import random
+import time
 
 from nose.plugins.attrib import attr
 
@@ -129,6 +130,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
         wait_for_ack(transaction_id, 60)
+        time.sleep(10)
         balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2)
         ec_by_ec_to_factoids_rate = int(round(value_to_send / float(self.ecrate)))
         self.assertEqual(int(balance_1_after), int(balance1) + ec_by_ec_to_factoids_rate, 'Wrong output of transaction')
@@ -154,6 +156,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
         wait_for_ack(transaction_id, 60)
+        time.sleep(10)
         balance_1_after = int(self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2))
 
         ec_by_ec_to_factoids_rate = int(round(int(balance_1) + value_to_etc / float(self.ecrate)))
