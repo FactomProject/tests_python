@@ -8,7 +8,7 @@ from helpers.helpers import read_data_from_json
 from helpers.general_test_methods import wait_for_ack
 from factom_cli_tests.loadnodes import LoadNodes
 
-@attr(fast=True)
+@attr(load=True)
 class FactomTransactionBalanceTest(unittest.TestCase):
     '''
     testcases to verify balances and transactions are the same in every node in the network
@@ -38,13 +38,17 @@ class FactomTransactionBalanceTest(unittest.TestCase):
             wait_for_ack(tx_id,5)
             balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.second_address)
             self.assertEqual(float(balance_1_after), float(balance_1) + value_of_factoids)
+        self.balance_on_nodes()
+        self.transactions_on_nodes()
 
-    def test_balance_on_nodes(self):
+    def balance_on_nodes(self):
         address_list = [self.first_address,
                         self.second_address]
-        self.factom_load_nodes.balance_on_nodes(address_list)
+        status = self.factom_load_nodes.balance_on_nodes(address_list)
+        self.assertTrue(status == False, "Balance mismatch. Testcase failed")
 
-    def test_transactions_on_nodes(self):
+    def transactions_on_nodes(self):
         address_list = [self.first_address,
                         self.second_address]
-        self.factom_load_nodes.transactions_on_nodes(address_list)
+        status = self.factom_load_nodes.transactions_on_nodes(address_list)
+        self.assertTrue(status == False, "Balance mismatch. Testcase failed")

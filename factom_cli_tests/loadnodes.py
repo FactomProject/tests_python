@@ -11,8 +11,10 @@ from cli_objects.factom_chain_objects import FactomChainObjects
 
 from helpers.helpers import create_random_string, read_data_from_json
 from random import randint
+import logging
+from helpers.general_test_methods import wait_for_ack
 
-class LoadNodes(unittest.TestCase):
+class LoadNodes():
     data = read_data_from_json('shared_test_data.json')
     addresses = read_data_from_json('addresses.json')
     factomd_address = addresses['factomd_address']
@@ -37,8 +39,8 @@ class LoadNodes(unittest.TestCase):
         chain_flags_list = ['-C ']
         for i in xrange(10):
             path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
-            self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet2, '100')
-            time.sleep(10)
+            tx_id = self.factom_cli_create.buy_ec_return_tx_id(self.first_address, self.entry_creds_wallet2, '100')
+            wait_for_ack(tx_id,10)
             for i in range(10):
                 with open('output_file', 'wb') as fout:
                     fout.write(os.urandom(randint(100, 5000)))
@@ -70,7 +72,10 @@ class LoadNodes(unittest.TestCase):
             for factomd_address_custom in self.factomd_address_custom_list:
                 self.factom_cli_create.change_factomd_address(factomd_address_custom)
                 balance_2 = self.factom_cli_create.check_wallet_address_balance(address)
-                self.assertTrue(balance_1 == balance_2, "mismatch in balance. Balance of default server=%s, but server %s=%s, address = %s " % (balance_1, factomd_address_custom,balance_2,address))
+                if (balance_1 != balance_2):
+                    logging.getLogger('cli_command').info("mismatch in balance. Balance of default server=%s, but server %s=%s, address = %s " % (balance_1, factomd_address_custom,balance_2,address))
+                    return False
+            return True
 
 
     def transactions_on_nodes(self,address_list):
@@ -79,4 +84,7 @@ class LoadNodes(unittest.TestCase):
             for factomd_address_custom in self.factomd_address_custom_list:
                 self.factom_cli_create.change_factomd_address(factomd_address_custom)
                 transactions_2 = self.factom_cli_create.list_transactions_by_address(address)
-                self.assertTrue(transactions_1 == transactions_2, "mismatch in transactions. Transaction of default server=%s, %s=%s" % (transactions_1, factomd_address_custom, transactions_2))
+                if (transactions_1 == transactions_2):
+                    logging.getLogger('cli_command').info("mismatch in transactions. Transaction of default server=%s, %s=%s" % (transactions_1, factomd_address_custom, transactions_2))
+                    return False
+            return True
