@@ -1,24 +1,27 @@
-import unittest
-import logging
 import ast
-import time
-import datetime
+import logging
+import re
 import threading
+import time
+import unittest
 
 from nose.plugins.attrib import attr
+
+from cli_objects.factom_chain_objects import FactomChainObjects
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_multiple_nodes import FactomHeightObjects
-from cli_objects.factom_chain_objects import FactomChainObjects
-from helpers.helpers import create_random_string, read_data_from_json
-from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
-from factom_cli_tests.loadnodes import LoadNodes
-import re
+from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
+from helpers.helpers import read_data_from_json
+from helpers.loadnodes import LoadNodes
+
 
 class FactomEntryTests(unittest.TestCase):
     '''
     testcases to verify all entries are the same in every node in the network
     '''
     data = read_data_from_json('addresses.json')
+    addresses = read_data_from_json('shared_test_data.json')
+    factomd_address = data['factomd_address']
     factomd_address_prod = data['factomd_address_prod1']
     factomd_address_custom_list = [data['factomd_address'],data['factomd_address_0'],data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'],data['factomd_address_4'],
                                    data['factomd_address_5'],data['factomd_address_6']]
@@ -29,6 +32,7 @@ class FactomEntryTests(unittest.TestCase):
     _delete_database = 'sudo rm -r /var/lib/docker/volumes/factom_base_factomd_data-i'
     _path_database = '/_data/m2/custom-database'
 
+
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
         self.factom_multiple_nodes = FactomHeightObjects()
@@ -37,6 +41,14 @@ class FactomEntryTests(unittest.TestCase):
         self.missingentrycount = 0
         self.totalentries = 0
         self.entrycountlist = []
+        self.factom_cli_create = FactomCliCreate()
+        self.factom_chain_object = FactomChainObjects()
+        self.factom_cli_create.change_factomd_address(self.factomd_address)
+        self.factom_chain_object.change_factomd_address(self.factomd_address)
+        self.first_address = self.factom_cli_create.import_address_from_factoid(self.addresses['factoid_wallet_address'])
+        self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
+        self.entry_creds_wallet1 = self.factom_cli_create.import_address_from_factoid(self.addresses['ec_wallet_address'])
+        self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
     @attr(production=True)
     def test_production_entries(self):
@@ -110,24 +122,23 @@ class FactomEntryTests(unittest.TestCase):
                     entryheight = m2.group(0)
                     entryheight = entryheight.replace("EntryHeight: ","")
                     elapsedtime =  time.time() - starttime
+                    print elapsedtime
                     if (leaderheight == entryheight) and leaderheight != str(0):
                         endtime = time.time()
                         timediff = endtime - starttime
-                        logging.getLogger('cli_command').info(
-                            "timetaken to sync entry height to leader height %f" % timediff)
+                        logging.getLogger('cli_command').info("timetaken to sync entry height to leader height %f" % timediff)
                         found = True
                         break
                     elif elapsedtime > 600:
                         logging.getLogger('cli_command').info("node hasn't synced for more than 10 mins, hence exiting")
                         break
 
-
     def loadtest(self):
-        self.factom_load_nodes.make_chain_and_check_balance()
+        self.factom_load_nodes.make_chain_and_check_balance([self.first_address,self.entry_creds_wallet2])
         return
 
     @attr(load=True)
-    def notest_load_with_height_check(self):
+    def test_load_with_height_check(self):
         t = threading.Thread(target=self.loadtest)
         t.start()
         self.sync_entry_height()

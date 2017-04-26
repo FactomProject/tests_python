@@ -1,12 +1,14 @@
 import unittest
+
 from nose.plugins.attrib import attr
 
+from cli_objects.factom_chain_objects import FactomChainObjects
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_multiple_nodes import FactomHeightObjects
-from cli_objects.factom_chain_objects import FactomChainObjects
-from helpers.helpers import read_data_from_json
 from helpers.general_test_methods import wait_for_ack
-from factom_cli_tests.loadnodes import LoadNodes
+from helpers.helpers import read_data_from_json
+from helpers.loadnodes import LoadNodes
+
 
 @attr(load=True)
 class FactomTransactionBalanceTest(unittest.TestCase):
@@ -30,7 +32,7 @@ class FactomTransactionBalanceTest(unittest.TestCase):
 
     def test_make_transactions(self):
         value_of_factoids = 2
-        for i in range(0,25):
+        for i in range(0,1250):
             balance_1 = self.factom_cli_create.check_wallet_address_balance(self.second_address)
             text = self.factom_cli_create.send_factoids(self.first_address,self.second_address,str(value_of_factoids))
             chain_dict = self.factom_chain_object.parse_chain_data(text)
