@@ -15,7 +15,8 @@ class FactomHeightTests(unittest.TestCase):
     '''
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
-    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
+    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5']
+                                   ,data['factomd_address_6']]
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
@@ -30,7 +31,7 @@ class FactomHeightTests(unittest.TestCase):
                 admin_block_height = self.factom_chain_object.get_admin_block_height(str(x))
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 admin_block_height_1 = self.factom_chain_object.get_admin_block_height(str(x))
-                self.assertTrue(admin_block_height == admin_block_height_1, "mismatch in admin block at height %d" % (x))
+                self.assertTrue(admin_block_height == admin_block_height_1 , "mismatch in admin block at height %d on server - %s" % (x, factomd_address_custom))
 
     def test_check_directory_block_height(self):
         directory_block_head = self.factom_chain_object.get_directory_block_height_from_head()
@@ -41,7 +42,7 @@ class FactomHeightTests(unittest.TestCase):
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 directory_block_height_1 = self.factom_chain_object.get_directory_block_height(str(x))
                 self.assertTrue(directory_block_height == directory_block_height_1,
-                                "mismatch in directory block at height %d" % (x))
+                                "mismatch in directory block at height %d on server - %s" % (x,factomd_address_custom))
 
     def test_check_entrycredit_block_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
@@ -52,7 +53,7 @@ class FactomHeightTests(unittest.TestCase):
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 entrycredit_block_height_1 = self.factom_chain_object.get_entrycredit_block_height(str(x))
                 self.assertTrue(entrycredit_block_height == entrycredit_block_height_1,
-                                "mismatch in entrycredit block at height %d" % (x))
+                                "mismatch in entrycredit block at height %d on server - %s" % (x,factomd_address_custom))
 
     def test_check_factoid_block_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
@@ -63,7 +64,7 @@ class FactomHeightTests(unittest.TestCase):
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 factoid_block_height_1 = self.factom_chain_object.get_factoid_block_height(str(x))
                 self.assertTrue(factoid_block_height == factoid_block_height_1,
-                                "mismatch in factoid block at height %d" % (x))
+                                "mismatch in factoid block at height %d on server - %s" % (x,factomd_address_custom))
 
     def test_wallet_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()

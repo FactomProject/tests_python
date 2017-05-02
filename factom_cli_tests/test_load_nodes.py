@@ -51,6 +51,7 @@ class FactomLoadNodes(unittest.TestCase):
                     name_2 = create_random_string(5)
                     names_list = ['-e', name_1, '-e', name_2]
                     self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, names_list)
+                    time.sleep(2)
                     os.remove(path)
             time.sleep(5)
         time.sleep(30)

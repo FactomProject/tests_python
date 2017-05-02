@@ -30,9 +30,9 @@ class FactomTransactionBalanceTest(unittest.TestCase):
         self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
         self.factom_load_nodes = LoadNodes()
 
-    def test_make_transactions(self):
+    def notest_make_transactions(self):
         value_of_factoids = 2
-        for i in range(0,1250):
+        for i in range(0,1200):
             balance_1 = self.factom_cli_create.check_wallet_address_balance(self.second_address)
             text = self.factom_cli_create.send_factoids(self.first_address,self.second_address,str(value_of_factoids))
             chain_dict = self.factom_chain_object.parse_chain_data(text)
@@ -42,6 +42,15 @@ class FactomTransactionBalanceTest(unittest.TestCase):
             self.assertEqual(float(balance_1_after), float(balance_1) + value_of_factoids)
         self.balance_on_nodes()
         self.transactions_on_nodes()
+
+    def test_make_transactions_no_ack(self):
+        value_of_factoids = 2
+        for i in range(0,1200):
+            balance_1 = self.factom_cli_create.check_wallet_address_balance(self.second_address)
+            text = self.factom_cli_create.send_factoids(self.first_address,self.second_address,str(value_of_factoids))
+        self.balance_on_nodes()
+        self.transactions_on_nodes()
+
 
     def balance_on_nodes(self):
         address_list = [self.first_address,
@@ -54,3 +63,13 @@ class FactomTransactionBalanceTest(unittest.TestCase):
                         self.second_address]
         status = self.factom_load_nodes.transactions_on_nodes(address_list)
         self.assertTrue(status == False, "Balance mismatch. Testcase failed")
+
+    def notest_transactions_on_nodes(self):
+        listaddress_1 = self.factom_cli_create.list_addresses()
+        for factomd_address_custom in self.factomd_address_custom_list:
+            self.factom_cli_create.change_factomd_address(factomd_address_custom)
+            listaddress_2 = self.factom_cli_create.list_addresses()
+            if (listaddress_1 != listaddress_2):
+                self.assertTrue(listaddress_1 == listaddress_2,"mismatch in listaddress.server %s "  % (factomd_address_custom))
+
+

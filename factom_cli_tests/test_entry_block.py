@@ -51,11 +51,11 @@ class FactomEntryTests(unittest.TestCase):
         self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
     @attr(production=True)
-    def test_production_entries(self):
+    def notest_production_entries(self):
         self.missingentrycount = self._missing_entries(self.factomd_address_prod)
 
     @attr(load=True)
-    def test_ansible_entries(self):
+    def notest_ansible_entries(self):
         for factomd_address_custom in self.factomd_address_custom_list:
             self.entrycountlist.append(self._missing_entries(factomd_address_custom))
         self.assertTrue(all(x == self.entrycountlist[0] for x in self.entrycountlist),"mismatch in entries of the servers")
@@ -83,7 +83,7 @@ class FactomEntryTests(unittest.TestCase):
                             self.missingentrycount += 1
                         self.totalentries += 1
                         self.assertFalse(self.missingentrycount > 0, ("missing entries = %d on server = %s" % (self.missingentrycount,factomd_address)))
-        logging.getLogger('cli_command').info("total entries = %d on server = %s",(self.totalentries,factomd_address))
+        print"total entries = %d on server = %s" % (self.totalentries,factomd_address)
         return self.totalentries
 
     def restart_followers(self):
@@ -138,7 +138,10 @@ class FactomEntryTests(unittest.TestCase):
         return
 
     @attr(load=True)
-    def test_load_with_height_check(self):
+    def notest_load_with_height_check(self):
         t = threading.Thread(target=self.loadtest)
         t.start()
         self.sync_entry_height()
+
+    def test_load_test(self):
+        self.loadtest()

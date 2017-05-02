@@ -129,9 +129,11 @@ class FactomCliCreate(FactomBaseObject):
                                                              ec_wallet_address, ' ', amount)))
 
     def send_factoids(self, wallet_address_one, wallet_address_two, amount):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
+        transaction=send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
                                                              self._factom_send_factoids, wallet_address_one, ' ',
                                                              wallet_address_two, ' ', amount)))
+        return transaction.split(' ')[1]
+
     def backup_wallet(self):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
                                                              self._factom_wallet_backup_wallet)))
