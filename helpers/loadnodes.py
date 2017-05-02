@@ -90,7 +90,3 @@ class LoadNodes():
                 print "found 11 entries in server - %s" %factomd_address_custom
             else:
                 print "all entries are not available in the server - %s" %factomd_address_custom
-
-
-
-
