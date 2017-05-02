@@ -123,5 +123,5 @@ class FactomCliTransactionTest(unittest.TestCase):
         name_2 = create_random_string(5)
         text = self.factom_chain_object.compose_entry_from_binary_file(self.entry_creds_wallet100, self.path, chain_id,
                                                                        name_1, name_2)
-        self.assertTrue("commit-entry" in text)
-        self.assertTrue("reveal-entry" in text)
+        self.assertTrue("commit-entry" in text, text)
+        self.assertTrue("reveal-entry" in text, text)

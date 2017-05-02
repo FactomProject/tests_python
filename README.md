@@ -1,9 +1,11 @@
 # tests_python
 Python tests for continuous integration
 
+#before all test runs
+`export PYTHONPATH=.`
+
 #to run all tests:
 in test folder:
-`export PYTHONPATH=.`
 `nosetests`
 
 #test suits
