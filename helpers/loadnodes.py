@@ -9,6 +9,7 @@ from cli_objects.factom_chain_objects import FactomChainObjects
 from cli_objects.factom_cli_create import FactomCliCreate
 from helpers import read_data_from_json
 
+
 class LoadNodes():
 
     def __init__(self):

@@ -6,6 +6,7 @@ from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_multiple_nodes import FactomHeightObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
+import re
 
 
 @attr(last=True)
@@ -73,3 +74,20 @@ class FactomHeightTests(unittest.TestCase):
         wallet_height = self.factom_multiple_nodes.get_wallet_height()
 
         self.assertTrue(directory_block_height == wallet_height, "mismatch in wallet height")
+
+
+    def test_block_time_of_directory_blocks(self):
+        directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
+        previousblktime = 0
+        for x in range(0, int(directory_block_height)):
+            directory_block_height = self.factom_chain_object.get_directory_block_height(str(x))
+            m1 = re.search((r'"timestamp": \d+'),directory_block_height)
+            timestamp = m1.group(0).replace(r'"timestamp":',"")
+            currentblktime = (int(timestamp) * 60)
+            if x == 0:
+                previousblktime = currentblktime
+            else:
+                time =  currentblktime - previousblktime
+                if time > 40:
+                    print "Height %s, time difference = %s(s)" % (str(x), time)
+                previousblktime = currentblktime
