@@ -11,7 +11,9 @@ class FactomBaseObject():
     _gopath = os.environ['GOPATH']
     _factom_cli_command = _gopath + '/bin/factom-cli -w ' \
                                     ''+wallet_address+' -s '+factomd_address+' '
+
     def change_factomd_address(self, value):
-         self._factom_cli_command = self._gopath + '/bin/factom-cli -w ' \
+        self._factom_cli_command = self._gopath + '/bin/factom-cli -w ' \
                                                   '' + self.wallet_address + ' -s ' + value + ' '
+
 

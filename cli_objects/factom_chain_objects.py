@@ -54,11 +54,18 @@ class FactomChainObjects(FactomBaseObject):
             (self._factom_cli_command, self._factomd_compose_entry, ' -c ', chain_id , ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
 
-    def get_firstentry(self, chain_id):
-        text = send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_firstentry, chain_id)))
-        return text
+    def get_firstentry(self, chain_id, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        return send_command_to_cli_and_receive_text(''.join(
+            (self._factom_cli_command, self._factom_get_firstentry, chain_id, flags)))
 
+    # def get_firstentry(self, chain_id):
+    #     text = send_command_to_cli_and_receive_text(''.join(
+    #         (self._factom_cli_command, self._factom_get_firstentry, chain_id)))
+    #     return text
+    #
     def get_firstentry_with_entryhash(self, chain_id):
         text = send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_get_firstentry, chain_id, ' -E ')))

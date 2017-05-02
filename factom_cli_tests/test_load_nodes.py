@@ -31,8 +31,6 @@ class FactomLoadNodes(unittest.TestCase):
             path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
             self.factom_cli_create.force_buy_ec(self.first_address, self.entry_creds_wallet1, '100')
 
-
-
             for i in range(80):
                 with open('output_file', 'wb') as fout:
                     fout.write(os.urandom(randint(100, 5000)))
@@ -40,7 +38,8 @@ class FactomLoadNodes(unittest.TestCase):
                 name_1 = create_random_string(5)
                 name_2 = create_random_string(5)
                 names_list = ['-n', name_1, '-n', name_2]
-                chain_id = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1, path, names_list,
+                chain_id = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet1, path,
+                                                                                names_list,
                                                                                 flag_list=chain_flags_list)
 
                 for i in range(120):
@@ -50,7 +49,8 @@ class FactomLoadNodes(unittest.TestCase):
                     name_1 = create_random_string(5)
                     name_2 = create_random_string(5)
                     names_list = ['-e', name_1, '-e', name_2]
-                    self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, names_list)
-                    os.remove(path)
+                    self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, path, chain_id, names_list,
+                                                                  flag_list=chain_flags_list)
             time.sleep(5)
+            os.remove(path)
         time.sleep(30)
