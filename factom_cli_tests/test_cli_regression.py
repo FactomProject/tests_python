@@ -162,7 +162,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
     def test_buy_entry_creds(self):
         value_of_etc = 150
         balance_1 = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
-        transaction_id = self.factom_cli_create.force_buy_ec(self.first_address, self.entry_creds_wallet1, str(value_of_etc))
+        transaction_id = self.factom_cli_create.buy_ec_return_tx_id(self.first_address, self.entry_creds_wallet1, str(value_of_etc))
         wait_for_ack(transaction_id, 60)
         balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
         self. assertEqual(int(balance_1_after), int(balance_1) + value_of_etc, 'EC were not bought')

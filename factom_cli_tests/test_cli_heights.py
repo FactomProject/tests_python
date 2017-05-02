@@ -6,6 +6,7 @@ from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_multiple_nodes import FactomHeightObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
+import re
 
 
 @attr(last=True)
@@ -15,7 +16,8 @@ class FactomHeightTests(unittest.TestCase):
     '''
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
-    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
+    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5']
+                                   ,data['factomd_address_6']]
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
@@ -30,7 +32,7 @@ class FactomHeightTests(unittest.TestCase):
                 admin_block_height = self.factom_chain_object.get_admin_block_height(str(x))
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 admin_block_height_1 = self.factom_chain_object.get_admin_block_height(str(x))
-                self.assertTrue(admin_block_height == admin_block_height_1, "mismatch in admin block at height %d" % (x))
+                self.assertTrue(admin_block_height == admin_block_height_1 , "mismatch in admin block at height %d on server - %s" % (x, factomd_address_custom))
 
     def test_check_directory_block_height(self):
         directory_block_head = self.factom_chain_object.get_directory_block_height_from_head()
@@ -41,7 +43,7 @@ class FactomHeightTests(unittest.TestCase):
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 directory_block_height_1 = self.factom_chain_object.get_directory_block_height(str(x))
                 self.assertTrue(directory_block_height == directory_block_height_1,
-                                "mismatch in directory block at height %d" % (x))
+                                "mismatch in directory block at height %d on server - %s" % (x,factomd_address_custom))
 
     def test_check_entrycredit_block_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
@@ -52,7 +54,7 @@ class FactomHeightTests(unittest.TestCase):
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 entrycredit_block_height_1 = self.factom_chain_object.get_entrycredit_block_height(str(x))
                 self.assertTrue(entrycredit_block_height == entrycredit_block_height_1,
-                                "mismatch in entrycredit block at height %d" % (x))
+                                "mismatch in entrycredit block at height %d on server - %s" % (x,factomd_address_custom))
 
     def test_check_factoid_block_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
@@ -63,7 +65,7 @@ class FactomHeightTests(unittest.TestCase):
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
                 factoid_block_height_1 = self.factom_chain_object.get_factoid_block_height(str(x))
                 self.assertTrue(factoid_block_height == factoid_block_height_1,
-                                "mismatch in factoid block at height %d" % (x))
+                                "mismatch in factoid block at height %d on server - %s" % (x,factomd_address_custom))
 
     def test_wallet_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
@@ -72,3 +74,20 @@ class FactomHeightTests(unittest.TestCase):
         wallet_height = self.factom_multiple_nodes.get_wallet_height()
 
         self.assertTrue(directory_block_height == wallet_height, "mismatch in wallet height")
+
+
+    def test_block_time_of_directory_blocks(self):
+        directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
+        previousblktime = 0
+        for x in range(0, int(directory_block_height)):
+            directory_block_height = self.factom_chain_object.get_directory_block_height(str(x))
+            m1 = re.search((r'"timestamp": \d+'),directory_block_height)
+            timestamp = m1.group(0).replace(r'"timestamp":',"")
+            currentblktime = (int(timestamp) * 60)
+            if x == 0:
+                previousblktime = currentblktime
+            else:
+                time =  currentblktime - previousblktime
+                if time > 40:
+                    print "Height %s, time difference = %s(s)" % (str(x), time)
+                previousblktime = currentblktime
