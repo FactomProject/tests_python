@@ -33,7 +33,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         cli_four = FactomCliCreate()
         cli_four.change_factomd_address(self.addresses['factomd_address_6'])
 
-        cli_one.send_factoids(self.first_address, self.second_address, '2000')
+        cli_one.send_factoids(self.first_address, self.second_address, '200')
         third_address = self.factom_cli_create.create_new_factoid_address()
 
         for i in range(100):

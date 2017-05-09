@@ -27,9 +27,6 @@ class FactomCliTransactionTest(unittest.TestCase):
         if self.path:
             os.remove(self.path)
 
-    def test_file_list(self):
-        os.listdir("/home/factom/go/")
-
     def test_verify_entry_costs(self):
         # create chain
         ONE_K_MINUS_8 = 1016

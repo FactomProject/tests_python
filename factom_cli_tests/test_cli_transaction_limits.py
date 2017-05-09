@@ -83,14 +83,16 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.assertTrue(balance1 == balance2, "Balance is subtracted for too small input")
 
     def test_create_largest_allowable_transaction_10KB(self):
-        '''
+        """creating a large transaction
+
         a transaction with 78 inputs will take up 10KB
         so, 78 times:
         - a new factoid address is created (each input must come from a different address)
         - 1 factoid is transferred to this new address
         - an input from this new address is added to the master transaction
         the master transaction should still be signable at this point
-        '''
+        """
+
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         for i in xrange(1, 79):
@@ -98,10 +100,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
             self.add_input_to_master_transaction(transaction_name, new_name)
         self.assertNotIn("Transaction is greater than the max transaction size", self.factom_cli_create.sign_transaction_in_wallet(transaction_name), "Largest allowable transaction was not allowed")
 
-        '''
-        now try to create a transaction >10KB
-        by adding one more input to the master transaction
-        '''
+        # now try to create a transaction >10KB by adding one more input to the master transaction
         new_name = transaction_name + '79'
         self.add_input_to_master_transaction(transaction_name, new_name)
         self.assertIn("Transaction is greater than the max transaction size", self.factom_cli_create.sign_transaction_in_wallet(transaction_name), "Too large transaction was allowed")

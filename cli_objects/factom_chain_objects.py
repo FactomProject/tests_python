@@ -61,11 +61,6 @@ class FactomChainObjects(FactomBaseObject):
         return send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_get_firstentry, chain_id, flags)))
 
-    # def get_firstentry(self, chain_id):
-    #     text = send_command_to_cli_and_receive_text(''.join(
-    #         (self._factom_cli_command, self._factom_get_firstentry, chain_id)))
-    #     return text
-    #
     def get_firstentry_with_entryhash(self, chain_id):
         text = send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_get_firstentry, chain_id, ' -E ')))
