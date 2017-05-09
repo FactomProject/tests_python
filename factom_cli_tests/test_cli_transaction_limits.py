@@ -7,12 +7,15 @@ from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from helpers.helpers import read_data_from_json
+from helpers.general_test_methods import wait_for_ack
 
 @attr(fast=True)
 class FactomCliTransactionLimits(unittest.TestCase):
 
 
     data = read_data_from_json('shared_test_data.json')
+
+    ACK_WAIT_TIME = 10
 
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
@@ -26,13 +29,14 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
     def test_transaction_limits_0(self):
+        # attempt to add a 0 factoid input to a transaction
         balance1 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '0')
         self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        self._wait_for_ack(transaction_id, 10)
+        wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
         balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
 
         self.assertTrue(balance1 == balance2, "Balance is subtracted on 0 factoids transaction")
@@ -45,9 +49,9 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.first_address, '-1')
         self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        self._wait_for_ack(transaction_id, 10)
+        wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
 
-        # test here balance after change
+        # balance should be unchanged
         balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
         self.assertTrue(balance1 == balance2, "Balance is subtracted for negative numbers")
 
@@ -58,7 +62,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '0.0000000009')
         self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        self._wait_for_ack(transaction_id, 10)
+        wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
 
         # test here balance after change
         balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
@@ -72,38 +76,44 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, str(balance_plus_one))
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.first_address, str(balance_plus_one - transaction_fee))
-        self.assertIn("balance is too low", self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
-        transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        self._wait_for_ack(transaction_id, 10)
+        self.assertIn("balance is too low", self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
+                      "Insufficient balance not detected")
+        self.assertIn("Cannot send unsigned transaction", self.factom_cli_create.send_transaction(transaction_name), "Attempt to send unsigned transaction not detected")
         balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
         self.assertTrue(balance1 == balance2, "Balance is subtracted for too small input")
 
-    #todo change for document transaction
     def test_create_largest_allowable_transaction_10KB(self):
-        balance1 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
+        '''
+        a transaction with 78 inputs will take up 10KB
+        so, 78 times:
+        - a new factoid address is created (each input must come from a different address)
+        - 1 factoid is transferred to this new address
+        - an input from this new address is added to the master transaction
+        the master transaction should still be signable at this point
+        '''
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
-        for i in xrange(76):
+        for i in xrange(1, 79):
             new_name = transaction_name+str(i)
-            temp_address = self.factom_cli_create.create_new_factoid_address()
-            self.factom_cli_create.create_new_transaction_in_wallet(new_name)
-            self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(new_name, self.first_address,
-                                                                               '0.1')
-            self.factom_cli_create.set_account_to_subtract_fee_from_that_transaction(new_name, self.first_address)
-            self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(new_name, temp_address,
-                                                                               '0.1')
-            self.factom_cli_create.sign_transaction_in_wallet(new_name)
-            self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-            self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, temp_address,
-                                                                               str(float(i)/100))
-            time.sleep(2)
-        balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
-        self.assertTrue(balance1 == balance2, "Balance is subtracted for too small input")
+            self.add_input_to_master_transaction(transaction_name, new_name)
+        self.assertNotIn("Transaction is greater than the max transaction size", self.factom_cli_create.sign_transaction_in_wallet(transaction_name), "Largest allowable transaction was not allowed")
 
-    def _wait_for_ack(self, transaction_id, time_to_wait):
-        status = 'not found'
-        i = 0
-        while "TransactionACK" not in status and i < time_to_wait:
-            status = self.factom_cli_create.request_transaction_acknowledgement(transaction_id)
-            time.sleep(1)
-            i += 1
+        '''
+        now try to create a transaction >10KB
+        by adding one more input to the master transaction
+        '''
+        new_name = transaction_name + '79'
+        self.add_input_to_master_transaction(transaction_name, new_name)
+        self.assertIn("Transaction is greater than the max transaction size", self.factom_cli_create.sign_transaction_in_wallet(transaction_name), "Too large transaction was allowed")
+
+    def add_input_to_master_transaction(self, transaction_name, sub_transaction_name):
+        temp_address = self.factom_cli_create.create_new_factoid_address()
+        self.factom_cli_create.create_new_transaction_in_wallet(sub_transaction_name)
+        self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(sub_transaction_name, self.first_address, '1')
+        self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(sub_transaction_name, temp_address, '1')
+        self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(sub_transaction_name, temp_address)
+        self.factom_cli_create.sign_transaction_in_wallet(sub_transaction_name)
+        self.factom_cli_create.send_transaction_and_receive_transaction_id(sub_transaction_name)
+        self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, temp_address,
+                                                                          str(format(float(self.ecrate) * 2, 'f')))
+

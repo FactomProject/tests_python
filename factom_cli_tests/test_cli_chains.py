@@ -32,18 +32,10 @@ class FactomChainTests(unittest.TestCase):
         self.entry_creds_wallet0 = self.factom_cli_create.create_entry_credit_address()
         self.entry_creds_wallet10 = self.factom_cli_create.create_entry_credit_address()
         self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        balance_before = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet100)
-        print 'balance_before', balance_before
         text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id, self.ACK_WAIT_TIME)
-        balance_after = balance_before
-        while balance_after == balance_before:
-            balance_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet100)
-            print 'balance_after', balance_after
-            time.sleep(1)
-        print 'balance_after', balance_after
 
     def test_make_chain_with_wrong_address(self):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
@@ -76,7 +68,7 @@ class FactomChainTests(unittest.TestCase):
 
         # try to compose duplicate chain
 
-        text = self.factom_chain_object.make_chain_from_binary(self.entry_creds_wallet2,
+        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100,
                                                                                            path, names_list)
         self.assertTrue('already exist' in text, text)
 

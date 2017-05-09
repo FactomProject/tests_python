@@ -33,7 +33,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.second_address, '1')
-        self.factom_cli_create.set_account_to_subtract_fee_from_that_transaction(transaction_name, self.second_address)
+        self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(transaction_name, self.second_address)
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
         # compose transaction
         transaction_hash = self.factom_cli_create.compose_transaction_and_return_transaction_code(transaction_name)
@@ -72,7 +72,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.second_address, '1')
-        self.factom_cli_create.set_account_to_subtract_fee_from_that_transaction(transaction_name, self.second_address)
+        self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(transaction_name, self.second_address)
         self.assertTrue(transaction_name in self.factom_cli_create.list_local_transactions(), 'Transaction was created')
         self.factom_cli_create.remove_transaction_from_wallet(transaction_name)
         self.assertTrue(transaction_name not in self.factom_cli_create.list_local_transactions(), 'Transaction was not deleted')
@@ -83,8 +83,8 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.assertTrue("Inputs and outputs don't add up" in
-                        self.factom_cli_create.set_account_to_subtract_fee_from_that_transaction(transaction_name, self.first_address
-                                                                                                  ), "Input and outpt are don't adding up, but error is not displayed")
+                        self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(transaction_name, self.first_address
+                                                                                                   ), "Input and outpt are don't adding up, but error is not displayed")
         self.factom_cli_create.remove_transaction_from_wallet(transaction_name)
         self.assertTrue(transaction_name not in self.factom_cli_create.list_local_transactions(),
                         'Transaction was not deleted')
@@ -94,7 +94,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.first_address, '1')
-        self.factom_cli_create.set_account_to_subtract_fee_from_that_transaction(transaction_name, self.first_address)
+        self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(transaction_name, self.first_address)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '10')
         self.assertTrue('Overpaying fee' in self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
                         'Was able to overpay fee')
@@ -108,7 +108,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, str(float(self.ecrate) * 8))
-        self.factom_cli_create.set_account_to_add_fee_from_transaction_input(transaction_name,self.first_address)
+        self.factom_cli_create.set_account_to_add_fee_to_transaction_input(transaction_name, self.first_address)
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
         self.assertTrue(transaction_name in self.factom_cli_create.list_local_transactions(), 'Transaction was created')
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
@@ -127,7 +127,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
         self.factom_cli_create.add_entry_credit_output_to_transaction_in_wallet(transaction_name,
                                                                            self.entry_creds_wallet2, str(value_to_send))
-        self.factom_cli_create.set_account_to_add_fee_from_transaction_input(transaction_name, self.first_address)
+        self.factom_cli_create.set_account_to_add_fee_to_transaction_input(transaction_name, self.first_address)
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
         self.assertTrue(transaction_name in self.factom_cli_create.list_local_transactions(), 'Transaction was created')
 
@@ -152,7 +152,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.add_entry_credit_output_to_transaction_in_wallet(transaction_name,
                                                                                 self.entry_creds_wallet2,
                                                                                 str(value_to_etc))
-        self.factom_cli_create.set_account_to_subtract_fee_from_that_transaction(transaction_name, self.second_address)
+        self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(transaction_name, self.second_address)
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
         self.assertTrue(transaction_name in self.factom_cli_create.list_local_transactions(), 'Transaction was created')
 
