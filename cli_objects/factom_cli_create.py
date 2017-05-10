@@ -64,10 +64,10 @@ class FactomCliCreate(FactomBaseObject):
                                                              self._factom_add_transaction_f_output, transaction_name,
                                                              ' ', wallet_address, ' ', amount)))
 
-    def set_account_to_subtract_fee_from_that_transaction(self, transaction_name, wallet_address):
+    def set_account_to_subtract_fee_from_transaction_output(self, transaction_name, wallet_address):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_substract_fee_on_tx, transaction_name, ' ', wallet_address)))
 
-    def set_account_to_add_fee_from_transaction_input(self, transaction_name, wallet_address):
+    def set_account_to_add_fee_to_transaction_input(self, transaction_name, wallet_address):
         return send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factomd_add_fee_on_tx, transaction_name, ' ', wallet_address)))
 
