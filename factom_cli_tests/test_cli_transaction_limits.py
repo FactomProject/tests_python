@@ -90,8 +90,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         - a new factoid address is created (each input must come from a different address)
         - 1 factoid is transferred to this new address
         - an input from this new address is added to the master transaction
-        the master transaction should still be signable at this point
-        """
+        the master transaction should still be signable at this point"""
 
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)

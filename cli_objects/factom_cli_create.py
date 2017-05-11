@@ -18,8 +18,8 @@ class FactomCliCreate(FactomBaseObject):
     _factom_ack = "status "
     _factom_sendtx = "sendtx "
     _factom_new_entry_address = "newecaddress"
-    _factom_listadresses = "listaddresses"
-    _factom_exportadresses = "exportadresses"
+    _factom_listaddresses = "listaddresses"
+    _factom_exportaddresses = "exportaddresses"
     _factom_list_local_txs = "listtxs tmp"
     _factom_remove_tx = "rmtx "
     _factom_buy_ec = "buyec "
@@ -34,11 +34,10 @@ class FactomCliCreate(FactomBaseObject):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_newfctaddress)))
 
     def import_words_from_koinify_into_wallet(self, words):
-        '''
-        Import 12 words from Koinify sale into the Wallet
-        :param words: space sepparated 12 words from koinify
-        :return: txt, factoid wallet address
-        '''
+        '''Import 12 words from Koinify sale into the Wallet
+        :param words: space separated 12 words from koinify
+        :return: txt, factoid wallet address'''
+
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_importwords, words)))
 
     def check_wallet_address_balance(self, address):
@@ -96,10 +95,10 @@ class FactomCliCreate(FactomBaseObject):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_new_entry_address)))
 
     def list_addresses(self):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_listadresses)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_listaddresses)))
 
     def export_addresses(self):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_exportadresses)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_exportaddresses)))
 
     def list_local_transactions(self):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_list_local_txs)))

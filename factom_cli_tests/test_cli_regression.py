@@ -190,10 +190,13 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.assertEqual(int(balance_1_after), int(balance_1) + value_of_factoids)
 
     def test_for_sof_425(self):
+        # rounding error may cause internal error when amount sent is very close to available balance
         second_address = self.factom_cli_create.create_new_factoid_address()
         third_address = self.factom_cli_create.create_new_factoid_address()
-        self.factom_cli_create.send_factoids(self.first_address, second_address, '100')
-
+        text = self.factom_cli_create.send_factoids(self.first_address, second_address, '100')
+        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        tx_id = chain_dict['TxID']
+        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
 
         self.assertTrue('100' in self.factom_cli_create.check_wallet_address_balance(second_address))
         self.assertTrue('balance is too low' in self.factom_cli_create.send_factoids(second_address, third_address, '99.9999'))
