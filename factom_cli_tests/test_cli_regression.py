@@ -36,14 +36,16 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(transaction_name, self.second_address)
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
         # compose transaction
-        transaction_hash = self.factom_cli_create.compose_transaction_and_return_transaction_code(transaction_name)
+        text = self.factom_cli_create.compose_transaction(transaction_name)
+        self.assertTrue('curl' in text, "Curl code not created")
+        self.assertTrue('"transaction":' in text, "Incorrect curl code created")
+        transaction_hash = text.split('"')[11]
         self.assertFalse(
-            'Internal error: Transaction not found' in self.factom_cli_create.request_transaction_acknowledgement(
+            'Internal error: wallet: Transaction name was not found' in self.factom_cli_create.request_transaction_acknowledgement(
                 transaction_hash), "Transaction is not found in system")
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
         wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
         balance2_after = self.factom_cli_create.check_wallet_address_balance(self.second_address)
-
         self.assertTrue(balance2_after is not 0, 'cash was not send to address: ' + self.second_address)
 
     def test_if_you_can_compose_wrong_transaction(self):
