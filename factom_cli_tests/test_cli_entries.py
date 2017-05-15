@@ -1,5 +1,6 @@
 import unittest
 import os, binascii
+from flaky import flaky
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
@@ -7,6 +8,7 @@ from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack
 from nose.plugins.attrib import attr
 
+@flaky(max_runs=3, min_passes=1)
 @attr(fast=True)
 class FactomCliTransactionTest(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
