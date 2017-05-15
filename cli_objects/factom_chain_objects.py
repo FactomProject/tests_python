@@ -14,6 +14,7 @@ class FactomChainObjects(FactomBaseObject):
     _factom_add_entries = ' addentry '
     _factom_get_firstentry = ' get firstentry '
     _factom_get_allentries = ' get allentries '
+    _factom_get_chainhead = ' get chainhead '
     _factom_wallet_backup_wallet = 'backupwallet'
     _factom_get_entryblock = 'get eblock '
     _factom_get_entryhash = 'get entry '
@@ -69,6 +70,11 @@ class FactomChainObjects(FactomBaseObject):
     def get_allentries(self, chain_id):
         text = send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_get_allentries, chain_id)))
+        return text
+
+    def get_chainhead(self, chain_id):
+        text = send_command_to_cli_and_receive_text(''.join(
+            (self._factom_cli_command, self._factom_get_chainhead, chain_id)))
         return text
 
     def get_sequence_number_from_head(self):

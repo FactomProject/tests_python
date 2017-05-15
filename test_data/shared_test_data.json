@@ -2,5 +2,10 @@
   "factoid_wallet_address": "Fs2DNirmGDtnAZGXqca3XHkukTNMxoMGFFQxJA3bAjJnKzzsZBMH",
   "ec_wallet_address": "Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG",
   "test_file_path": "../test_data/testfile",
-  "words": "salute umbrella proud setup delay ginger practice split toss jewel tuition stool"
+  "words": "salute umbrella proud setup delay ginger practice split toss jewel tuition stool",
+  "1st_hex_external_id1": "cc",
+  "1st_hex_external_id2": "dd",
+  "1st_hex_chain_id": "e5967ce2a9c61c841495fd2e6acaeaec9cb5bc49f3a24eee25670a9b4ea5a0c9",
+  "1st_hex_entry_hash": "e9ba1191bd9b5820bf65e1927d54ccdebd86283c75afe2c7f714d030f9e49874"
+
 }
