@@ -2,7 +2,7 @@ from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
 from base_object import FactomBaseObject
 
 class FactomChainObjects(FactomBaseObject):
-    _factomd_add_chain = 'addchain '
+    _factomd_add_chain = 'addchain'
     _factomd_compose_chain = 'composechain '
     _factom_get_head = 'get head '
     _factom_get_heights = 'get heights'
@@ -11,7 +11,7 @@ class FactomChainObjects(FactomBaseObject):
     _factom_get_dbheight = 'get dbheight '
     _factom_get_ecbheight = 'get ecbheight '
     _factomd_compose_entry = 'composeentry '
-    _factom_add_entries = ' addentry '
+    _factom_add_entries = 'addentry'
     _factom_get_firstentry = ' get firstentry '
     _factom_get_allentries = ' get allentries '
     _factom_get_chainhead = ' get chainhead '
@@ -34,16 +34,16 @@ class FactomChainObjects(FactomBaseObject):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, flags, ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, flags, ' ', ext_to_string, ' ', ecadress, ' < ', file_data)))
         return text
 
-    def add_entries_to_chain(self, ecaddress, file_data, chain_id, external_id_with_flags_list, **kwargs):
+    def add_entry_to_chain(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
         ext_to_string = ' '.join(external_id_with_flags_list)
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(
-            ''.join((self._factom_cli_command, self._factom_add_entries, ' ', flags, ' -c ', chain_id, ' ',
+            ''.join((self._factom_cli_command, self._factom_add_entries, ' ', flags, ' ',
                      ext_to_string, ' ', ecaddress, ' < ', file_data)))
 
     def parse_entry_data(self, entry_text):
@@ -60,12 +60,7 @@ class FactomChainObjects(FactomBaseObject):
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_firstentry, chain_id, flags)))
-
-    def get_firstentry_with_entryhash(self, chain_id):
-        text = send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_firstentry, chain_id, ' -E ')))
-        return text
+            (self._factom_cli_command, self._factom_get_firstentry, flags, ' ', chain_id)))
 
     def get_allentries(self, chain_id):
         text = send_command_to_cli_and_receive_text(''.join(

@@ -22,7 +22,7 @@ class FactomCliCreate(FactomBaseObject):
     _factom_exportaddresses = "exportaddresses"
     _factom_list_local_txs = "listtxs tmp"
     _factom_remove_tx = "rmtx "
-    _factom_buy_ec = "buyec "
+    _factom_buy_ec = "buyec"
     _factom_send_factoids = "sendfct "
     _factom_wallet_backup_wallet = "backupwallet"
 
