@@ -22,6 +22,9 @@ class FactomChainObjects(FactomBaseObject):
     def parse_chain_data(self, chain_text):
         return dict(item.split(": ") for item in chain_text.split('\n'))
 
+    def parse_entry_data(self, entry_text):
+        return dict(item.split(": ") for item in entry_text.split('\n'))
+
     def make_chain_from_binary_file(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
         ext_to_string = ' '.join(external_id_with_flags_list)
         flags = ''
@@ -45,9 +48,6 @@ class FactomChainObjects(FactomBaseObject):
         return send_command_to_cli_and_receive_text(
             ''.join((self._factom_cli_command, self._factom_add_entries, ' ', flags, ' ',
                      ext_to_string, ' ', ecaddress, ' < ', file_data)))
-
-    def parse_entry_data(self, entry_text):
-        return dict(item.split(": ") for item in entry_text.split('\n'))
 
     def compose_entry_from_binary_file(self, ecadress, file_data, chain_id, *external_ids):
         ext_to_string = ' '.join(['-e ' + s for s in external_ids])

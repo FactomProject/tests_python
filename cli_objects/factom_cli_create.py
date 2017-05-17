@@ -91,16 +91,21 @@ class FactomCliCreate(FactomBaseObject):
     def export_addresses(self):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_exportaddresses)))
 
-    def list_local_transactions(self):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_list_local_txs)))
+    def list_local_transactions(self, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_list_local_txs,
+                                                             ' ',flags)))
 
     def remove_transaction_from_wallet(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_remove_tx, transaction_name)))
 
-    def add_entry_credit_output_to_transaction_in_wallet(self, transaction_name, wallet_address, amount):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self._factom_add_transaction_ec_output, transaction_name,
-                                                             ' ', wallet_address, ' ', amount)))
+    def add_entry_credit_output_to_transaction_in_wallet(self, transaction_name, wallet_address, amount, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_ec_output, flags, ' ', transaction_name, ' ', wallet_address, ' ', amount)))
 
     def force_buy_ec(self, wallet_address, ec_wallet_address, amount):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,

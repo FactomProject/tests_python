@@ -6,7 +6,7 @@ from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects
-from helpers.helpers import read_data_from_json
+from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack
 
 @attr(fast=True)
@@ -26,7 +26,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
     def test_allocate_funds_to_factoid_wallet_address(self):
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.second_address, '1')
@@ -44,10 +44,11 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.assertTrue(self.factom_cli_create.check_wallet_address_balance(self.second_address) is not 0, 'Factoids were not send to address: ' + self.second_address)
 
     def test_if_you_can_compose_wrong_transaction(self):
-        self.assertTrue("Transaction name was not found" in self.factom_cli_create.compose_transaction('not_existing_trans'), 'Not existing transaction was found in wallet')
+        self.assertTrue("Transaction name was not found" in self.factom_cli_create.compose_transaction('not_existing_trans'), 'Non-existent transaction was found in wallet')
 
-    def test_request_balace_wrong_account(self):
-        self.assertTrue('Undefined' in self.factom_cli_create.check_wallet_address_balance('wrong_account'))
+    def test_request_balance_wrong_account(self):
+        self.assertTrue('Undefined or invalid address' in self.factom_cli_create.check_wallet_address_balance(
+            'Non-existent address'),'Non-existent address is showing up')
 
     def test_entry_credits_wallet(self):
 
@@ -57,15 +58,14 @@ class FactomCliEndToEndTest(unittest.TestCase):
         balance_1 = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
         balance_2 = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2)
 
-
-    def test_create_transaction_with_no_inputs_outputs_and_entry_creds(self):
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+    def test_create_transaction_with_no_inputs_outputs_or_entry_creds(self):
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.assertTrue('Insufficient Fee' in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
         self.assertTrue('Cannot send unsigned transaction' in self.factom_cli_create.send_transaction(transaction_name))
 
     def test_delete_transaction(self):
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.second_address, '1')
@@ -75,19 +75,19 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.assertTrue(transaction_name not in self.factom_cli_create.list_local_transactions(), 'Transaction was not deleted')
 
     def test_create_transaction_with_not_equal_input_and_output(self):
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.assertTrue("Inputs and outputs don't add up" in
                         self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(transaction_name, self.first_address
-                                                                                                   ), "Input and outpt are don't adding up, but error is not displayed")
+                                                                                                   ), "Input and output don't add up, but error is not displayed")
         self.factom_cli_create.remove_transaction_from_wallet(transaction_name)
         self.assertTrue(transaction_name not in self.factom_cli_create.list_local_transactions(),
                         'Transaction was not deleted')
 
     def test_add_input_larger_than_10_x_fee_to_correct_transaction(self):
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.first_address, '1')
@@ -101,7 +101,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
     def test_create_transaction_with_no_output_or_ec(self):
         balance1 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '1')
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, str(float(self.ecrate) * 8))
@@ -113,17 +113,15 @@ class FactomCliEndToEndTest(unittest.TestCase):
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
         balance1_after = self.factom_cli_create.check_wallet_address_balance(self.first_address)
-        self.assertTrue(abs(float(balance1_after) - (float(balance1) - float(self.ecrate) * 8)) <= 0.001, 'Balance is not subtracted '
-                                                                                             'correctly')
+        self.assertTrue(abs(float(balance1_after) - (float(balance1) - float(self.ecrate) * 8)) <= 0.001, 'Balance is not subtracted correctly')
 
     def test_create_transaction_with_input_to_ec(self):
         value_to_send = 1
 
         balance1 = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2)
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, str(value_to_send))
-
         self.factom_cli_create.add_entry_credit_output_to_transaction_in_wallet(transaction_name,
                                                                            self.entry_creds_wallet2, str(value_to_send))
         self.factom_cli_create.set_account_to_add_fee_to_transaction_input(transaction_name, self.first_address)
@@ -142,19 +140,23 @@ class FactomCliEndToEndTest(unittest.TestCase):
         value_in_factoids_to_output = 1
         value_to_etc = 1
         balance_1 = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2)
-
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address,
                                                                            str(value_to_send))
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.second_address, str(value_in_factoids_to_output))
 
-        self.factom_cli_create.add_entry_credit_output_to_transaction_in_wallet(transaction_name,
-                                                                                self.entry_creds_wallet2,
-                                                                                str(value_to_etc))
-        self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(transaction_name, self.second_address)
+        # check add_entry_credit_output_to_transaction quiet flag
+        factom_flags_list = ['-q']
+        self.factom_cli_create.add_entry_credit_output_to_transaction_in_wallet(transaction_name, self.entry_creds_wallet2,
+                    str(value_to_etc), flag_list=factom_flags_list)
+        self.assertTrue("Inputs and outputs don't add up" not in self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(transaction_name, self.second_address),
+                        "Entry credit output no added")
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
-        self.assertTrue(transaction_name in self.factom_cli_create.list_local_transactions(), 'Transaction was created')
+
+        # check list_local_transactions Names flag
+        factom_flags_list = ['-N']
+        self.assertTrue(transaction_name in self.factom_cli_create.list_local_transactions(flag_list=factom_flags_list), 'Transaction was not created locally in wallet')
 
         # balance_1_before = int(self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2))
         text = self.factom_cli_create.send_transaction(transaction_name)
