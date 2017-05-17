@@ -36,7 +36,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '0')
         self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
+        wait_for_ack(transaction_id)
         balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
 
         self.assertTrue(balance1 == balance2, "Balance is subtracted on 0 factoids transaction")
@@ -49,7 +49,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.first_address, '-1')
         self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
+        wait_for_ack(transaction_id)
 
         # balance should be unchanged
         balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
@@ -62,7 +62,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '0.0000000009')
         self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
+        wait_for_ack(transaction_id)
 
         # test here balance after change
         balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)

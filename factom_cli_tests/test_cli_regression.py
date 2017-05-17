@@ -41,7 +41,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
             'Internal error: Transaction not found' in self.factom_cli_create.request_transaction_acknowledgement(
                 transaction_hash), "Transaction is not found in system")
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
+        wait_for_ack(transaction_id)
         balance2_after = self.factom_cli_create.check_wallet_address_balance(self.second_address)
 
         self.assertTrue(balance2_after is not 0, 'cash was not send to address: ' + self.second_address)
@@ -112,7 +112,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
         self.assertTrue(transaction_name in self.factom_cli_create.list_local_transactions(), 'Transaction was created')
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
+        wait_for_ack(transaction_id)
         balance1_after = self.factom_cli_create.check_wallet_address_balance(self.first_address)
         self.assertTrue(abs(float(balance1_after) - (float(balance1) - float(self.ecrate) * 8)) <= 0.001, 'Balance is not subtracted '
                                                                                              'correctly')
@@ -132,7 +132,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.assertTrue(transaction_name in self.factom_cli_create.list_local_transactions(), 'Transaction was created')
 
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
+        wait_for_ack(transaction_id)
         balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2)
         ec_by_ec_to_factoids_rate = int(round(value_to_send / float(self.ecrate)))
         self.assertEqual(int(balance_1_after), int(balance1) + ec_by_ec_to_factoids_rate, 'Wrong output of transaction')
@@ -158,7 +158,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
         # balance_1_before = int(self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2))
         transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        wait_for_ack(transaction_id, self.ACK_WAIT_TIME)
+        wait_for_ack(transaction_id)
         balance_1_after = int(self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet2))
 
         ec_by_ec_to_factoids_rate = int(round(int(balance_1) + value_to_etc / float(self.ecrate)))
@@ -170,7 +170,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         text = self.factom_cli_create.force_buy_ec(self.first_address, self.entry_creds_wallet1, str(value_of_etc))
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
+        wait_for_ack(tx_id)
         balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
         self. assertEqual(int(balance_1_after), int(balance_1) + value_of_etc, 'EC were not bought')
 
@@ -185,7 +185,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         text = self.factom_cli_create.send_factoids(self.first_address, self.second_address, str(value_of_factoids))
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
+        wait_for_ack(tx_id)
         balance_1_after = self.factom_cli_create.check_wallet_address_balance(self.second_address)
         self.assertEqual(int(balance_1_after), int(balance_1) + value_of_factoids)
 
@@ -196,7 +196,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         text = self.factom_cli_create.send_factoids(self.first_address, second_address, '100')
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
+        wait_for_ack(tx_id)
 
         self.assertTrue('100' in self.factom_cli_create.check_wallet_address_balance(second_address))
         self.assertTrue('balance is too low' in self.factom_cli_create.send_factoids(second_address, third_address, '99.9999'))

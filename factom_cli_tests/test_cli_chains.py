@@ -119,7 +119,7 @@ class FactomChainTests(unittest.TestCase):
         names_list = ['-n', name_1, '-n', name_2]
         factom_flags_list = ['-f', '-T']
         tx_id = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, path, names_list, flag_list=factom_flags_list)
-        wait_for_ack(tx_id, 20)
+        wait_for_ack(tx_id)
         self.assertTrue("TransactionACK" in self.factom_cli_create.request_transaction_acknowledgement(tx_id))
 
     def test_quiet_make_chain(self):
