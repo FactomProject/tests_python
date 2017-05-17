@@ -1,7 +1,6 @@
 import unittest
 import string
 import random
-import time
 
 from nose.plugins.attrib import attr
 
@@ -12,10 +11,7 @@ from helpers.general_test_methods import wait_for_ack
 @attr(fast=True)
 class FactomCliTransactionLimits(unittest.TestCase):
 
-
     data = read_data_from_json('shared_test_data.json')
-
-    ACK_WAIT_TIME = 10
 
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
@@ -34,39 +30,29 @@ class FactomCliTransactionLimits(unittest.TestCase):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '0')
-        self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
-        transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        wait_for_ack(transaction_id)
-        balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
-
-        self.assertTrue(balance1 == balance2, "Balance is subtracted on 0 factoids transaction")
+        self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
+                        "0 input to transaction was allowed")
+        self.assertTrue("Cannot send unsigned transaction" in self.factom_cli_create.send_transaction(transaction_name), "Unsigned transaction sent")
 
     def test_add_minus_input_to_transaction(self):
-        balance1 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '-1')
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.first_address, '-1')
-        self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
-        transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        wait_for_ack(transaction_id)
-
-        # balance should be unchanged
-        balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
-        self.assertTrue(balance1 == balance2, "Balance is subtracted for negative numbers")
+        self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
+                        "Negative input to transaction was allowed")
+        self.assertTrue("Cannot send unsigned transaction" in self.factom_cli_create.send_transaction(transaction_name),
+                        "Unsigned transaction sent")
 
     def test_add_too_small_input_to_transaction(self):
-        balance1 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
-        self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '0.0000000009')
-        self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name))
-        transaction_id = self.factom_cli_create.send_transaction_and_receive_transaction_id(transaction_name)
-        wait_for_ack(transaction_id)
-
-        # test here balance after change
-        balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
-        self.assertTrue(balance1 == balance2, "Balance is subtracted for too small input")
+        # self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, str(format(float(self.ecrate) / 2, 'f')))
+        self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, self.ecrate)
+        self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
+                        "Input less than fee was allowed to transaction")
+        self.assertTrue("Cannot send unsigned transaction" in self.factom_cli_create.send_transaction(transaction_name),
+                        "Unsigned transaction sent")
 
     def test_add_more_than_balance_input_to_transaction(self):
         balance1 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
@@ -79,8 +65,6 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.assertIn("balance is too low", self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
                       "Insufficient balance not detected")
         self.assertIn("Cannot send unsigned transaction", self.factom_cli_create.send_transaction(transaction_name), "Attempt to send unsigned transaction not detected")
-        balance2 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
-        self.assertTrue(balance1 == balance2, "Balance is subtracted for too small input")
 
     def test_create_largest_allowable_transaction_10KB(self):
         """creating a large transaction
@@ -111,7 +95,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(sub_transaction_name, temp_address, '1')
         self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(sub_transaction_name, temp_address)
         self.factom_cli_create.sign_transaction_in_wallet(sub_transaction_name)
-        self.factom_cli_create.send_transaction_and_receive_transaction_id(sub_transaction_name)
+        self.factom_cli_create.send_transaction(sub_transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, temp_address,
                                                                           str(format(float(self.ecrate) * 2, 'f')))
 
