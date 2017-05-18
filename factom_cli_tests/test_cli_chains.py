@@ -87,7 +87,7 @@ class FactomChainTests(unittest.TestCase):
         balance_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet100)
         self.assertEqual(int(balance_before), int(balance_after) + 12, 'Incorrect charge for chain creation')
 
-    def test_make_chain_with_hex_external_id(self):
+    def test_make_chain_with_hex_external_id_return_chain_id(self):
         ''' This test is only reliable for the 1st run on a given database.
          Because of the -C flag, no transaction id is available, so the only way to locate the created chain is by
          using a fixed external id which yields a known entry hash. However once this chain is created in a database,
@@ -102,7 +102,8 @@ class FactomChainTests(unittest.TestCase):
         name_1 = self.data['1st_hex_external_id1']
         name_2 = self.data['1st_hex_external_id2']
         names_list = ['-h', name_1, '-h', name_2]
-        chain_flag_list = ['-C']
+        chain_flag_list = ['']
+        # chain_flag_list = ['-C']
         self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, path, names_list, flag_list=chain_flag_list)
         self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(self.data[
                                                                                             '1st_hex_entry_hash']))
@@ -137,7 +138,8 @@ class FactomChainTests(unittest.TestCase):
         name_1 = self.data['1st_external_id1']
         name_2 = self.data['1st_external_id2']
         names_list = ['-n', name_1, '-n', name_2]
-        factom_flags_list = ['-q']
+        factom_flags_list = ['']
+        # factom_flags_list = ['-q']
         self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, path, names_list, flag_list=factom_flags_list)
         self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(self.data[
                                                                                             '1st_entry_hash']))

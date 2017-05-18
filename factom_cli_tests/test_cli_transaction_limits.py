@@ -47,7 +47,6 @@ class FactomCliTransactionLimits(unittest.TestCase):
     def test_add_too_small_input_to_transaction(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
-        # self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, str(format(float(self.ecrate) / 2, 'f')))
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, self.ecrate)
         self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
                         "Input less than fee was allowed to transaction")
