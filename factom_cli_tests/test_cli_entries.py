@@ -184,25 +184,54 @@ class FactomCliTransactionTest(unittest.TestCase):
         name_2 = self.data['3rd_over_2nd_external_id2']
         names_list = names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-q']
-        self.factom_chain_object.add_entry_to_chain(self.entry_creds_wallet100, self.path, names_list, flag_list=factom_flags_list), self.data['3rd_over_2nd_chain_id']
-        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(self.data[
+        self.factom_chain_object.add_entry_to_chain(self.entry_creds_wallet100, self.path, names_list, flag_list=factom_flags_list)
+        self.assertFalse("Entry not found" in self.factom_chain_object.get_entryhash(self.data[
                                                                                             '3rd_over_2nd_entry_hash']))
+
+    def test_make_entry_return_chain_id(self):
+        ''' This test is only reliable on the 1st run on a given database.
+          Because of the -C flag, no transaction id is available, so the only way to locate the created entry is by
+          using a fixed entry in a fixed chain id which yields a known entry hash. However once this entry is created
+          in a database, it will still be there even if subsequent runs fail.'''
+
+        # make chain
+        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
+        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
+        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        tx_id = chain_dict['TxID']
+        wait_for_ack(tx_id)
+        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        name_1 = self.data['2nd_external_id1']
+        name_2 = self.data['2nd_external_id2']
+        names_list = ['-n', name_1, '-n', name_2]
+        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, path, names_list)
+
+        # make entry
+        with open('output_file', 'a') as fout:
+            fout.write('1')
+            self.path = fout.name
+        name_1 = self.data['4th_over_2nd_external_id1']
+        name_2 = self.data['4th_over_2nd_external_id2']
+        names_list = names_list + ['-e', name_1, '-e', name_2]
+        factom_flags_list = ['-C']
+        chain_id = self.factom_chain_object.add_entry_to_chain(self.entry_creds_wallet100, self.path, names_list, flag_list=factom_flags_list)
+        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries(chain_id), "Entry not found")
 
     def test_compose_entry(self):
         # make chain
-            name_1 = create_random_string(5)
-            name_2 = create_random_string(5)
-            names_list = ['-n', name_1, '-n', name_2]
-            with open('output_file', 'wb') as fout:
-                fout.write(os.urandom(10))
-                self.path = fout.name
-            text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, self.path, names_list)
-            chain_dict = self.factom_chain_object.parse_chain_data(text)
-            chain_id = chain_dict['ChainID']
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list = ['-n', name_1, '-n', name_2]
+        with open('output_file', 'wb') as fout:
+            fout.write(os.urandom(10))
+            self.path = fout.name
+        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, self.path, names_list)
+        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        chain_id = chain_dict['ChainID']
 
-            # compose entry
-            name_1 = create_random_string(5)
-            name_2 = create_random_string(5)
-            text = self.factom_chain_object.compose_entry_from_binary_file(self.entry_creds_wallet100, self.path, chain_id,
-                                                                           name_1, name_2)
-            self.assertTrue("message" and "entry" in text)
+        # compose entry
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        text = self.factom_chain_object.compose_entry_from_binary_file(self.entry_creds_wallet100, self.path, chain_id,
+                                                                       name_1, name_2)
+        self.assertTrue("message" and "entry" in text)
