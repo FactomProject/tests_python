@@ -49,12 +49,7 @@ class FactomChainTests(unittest.TestCase):
                                                                                                path, names_list))
 
     def test_make_chain_that_already_exists(self):
-        # make 1st chain
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
+        self.buy_100_entry_credits()
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -70,11 +65,7 @@ class FactomChainTests(unittest.TestCase):
         self.assertTrue('already exist' in text, text)
 
     def test_make_chain_and_check_balance(self):
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
+        self.buy_100_entry_credits()
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -93,11 +84,7 @@ class FactomChainTests(unittest.TestCase):
          using a fixed external id which yields a known entry hash. However once this chain is created in a database,
          it will still be there even if subsequent runs fail.'''
 
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
+        self.buy_100_entry_credits()
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = self.data['1st_hex_external_id1']
         name_2 = self.data['1st_hex_external_id2']
@@ -109,11 +96,7 @@ class FactomChainTests(unittest.TestCase):
                                                                                             '1st_hex_entry_hash']))
 
     def test_force_make_chain(self):
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
+        self.buy_100_entry_credits()
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -130,11 +113,7 @@ class FactomChainTests(unittest.TestCase):
          it will still be there even if subsequent runs fail.'''
 
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
+        self.buy_100_entry_credits()
         name_1 = self.data['1st_external_id1']
         name_2 = self.data['1st_external_id2']
         names_list = ['-n', name_1, '-n', name_2]
@@ -145,11 +124,7 @@ class FactomChainTests(unittest.TestCase):
                                                                                             '1st_entry_hash']))
 
     def test_compose_chain(self):
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
+        self.buy_100_entry_credits()
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -161,11 +136,7 @@ class FactomChainTests(unittest.TestCase):
         self.assertTrue("commit-chain" and "reveal-chain" in text)
 
     def test_compose_chain_with_hex_external_id(self):
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
+        self.buy_100_entry_credits()
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = binascii.b2a_hex(os.urandom(2))
         name_2 = binascii.b2a_hex(os.urandom(2))
@@ -191,7 +162,7 @@ class FactomChainTests(unittest.TestCase):
     def test_compose_chain__with_not_enough_ec(self):
         self.entry_creds_wallet10 = self.factom_cli_create.create_entry_credit_address()
         text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet10, '10')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        chain_dict = self.factom_chain_object.parse_summary_transaction_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
@@ -204,3 +175,12 @@ class FactomChainTests(unittest.TestCase):
         seq = self.factom_chain_object.get_sequence_number_from_head()
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
         self.assertTrue(seq == directory_block_height, 'Directory block is not equal to sequence')
+
+    def buy_100_entry_credits(self):
+        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
+        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
+        chain_dict = self.factom_chain_object.parse_summary_transaction_data(text)
+        tx_id = chain_dict['TxID']
+        wait_for_ack(tx_id)
+
+

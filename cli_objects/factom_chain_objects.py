@@ -25,6 +25,14 @@ class FactomChainObjects(FactomBaseObject):
     def parse_entry_data(self, entry_text):
         return dict(item.split(": ") for item in entry_text.split('\n'))
 
+    def parse_summary_transaction_data(self, chain_text):
+        return dict(item.split(": ") for item in chain_text.split('\n'))
+
+    def parse_full_transaction_data(self, transaction_text):
+        # strip blank line
+        transaction_text = transaction_text[:-1]
+        return dict(item.split(": ") for item in transaction_text.split('\n'))
+
     def make_chain_from_binary_file(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
         ext_to_string = ' '.join(external_id_with_flags_list)
         flags = ''

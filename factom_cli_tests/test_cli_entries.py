@@ -22,7 +22,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         self.entry_creds_wallet100 = self.factom_cli_create.import_address_from_factoid(
             self.data['ec_wallet_address'])
         text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        chain_dict = self.factom_chain_object.parse_summary_transaction_data(text)
         tx_id = chain_dict['TxID']
 
     def tearDown(self):
@@ -31,11 +31,6 @@ class FactomCliTransactionTest(unittest.TestCase):
 
     def test_make_entry_return_entry_hash(self):
        # make chain
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -132,12 +127,6 @@ class FactomCliTransactionTest(unittest.TestCase):
         self.assertTrue(entry_hash and "Entry [0]" in self.factom_chain_object.get_allentries(chain_id))
 
     def test_force_make_entry(self):
-        # make chain
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = binascii.b2a_hex(os.urandom(2))
         name_2 = binascii.b2a_hex(os.urandom(2))
@@ -165,11 +154,6 @@ class FactomCliTransactionTest(unittest.TestCase):
           in a database, it will still be there even if subsequent runs fail.'''
 
         # make chain
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = self.data['2nd_external_id1']
         name_2 = self.data['2nd_external_id2']
@@ -195,11 +179,6 @@ class FactomCliTransactionTest(unittest.TestCase):
           in a database, it will still be there even if subsequent runs fail.'''
 
         # make chain
-        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
-        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
-        tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = self.data['2nd_external_id1']
         name_2 = self.data['2nd_external_id2']
