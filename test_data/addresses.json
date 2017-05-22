@@ -8,10 +8,12 @@
   "factomd_address_4": "10.41.0.14:8088",
   "factomd_address_5": "10.41.0.15:8088",
   "factomd_address_6": "10.41.0.16:8088",
-  "factomd_address_7":"localhost:8088",
-  "factomd_address_8":"52.161.26.157:8088",
-  "factomd_address_9":"52.161.28.54:8088",
-  "factomd_address_10":"52.161.29.253:8088",
+  "factomd_address_7": "10.41.0.17:8088",
+  "factomd_address_8": "10.41.0.18:8088",
+  "1_factomd_address_7":"localhost:8088",
+  "2_factomd_address_8":"52.161.26.157:8088",
+  "3_factomd_address_9":"52.161.28.54:8088",
+  "4_factomd_address_10":"52.161.29.253:8088",
   "factomd_address_prod1": "52.161.27.174:8088",
   "localhost": "localhost:8088"
 }

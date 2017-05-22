@@ -24,7 +24,7 @@ class FactomEntryTests(unittest.TestCase):
     factomd_address = data['factomd_address']
     factomd_address_prod = data['factomd_address_prod1']
     factomd_address_custom_list = [data['factomd_address'],data['factomd_address_0'],data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'],data['factomd_address_4'],
-                                   data['factomd_address_5'],data['factomd_address_6']]
+                                   data['factomd_address_5'],data['factomd_address_6'],data['factomd_address_7'],data['factomd_address_8'],data['1_factomd_address_7']]
     factomd_followers_list = [data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
     data = read_data_from_json('faulting.json')
     _stop_command = 'docker stop factom-factomd-i'

@@ -19,7 +19,7 @@ class LoadNodes():
 
         self.factomd_address_custom_list = [data['factomd_address'], data['factomd_address_0'], data['factomd_address_1'],
                                        data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'],
-                                       data['factomd_address_5'], data['factomd_address_6']]
+                                       data['factomd_address_5'], data['factomd_address_6'], data['factomd_address_7'], data['factomd_address_8'],['1_factomd_address_7']]
 
     def make_chain_and_check_balance(self,address_list):
         first_address = address_list[0]
@@ -52,10 +52,11 @@ class LoadNodes():
                         os.remove(path)
                     time.sleep(1)
                 time.sleep(1)
-                self.fetch_entries_with_chainid(chain_id)
+                #self.fetch_entries_with_chainid(chain_id)
+                self.fetch_entries_localhost(chain_id)
             time.sleep(1)
-            self.balance_on_nodes([first_address,entry_creds_wallet2])
-            self.transactions_on_nodes([first_address,entry_creds_wallet2])
+            #self.balance_on_nodes([first_address,entry_creds_wallet2])
+            #self.transactions_on_nodes([first_address,entry_creds_wallet2])
 
 
     def balance_on_nodes(self,address_list):
@@ -84,9 +85,20 @@ class LoadNodes():
     def fetch_entries_with_chainid(self,chain_id):
         print chain_id
         for factomd_address_custom in self.factomd_address_custom_list:
-            self.factom_cli_create.change_factomd_address(factomd_address_custom)
+            self.factom_chain_object.change_factomd_address(factomd_address_custom)
             allentries_output = self.factom_chain_object.get_allentries(chain_id)
             if (allentries_output.find("Entry [10]")):
                 print "found 11 entries in server - %s" %factomd_address_custom
             else:
                 print "all entries are not available in the server - %s" %factomd_address_custom
+
+    def fetch_entries_localhost(self,chain_id):
+        print chain_id
+        time.sleep(180)
+        allentries_output = self.factom_chain_object.get_allentries(chain_id)
+        if ("Entry [10]" in allentries_output):
+            print "found 11 entries in server"
+        else:
+            print "all entries are not available in the server"
+
+

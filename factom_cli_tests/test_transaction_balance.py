@@ -19,7 +19,7 @@ class FactomTransactionBalanceTest(unittest.TestCase):
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
     factomd_address_custom_list = [data['factomd_address_0'],data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'],data['factomd_address_4'],
-                                   data['factomd_address_5'],data['factomd_address_6']]
+                                   data['factomd_address_5'],data['factomd_address_6'],data['factomd_address_7'],data['factomd_address_8']]
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
@@ -44,8 +44,8 @@ class FactomTransactionBalanceTest(unittest.TestCase):
         self.transactions_on_nodes()
 
     def test_make_transactions_no_ack(self):
-        value_of_factoids = 2
-        for i in range(0,1200):
+        value_of_factoids = 1
+        for i in range(0,12000):
             balance_1 = self.factom_cli_create.check_wallet_address_balance(self.second_address)
             text = self.factom_cli_create.send_factoids(self.first_address,self.second_address,str(value_of_factoids))
         self.balance_on_nodes()
@@ -69,6 +69,8 @@ class FactomTransactionBalanceTest(unittest.TestCase):
         for factomd_address_custom in self.factomd_address_custom_list:
             self.factom_cli_create.change_factomd_address(factomd_address_custom)
             listaddress_2 = self.factom_cli_create.list_addresses()
+            print "server = %s , listaddress = %s" % (factomd_address_custom, listaddress_2)
+            print "------------------"
             if (listaddress_1 != listaddress_2):
                 self.assertTrue(listaddress_1 == listaddress_2,"mismatch in listaddress.server %s "  % (factomd_address_custom))
 

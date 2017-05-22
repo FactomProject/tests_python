@@ -184,9 +184,8 @@ class FactomCliEndToEndTest(unittest.TestCase):
         #todo change assert when fixed
         second_address = self.factom_cli_create.create_new_factoid_address()
         third_address = self.factom_cli_create.create_new_factoid_address()
-        self.factom_cli_create.send_factoids(self.first_address, second_address, '100')
-
-
+        transaction_id = self.factom_cli_create.send_factoids(self.first_address, second_address, '100')
+        wait_for_ack(transaction_id, 60)
         self.assertTrue('100' in self.factom_cli_create.check_wallet_address_balance(second_address))
         self.assertTrue('balance is too low' in self.factom_cli_create.send_factoids(second_address, third_address, '99.9999'))
         self.assertTrue('0' in self.factom_cli_create.check_wallet_address_balance(third_address))

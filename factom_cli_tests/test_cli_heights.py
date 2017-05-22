@@ -17,7 +17,7 @@ class FactomHeightTests(unittest.TestCase):
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
     factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5']
-                                   ,data['factomd_address_6']]
+                                   ,data['factomd_address_6'],data['factomd_address_7'],data['factomd_address_8'],data['1_factomd_address_7']]
 
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
@@ -84,6 +84,7 @@ class FactomHeightTests(unittest.TestCase):
             m1 = re.search((r'"timestamp": \d+'),directory_block_height)
             timestamp = m1.group(0).replace(r'"timestamp":',"")
             currentblktime = (int(timestamp) * 60)
+            #print "height %s, currentblktime = %s" %(str(x),currentblktime)
             if x == 0:
                 previousblktime = currentblktime
             else:

@@ -57,6 +57,7 @@ class FactomCliTransactionTest(unittest.TestCase):
             tx_id = self.factom_chain_object.parse_entry_data(text_raw)['CommitTxID']
             wait_for_ack(tx_id, 20)
             balance_last = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
+            print i
             self.assertEqual(int(balance_1st), int(balance_last) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
 
             # write smallest entry for fee amount
@@ -69,6 +70,7 @@ class FactomCliTransactionTest(unittest.TestCase):
             name_2 = binascii.b2a_hex(os.urandom(2))
             names_list = ['-x', name_1, '-x', name_2]
             tx_id = self.factom_chain_object.add_entries_to_chain(self.entry_creds_wallet1, self.path, chain_id, names_list)
+            tx_id = self.factom_chain_object.parse_entry_data(text_raw)['CommitTxID']
             wait_for_ack(tx_id, 20)
             balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet1)
             self.assertEqual(int(balance_last), int(balance_1st) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
