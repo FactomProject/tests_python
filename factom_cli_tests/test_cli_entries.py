@@ -119,12 +119,12 @@ class FactomCliTransactionTest(unittest.TestCase):
         self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entry_to_chain(self.entry_creds_wallet100, self.path, names_list))
 
         # validate get firstentry command
-        self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry(chain_id))
+        self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry([chain_id]))
 
         # validate get firstentry_return_entry_hash
         factom_flags_list = ['-E']
-        entry_hash = self.factom_chain_object.get_firstentry(chain_id, flag_list=factom_flags_list)
-        self.assertTrue(entry_hash and "Entry [0]" in self.factom_chain_object.get_allentries(chain_id))
+        entry_hash = self.factom_chain_object.get_firstentry([chain_id], flag_list=factom_flags_list)
+        self.assertTrue(entry_hash and "Entry [0]" in self.factom_chain_object.get_allentries([chain_id]))
 
     def test_force_make_entry(self):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
@@ -194,7 +194,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         names_list = names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-C']
         chain_id = self.factom_chain_object.add_entry_to_chain(self.entry_creds_wallet100, self.path, names_list, flag_list=factom_flags_list)
-        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries(chain_id), "Entry not found")
+        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries([chain_id]), "Entry not found")
 
     def test_compose_entry(self):
         # make chain

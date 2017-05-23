@@ -63,17 +63,21 @@ class FactomChainObjects(FactomBaseObject):
             (self._factom_cli_command, self._factomd_compose_entry, ' -c ', chain_id , ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
         return text
 
-    def get_firstentry(self, chain_id, **kwargs):
+    def get_firstentry(self, external_id_with_flags_list, **kwargs):
+        ext_to_string = ' '.join(external_id_with_flags_list)
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_firstentry, flags, ' ', chain_id)))
+            (self._factom_cli_command, self._factom_get_firstentry, flags, ' ', ext_to_string)))
 
-    def get_allentries(self, chain_id):
-        text = send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_allentries, chain_id)))
-        return text
+    def get_allentries(self, external_id_with_flags_list, **kwargs):
+        ext_to_string = ' '.join(external_id_with_flags_list)
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        return send_command_to_cli_and_receive_text(''.join(
+            (self._factom_cli_command, self._factom_get_allentries, flags, ' ', ext_to_string)))
 
     def get_chainhead(self, chain_id):
         text = send_command_to_cli_and_receive_text(''.join(
