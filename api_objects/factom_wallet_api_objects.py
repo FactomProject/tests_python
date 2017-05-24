@@ -156,3 +156,7 @@ class FactomWalletApiObjects():
         blocks = json.loads(self.send_post_request_with_params_dict('compose-transaction',
                                                                     {'tx-name': transaction_name}))
         return blocks["result"]['params']['transaction']
+
+    def get_wallet_height(self):
+        blocks = json.loads(self.send_get_request_with_method('get-height'))
+        return blocks["result"]
