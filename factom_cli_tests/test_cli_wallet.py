@@ -12,11 +12,11 @@ class FactomCliTransactionTest(unittest.TestCase):
         self.factom_cli_create = FactomCliCreate()
 
     '''The remote address feature of factomd is not currently activated
-        def test_wallet_address_balance_remote(self):
+    def test_wallet_address_balance_remote(self):
         text = self.factom_cli_create.check_wallet_address_balance_remote('factom.michaeljbeam.me')
         self.assertTrue("fct" in text)
         self.assertTrue("ec" in text)'''
 
     def test_backup_wallet(self):
-        text = self.factom_cli_create.backup_wallet()
-        self.assertTrue(len(text.split(' ')) == 12)
+        self.assertTrue(len(self.factom_cli_create.backup_wallet().split(' ')) == 12, "12 words are not present in "
+                                                                                      "wallet")
