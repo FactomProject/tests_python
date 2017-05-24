@@ -20,7 +20,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.second_address = self.factom_cli_create.create_new_factoid_address()
         words = '"'+self.data['words']+'"'
         self.third_address = self.factom_cli_create.import_words_from_koinify_into_wallet(words)
-        self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
+        self.ecrate = self.factom_cli_create.get_entry_credit_rate()
         self.entry_credit_address = self.factom_cli_create.import_address_from_factoid(
             self.data['ec_wallet_address'])
 
@@ -63,7 +63,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.assertTrue(self.entry_credit_address in self.factom_cli_create.export_addresses(), 'Not all addresses '
                                                                                                   'were exported')
         self.assertTrue(self.entry_credit_address in self.factom_cli_create.list_addresses(), 'Not all addresses '
-                                                                                                  'were exported')
+                                                                                                  'were listed')
 
     def test_create_transaction_with_no_inputs_outputs_or_entry_creds(self):
         transaction_name = create_random_string(5)

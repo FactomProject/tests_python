@@ -40,12 +40,12 @@ class FactomChainObjects(FactomBaseObject):
             flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' ', flags, ' ', ext_to_string, ' ', ecaddress, ' < ', file_data)))
 
-    def compose_chain_from_binary_file(self, ecadress, file_data, external_id_with_flags_list, **kwargs):
+    def compose_chain_from_binary_file(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
         ext_to_string = ' '.join(external_id_with_flags_list)
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, flags, ' ', ext_to_string, ' ', ecadress, ' < ', file_data)))
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, flags, ' ', ext_to_string, ' ', ecaddress, ' < ', file_data)))
         return text
 
     def add_entry_to_chain(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
@@ -57,10 +57,13 @@ class FactomChainObjects(FactomBaseObject):
             ''.join((self._factom_cli_command, self._factom_add_entries, ' ', flags, ' ',
                      ext_to_string, ' ', ecaddress, ' < ', file_data)))
 
-    def compose_entry_from_binary_file(self, ecadress, file_data, chain_id, *external_ids):
-        ext_to_string = ' '.join(['-e ' + s for s in external_ids])
+    def compose_entry_from_binary_file(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
+        ext_to_string = ' '.join(external_id_with_flags_list)
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
         text = send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factomd_compose_entry, ' -c ', chain_id , ' ', ext_to_string + ' ', ecadress, ' < ', file_data)))
+            (self._factom_cli_command, self._factomd_compose_entry, flags, ' ', ext_to_string + ' ', ecaddress, ' < ', file_data)))
         return text
 
     def get_firstentry(self, external_id_with_flags_list, **kwargs):
