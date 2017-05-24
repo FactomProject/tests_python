@@ -18,7 +18,6 @@ class FactomChainTests(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     TIME_TO_WAIT = 5
-    ACK_WAIT_TIME = 20
 
     def setUp(self):
         self.factom_cli_create = FactomCliCreate()
@@ -55,7 +54,7 @@ class FactomChainTests(unittest.TestCase):
         text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
+        wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -75,57 +74,80 @@ class FactomChainTests(unittest.TestCase):
         text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
+        wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
-        ex_id_flag = '-n'
-        names_list = [ex_id_flag, name_1, ex_id_flag, name_2]
+        names_list = ['-n', name_1, '-n', name_2]
         chain_flag_list = ['-E']
         balance_before = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet100)
-        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, path, names_list, flag_list=chain_flag_list)
+        entry_hash = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, path, names_list, flag_list=chain_flag_list)
+        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(entry_hash),
+                        "Chain not revealed")
         balance_after = self.factom_cli_create.check_wallet_address_balance(self.entry_creds_wallet100)
-
         self.assertEqual(int(balance_before), int(balance_after) + 12, 'Incorrect charge for chain creation')
+
+    def test_make_chain_with_hex_external_id_return_chain_id(self):
+        ''' This test is only reliable for the 1st run on a given database.
+         Because of the -C flag, no transaction id is available, so the only way to locate the created chain is by
+         using a fixed external id which yields a known entry hash. However once this chain is created in a database,
+         it will still be there even if subsequent runs fail.'''
+
+        self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
+        text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
+        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        tx_id = chain_dict['TxID']
+        wait_for_ack(tx_id)
+        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        name_1 = self.data['1st_hex_external_id1']
+        name_2 = self.data['1st_hex_external_id2']
+        names_list = ['-h', name_1, '-h', name_2]
+        chain_flag_list = ['']
+        self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, path, names_list, flag_list=chain_flag_list)
+        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(self.data[
+                                                                                            '1st_hex_entry_hash']))
 
     def test_force_make_chain(self):
         self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
         text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
+        wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
-        self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
-        ex_id_flag = '-n'
-        names_list = [ex_id_flag, name_1, ex_id_flag, name_2]
+        names_list = ['-n', name_1, '-n', name_2]
         factom_flags_list = ['-f', '-T']
         tx_id = self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, path, names_list, flag_list=factom_flags_list)
-        wait_for_ack(tx_id, 20)
+        wait_for_ack(tx_id)
         self.assertTrue("TransactionACK" in self.factom_cli_create.request_transaction_acknowledgement(tx_id))
 
     def test_quiet_make_chain(self):
+        ''' This test is only reliable on the 1st run on a given database.
+         Because of the -q flag, no transaction id is available, so the only way to locate the created chain is by
+         using a fixed external id which yields a known entry hash. However once this chain is created in a database,
+         it will still be there even if subsequent runs fail.'''
+
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
         text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
-        name_1 = 'aaaaa'
-        name_2 = 'bbbbb'
-        ex_id_flag = '-n'
-        names_list = [ex_id_flag, name_1, ex_id_flag, name_2]
-        factom_flags_list = [' -q']
+        wait_for_ack(tx_id)
+        name_1 = self.data['1st_external_id1']
+        name_2 = self.data['1st_external_id2']
+        names_list = ['-n', name_1, '-n', name_2]
+        factom_flags_list = ['']
         self.factom_chain_object.make_chain_from_binary_file(self.entry_creds_wallet100, path, names_list, flag_list=factom_flags_list)
-        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash('98aacf26dca2b7672146230a2fe3a731bc1c7001b7a12cc9b16cd282458bc4a5'))
+        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(self.data[
+                                                                                            '1st_entry_hash']))
 
     def test_compose_chain(self):
         self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
         text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
+        wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -136,12 +158,12 @@ class FactomChainTests(unittest.TestCase):
         self.factomd_api_objects.commit_chain_by_message(text[start:end])
         self.assertTrue("commit-chain" and "reveal-chain" in text)
 
-    def test_compose_chain_with_hex_ext(self):
+    def test_compose_chain_with_hex_external_id(self):
         self.entry_creds_wallet100 = self.factom_cli_create.create_entry_credit_address()
         text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet100, '100')
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
+        wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = binascii.b2a_hex(os.urandom(2))
         name_2 = binascii.b2a_hex(os.urandom(2))
@@ -169,7 +191,7 @@ class FactomChainTests(unittest.TestCase):
         text = self.factom_cli_create.buy_ec(self.first_address, self.entry_creds_wallet10, '10')
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         tx_id = chain_dict['TxID']
-        wait_for_ack(tx_id, self.ACK_WAIT_TIME)
+        wait_for_ack(tx_id)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
