@@ -20,6 +20,7 @@ class FactomCliCreate(FactomBaseObject):
     _factom_new_entry_address = "newecaddress"
     _factom_listaddresses = "listaddresses"
     _factom_exportaddresses = "exportaddresses"
+    _factom_list_tx = "listtxs id"
     _factom_list_local_txs = "listtxs tmp"
     _factom_remove_tx = "rmtx "
     _factom_buy_ec = "buyec "
@@ -53,22 +54,27 @@ class FactomCliCreate(FactomBaseObject):
     def create_new_transaction_in_wallet(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_newtx, transaction_name)))
 
-    def add_factoid_input_to_transaction_in_wallet(self, transaction_name, wallet_address, amount):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self._factom_add_transaction_f_input, transaction_name,
-                                                             ' ', wallet_address, ' ', amount)))
+    def add_factoid_input_to_transaction_in_wallet(self, transaction_name, wallet_address, amount, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_f_input, flags, ' ', transaction_name, ' ', wallet_address, ' ', amount)))
 
-    def add_factoid_output_to_transaction_in_wallet(self, transaction_name, wallet_address, amount):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self._factom_add_transaction_f_output, transaction_name,
-                                                             ' ', wallet_address, ' ', amount)))
+    def add_factoid_output_to_transaction_in_wallet(self, transaction_name, wallet_address, amount, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_f_output, flags, ' ', transaction_name, ' ', wallet_address, ' ', amount)))
 
     def set_account_to_subtract_fee_from_transaction_output(self, transaction_name, wallet_address):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_substract_fee_on_tx, transaction_name, ' ', wallet_address)))
 
-    def set_account_to_add_fee_to_transaction_input(self, transaction_name, wallet_address):
+    def set_account_to_add_fee_to_transaction_input(self, transaction_name, wallet_address, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factomd_add_fee_on_tx, transaction_name, ' ', wallet_address)))
+            (self._factom_cli_command, self._factomd_add_fee_on_tx, flags, ' ', transaction_name, ' ', wallet_address)))
 
     def sign_transaction_in_wallet(self, transaction_name):
         return send_command_to_cli_and_receive_text((''.join((self._factom_cli_command, self._factom_sign_transaction, transaction_name))))
@@ -91,6 +97,10 @@ class FactomCliCreate(FactomBaseObject):
     def export_addresses(self):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_exportaddresses)))
 
+    def list_transaction(self, tx_id):
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_list_tx, ' ',
+                                                             tx_id)))
+
     def list_local_transactions(self, **kwargs):
         flags = ''
         if kwargs:
@@ -107,24 +117,15 @@ class FactomCliCreate(FactomBaseObject):
             flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_ec_output, flags, ' ', transaction_name, ' ', wallet_address, ' ', amount)))
 
-    def force_buy_ec(self, wallet_address, ec_wallet_address, amount):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self._factom_buy_ec, '-f ', wallet_address, ' ', ec_wallet_address, ' ', amount)))
+    def buy_ec(self, wallet_address, ec_wallet_address, amount, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_buy_ec, flags, ' ', wallet_address, ' ', ec_wallet_address, ' ', amount)))
 
-    def buy_ec(self, wallet_address, ec_wallet_address, amount):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self._factom_buy_ec, ' ', wallet_address, ' ',
-                                                             ec_wallet_address, ' ', amount)))
+    def send_factoids(self, address_from, address_to, amount):
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_send_factoids, address_from, ' ', address_to, ' ', amount)))
 
-    def buy_ec_return_tx_id(self, wallet_address, ec_wallet_address, amount):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self._factom_buy_ec, ' -T ', wallet_address, ' ',
-                                                             ec_wallet_address, ' ', amount)))
-
-    def send_factoids(self, wallet_address_one, wallet_address_two, amount):
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
-                                                             self._factom_send_factoids, wallet_address_one, ' ',
-                                                             wallet_address_two, ' ', amount)))
     def backup_wallet(self):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command,
                                                              self._factom_wallet_backup_wallet)))

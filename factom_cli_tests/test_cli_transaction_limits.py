@@ -5,7 +5,7 @@ import random
 from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
-from helpers.helpers import read_data_from_json
+from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack
 
 @attr(fast=True)
@@ -27,7 +27,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
     def test_transaction_limits_0(self):
         # attempt to add a 0 factoid input to a transaction
         balance1 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '0')
         self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
@@ -35,7 +35,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         self.assertTrue("Cannot send unsigned transaction" in self.factom_cli_create.send_transaction(transaction_name), "Unsigned transaction sent")
 
     def test_add_minus_input_to_transaction(self):
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '-1')
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.first_address, '-1')
@@ -45,7 +45,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
                         "Unsigned transaction sent")
 
     def test_add_too_small_input_to_transaction(self):
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, self.ecrate)
         self.assertTrue("Insufficient Fee" in self.factom_cli_create.sign_transaction_in_wallet(transaction_name),
@@ -57,7 +57,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         balance1 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
         balance_plus_one = float(balance1.strip()) + 1
         transaction_fee = float(self.ecrate) * 9
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, str(balance_plus_one))
         self.factom_cli_create.add_factoid_output_to_transaction_in_wallet(transaction_name, self.first_address, str(balance_plus_one - transaction_fee))
@@ -75,7 +75,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         - an input from this new address is added to the master transaction
         the master transaction should still be signable at this point"""
 
-        transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+        transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         for i in xrange(1, 79):
             new_name = transaction_name+str(i)
