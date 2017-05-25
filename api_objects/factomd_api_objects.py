@@ -202,7 +202,7 @@ class FactomApiObjects():
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('factoid-submit', {'transaction':
                                                                                              transaction})[0])
-        return blocks['result']
+        return blocks
 
     def commit_chain_by_message(self, message):
         '''
