@@ -31,7 +31,7 @@ class FactomAPIEntryTests(unittest.TestCase):
         chain_name = "first chain"
         ext_ids = "abcd"
         content = "hello world"
-        #self.make_transaction()
+        self.make_transaction()
         result = self.wallet_api_objects.compose_chain(chain_name,ext_ids,content,self.entry_creds_wallet2)
         print result
 
@@ -40,8 +40,8 @@ class FactomAPIEntryTests(unittest.TestCase):
     def make_transaction(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
         self.wallet_api_objects.create_new_transaction(transaction_name)
-        self.wallet_api_objects.add_factoid_input_to_transaction(transaction_name, self.first_address, 10000)
-        self.wallet_api_objects.add_entry_credits_output_to_transaction(transaction_name, self.entry_creds_wallet2, 10000)
+        self.wallet_api_objects.add_factoid_input_to_transaction(transaction_name, self.first_address, 1)
+        self.wallet_api_objects.add_entry_credits_output_to_transaction(transaction_name, self.entry_creds_wallet2, 1)
         self.wallet_api_objects.add_fee_to_transaction(transaction_name, self.first_address)
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)

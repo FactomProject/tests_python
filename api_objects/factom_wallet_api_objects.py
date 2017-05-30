@@ -14,7 +14,7 @@ class FactomWalletApiObjects():
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
         r = requests.post(url, data=json.dumps(data), headers=headers)
-        print r.headers
+        #print r.headers
         print data
         print r.text
         return r.text
@@ -168,6 +168,6 @@ class FactomWalletApiObjects():
 
 
     def compose_chain(self,chain_name,ext_ids,content,ecpub):
-        blocks = json.loads(self.send_post_request_with_params_dict('compose-chain', {'chain': {chain_name:{'extids':[ext_ids],'content':content}},'ecpub':ecpub}))
+        blocks = json.loads(self.send_post_request_with_params_dict("compose-chain", {"chain": {chain_name:{"extids":[ext_ids],"content":content}},"ecpub":ecpub}))
         return blocks
 
