@@ -214,10 +214,11 @@ class FactomCliTransactionTest(unittest.TestCase):
         names_list = chain_names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-C']
         chain_id = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, names_list, flag_list=factom_flags_list)
-        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries([chain_id]), "Entry not found")
 
         # wait for entry to arrive in block
         wait_for_entry_in_block(chain_names_list)
+
+        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries([chain_id]), "Entry not found")
 
         # look for chainhead by chain id
         self.assertTrue('ChainID: ' + self.data['2nd_chain_id'] in self.factom_chain_object.get_chainhead([chain_id]), 'Chainhead not found')
