@@ -61,7 +61,7 @@ class FactomCliTransactionTest(unittest.TestCase):
 
         chain_name_1 = create_random_string(5)
         chain_name_2 = create_random_string(5)
-        names_list = ['-n', chain_name_1, '-n', chain_name_2]
+        chain_names_list = ['-n', chain_name_1, '-n', chain_name_2]
         firstentry_ext_id = chain_name_1
 
         i = ONE_K_MINUS_8
@@ -69,7 +69,7 @@ class FactomCliTransactionTest(unittest.TestCase):
             fout.write(os.urandom(i))
             self.path = fout.name
         text = self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address1000, self.path,
-                                                                    names_list)
+                                                                    chain_names_list)
         chain_dict = self.factom_chain_object.parse_chain_data(text)
         chain_id = chain_dict['ChainID']
         tx_id = chain_dict['CommitTxID']
@@ -81,10 +81,10 @@ class FactomCliTransactionTest(unittest.TestCase):
             # write largest entry for fee amount
             name_1 = create_random_string(2)
             name_2 = create_random_string(2)
-            names_list = ['-n', chain_name_1, '-n', chain_name_2, '-e', name_1, '-e', name_2]
-            text_raw = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000,
+            names_list = chain_names_list + ['-e', name_1, '-e', name_2]
+            text = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000,
                                                                    self.path, names_list)
-            tx_id = self.factom_chain_object.parse_entry_data(text_raw)['CommitTxID']
+            tx_id = self.factom_chain_object.parse_entry_data(text)['CommitTxID']
             wait_for_ack(tx_id)
             balance_last = self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000)
             self.assertEqual(int(balance_1st), int(balance_last) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
@@ -98,9 +98,9 @@ class FactomCliTransactionTest(unittest.TestCase):
             name_1 = binascii.b2a_hex(os.urandom(2))
             name_2 = binascii.b2a_hex(os.urandom(2))
             names_list = ['-c', chain_id, '-x', name_1, '-x', name_2]
-            text_raw = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000,
+            text = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000,
                                                                    self.path, names_list)
-            tx_id = self.factom_chain_object.parse_entry_data(text_raw)['CommitTxID']
+            tx_id = self.factom_chain_object.parse_entry_data(text)['CommitTxID']
             wait_for_ack(tx_id)
             balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000)
             self.assertEqual(int(balance_last), int(balance_1st) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
@@ -117,7 +117,8 @@ class FactomCliTransactionTest(unittest.TestCase):
         self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, names_list))
 
         # validate get firstentry command
-        self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry([chain_id]),
+        wait_for_entry_in_block(chain_names_list)
+        self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry(chain_names_list),
                         'Chain not found')
 
         # validate get firstentry_return_entry_hash
@@ -160,7 +161,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         self.assertTrue('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000' in text, 'Chainhead not found')
 
         # look for chainhead by hex external id return KeyMR
-        keyMR = self.factom_chain_object.parse_chainhead_data(text)['[\'EBlock'][:-1]
+        keyMR = self.factom_chain_object.parse_entryblock_data(text)['[\'EBlock'][:-1]
         factom_flags_list = ['-K']
         self.assertEqual(keyMR, self.factom_chain_object.get_chainhead(chain_names_list, flag_list=factom_flags_list), 'Key merkle root does not match')
 

@@ -12,30 +12,27 @@ factom_object = FactomChainObjects()
 # all entry credit addresses are funded from first_address
 first_address = factom_cli_create.import_address_from_factoid(data['factoid_wallet_address'])
 ACK_WAIT_TIME = 20
-BLOCK_WAIT_TIME = 40
+BLOCK_WAIT_TIME = 50
 
 def wait_for_ack(transaction_id):
-    status = 'not found'
-    i = 0
-
-    while "TransactionACK" not in status and i < ACK_WAIT_TIME:
-        status = factom_cli.request_transaction_acknowledgement(transaction_id)
+    for x in range(0, BLOCK_WAIT_TIME):
+        if 'TransactionACK' in factom_cli.request_transaction_acknowledgement(transaction_id): break
         time.sleep(1)
-        i += 1
 
 def wait_for_entry_in_block(chain):
     '''****************************************************
-    Invalid Hash is an error in factomd coding and will corrected in the future to the correct message.
+    Invalid Hash is an error in factomd coding and will corrected in the future to the correct message,
+    probably Entry Not Found.
     When it is corrected, change it here to match the new message.
     *******************************************************'''
 
-    status = 'Invalid Hash'
-    i = 0
+    '''Note: the parameter 'chain' is a list, so that this can be called with either:
+    a chain id e.g. [chain_id], or
+    a list of external ids e.g. ['-e', name_1, '-e', name_2]'''
 
-    while "Invalid Hash" in status and i < BLOCK_WAIT_TIME:
-        status = factom_object.get_chainhead(chain)
+    for x in range(0, BLOCK_WAIT_TIME):
+        if 'Invalid Hash' not in factom_object.get_chainhead(chain): break
         time.sleep(1)
-        i += 1
 
 def fund_entry_credit_address(amount):
     # all entry credit addresses are funded from first_address
