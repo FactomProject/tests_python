@@ -53,7 +53,7 @@ class FactomEntryTests(unittest.TestCase):
                     entryblocklist = pattern.findall(entryblock)
                     for entryhash in entryblocklist:
                         entryhash = entryhash.replace("EntryHash","")
-                        entrycontents = self.factom_chain_object.get_entryhash(entryhash)
+                        entrycontents = self.factom_chain_object.get_entry_by_hash(entryhash)
                         if (entrycontents == "Entry not found"):
                             entrycount += 1
         self.assertTrue(entrycount == 0, "Missing entries in the block chain, missing entries: "+ str(entrycount))

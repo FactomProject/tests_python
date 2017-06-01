@@ -14,11 +14,12 @@ class FactomChainObjects(FactomBaseObject):
     _factom_add_entries = 'addentry'
     _factom_get_firstentry = ' get firstentry '
     _factom_get_allentries = ' get allentries '
+    _factom_pending_entries = 'get pendingentries '
     _factom_get_chainhead = ' get chainhead '
     _factom_wallet_backup_wallet = 'backupwallet'
     _factom_get_directoryblock = 'get dblock '
     _factom_get_entryblock = 'get eblock '
-    _factom_get_entryhash = 'get entry '
+    _factom_get_entry_by_hash = 'get entry '
 
     def parse_chain_data(self, chain_text):
         return dict(item.split(": ") for item in chain_text.split('\n'))
@@ -102,6 +103,13 @@ class FactomChainObjects(FactomBaseObject):
         return send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_get_allentries, flags, ' ', ext_to_string)))
 
+    def get_pending_entries(self, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_pending_entries, flags)))
+        return text
+
     def get_chainhead(self, external_id_with_flags_list, **kwargs):
         ext_to_string = ' '.join(external_id_with_flags_list)
         flags = ''
@@ -110,11 +118,10 @@ class FactomChainObjects(FactomBaseObject):
         return send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_get_chainhead, flags, ' ', ext_to_string)))
 
-
-    def get_sequence_number_from_head(self):
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
-        return text.split('\n')[3].split(' ')[1]
-
+    # def get_sequence_number_from_head(self):
+    #     text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
+    #     return text.split('\n')[3].split(' ')[1]
+    #
     def get_latest_directory_block(self, **kwargs):
         flags = ''
         if kwargs:
@@ -151,6 +158,6 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entryblock, keymr)))
         return text
 
-    def get_entryhash(self,entryhash):
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entryhash, entryhash)))
+    def get_entry_by_hash(self, entryhash):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entry_by_hash, entryhash)))
         return text

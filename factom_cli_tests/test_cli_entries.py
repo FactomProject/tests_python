@@ -44,7 +44,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         factom_flags_list = ['-E']
         entry_hash = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, names_list,
                                                                      flag_list=factom_flags_list)
-        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entryhash(entry_hash),
+        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entry_by_hash(entry_hash),
                     "Entry not revealed")
 
     def test_verify_entry_costs(self):
@@ -116,6 +116,9 @@ class FactomCliTransactionTest(unittest.TestCase):
 
         self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, names_list))
 
+        # check for pending entries
+        self.assertTrue(chain_id in self.factom_chain_object.get_pending_entries(), 'Entry not shown as pending')
+
         # validate get firstentry command
         wait_for_entry_in_block(chain_names_list)
         self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry(chain_names_list),
@@ -133,7 +136,9 @@ class FactomCliTransactionTest(unittest.TestCase):
         name_1 = binascii.b2a_hex(os.urandom(2))
         name_2 = binascii.b2a_hex(os.urandom(2))
         chain_names_list = ['-h', name_1, '-h', name_2]
-        self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address1000, path, chain_names_list)
+        text = self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address1000, path,
+                                                                   chain_names_list)
+        chain_id = self.factom_chain_object.parse_entry_data(text)['ChainID']
 
         # make entry
         with open('output_file', 'a') as fout:
@@ -145,6 +150,17 @@ class FactomCliTransactionTest(unittest.TestCase):
         factom_flags_list = ['-f', '-T']
         tx_id = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000,
                                                                self.path, names_list, flag_list=factom_flags_list)
+        # check for pending entries return entry hash
+        factom_flags_list = ['-E']
+        entry_hash_list = self.factom_chain_object.get_pending_entries(flag_list=factom_flags_list)
+        for entry_hash in entry_hash_list.split('\n'):
+            text = self.factom_chain_object.get_entry_by_hash(entry_hash)
+            entry_chain_id = self.factom_chain_object.parse_first_entry_data(text)[' \'ChainID'][:-1]
+            if entry_chain_id == chain_id:
+               found = True
+               break
+        self.assertTrue(found, 'Entry not shown as pending')
+
         wait_for_ack(tx_id)
         self.assertTrue("TransactionACK" in self.factom_cli_create.request_transaction_acknowledgement(tx_id),
                         "Forced entry was not revealed")
@@ -190,7 +206,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         names_list = names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-q']
         self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, names_list, flag_list=factom_flags_list)
-        self.assertFalse("Entry not found" in self.factom_chain_object.get_entryhash(self.data[
+        self.assertFalse("Entry not found" in self.factom_chain_object.get_entry_by_hash(self.data[
                                                                                             '3rd_over_2nd_entry_hash']))
 
     def test_make_entry_return_chain_id(self):
