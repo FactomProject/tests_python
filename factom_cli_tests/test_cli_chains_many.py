@@ -17,7 +17,7 @@ rather than a Chain ID.
 Many chains are created because because the error is rare.
 @attr(fast=False) because it takes a long time and shouldn't be run regularly'''
 
-NUMBER_OF_RUNS = 10000
+NUMBER_OF_RUNS = 200000
 
 @attr(fast=False)
 class FactomChainTests(unittest.TestCase):

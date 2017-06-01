@@ -20,7 +20,7 @@ class FactomLoadNodes(unittest.TestCase):
         self.factom_chain_object = FactomChainObjects()
         self.first_address = self.factom_cli_create.import_address_from_factoid(
             self.data['factoid_wallet_address'])
-        self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
+        self.ecrate = self.factom_cli_create.get_entry_credit_rate()
         self.entry_credit_address100 = fund_entry_credit_address(100)
 
 

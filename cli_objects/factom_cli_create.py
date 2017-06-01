@@ -48,7 +48,7 @@ class FactomCliCreate(FactomBaseObject):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_balance, '-r ',
                                                              address)))
 
-    def get_factom_change_entry_credit_conversion_rate(self):
+    def get_entry_credit_rate(self):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_ecrate)))
 
     def create_new_transaction_in_wallet(self, transaction_name):
