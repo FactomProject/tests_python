@@ -120,7 +120,7 @@ class FactomApiObjects():
         :param hash:
         :return: chainid, content, extids
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry', {'hash': hash}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry', {'hash': hash})[0])
         return blocks['result']
 
     def get_pending_entries(self):
@@ -219,7 +219,7 @@ class FactomApiObjects():
         :param entry: str, entry
         :return:
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('reveal-chain', {'entry': entry}))
+        blocks = json.loads(self.send_get_request_with_params_dict('reveal-chain', {'entry': entry})[0])
         return blocks['result']
 
     def commit_entry(self, entry):

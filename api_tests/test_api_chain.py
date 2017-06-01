@@ -28,13 +28,17 @@ class FactomAPIEntryTests(unittest.TestCase):
         self.ecrate = self.factomd_api_objects.get_entry_credits_rate()
 
     def test_make_chains_entries(self):
-        chain_name = "first chain"
-        ext_ids = "abcd"
-        content = "hello world"
-        self.make_transaction()
-        result = self.wallet_api_objects.compose_chain(chain_name,ext_ids,content,self.entry_creds_wallet2)
-        print result
-
+        ext_ids = ["abcd","1111"]
+        content = "35746820656e747279"
+        #self.make_transaction()
+        result = self.wallet_api_objects.compose_chain(ext_ids,content,self.entry_creds_wallet2)
+        message = result['result']['commit']['params']['message']
+        entry =  result['result']['reveal']['params']['entry']
+        result = self.factomd_api_objects.commit_chain_by_message(message)
+        result = self.factomd_api_objects.reveal_chain_by_entry(entry)
+        entryhash = result['entryhash']
+        result = self.factomd_api_objects.get_entry_by_hash(entryhash)
+        self.assertFalse('Entry not found' in result)
 
 
     def make_transaction(self):
