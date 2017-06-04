@@ -40,7 +40,7 @@ class FactomApiObjects():
         :return: list of dicts with entries
         """
         blocks = json.loads(self.send_get_request_with_params_dict('directory-block', {'keymr': keymr})[0])
-        return blocks["result"]["entryblocklist"][0]
+        return blocks["result"]["entryblocklist"]
 
     def get_heights(self):
         '''
@@ -105,7 +105,7 @@ class FactomApiObjects():
         blocks = json.loads(self.send_get_request_with_params_dict('receipt', {'hash': hash}))
         return blocks['result']['Receipt']
 
-    def get_entry_blcok(self, key_mr):
+    def get_entry_block(self, key_mr):
         '''
         Get entry block by key_mr
         :param key_mr: str - keymr
