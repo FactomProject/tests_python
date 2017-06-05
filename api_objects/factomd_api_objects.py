@@ -102,7 +102,7 @@ class FactomApiObjects():
         :param hash: str hash
         :return: receipt
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('receipt', {'hash': hash}))
+        blocks = json.loads(self.send_get_request_with_params_dict('receipt', {'hash': hash})[0])
         return blocks['result']['Receipt']
 
     def get_entry_block(self, key_mr):
@@ -111,7 +111,7 @@ class FactomApiObjects():
         :param key_mr: str - keymr
         :return: header, entrylist
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry-block', {'KeyMR': key_mr}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry-block', {'KeyMR': key_mr})[0])
         return blocks['result']
 
     def get_entry_by_hash(self, hash):
@@ -120,7 +120,8 @@ class FactomApiObjects():
         :param hash:
         :return: chainid, content, extids
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry', {'hash': hash}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry', {'hash': hash})[0])
+        print blocks
         return blocks['result']
 
     def get_pending_entries(self):
