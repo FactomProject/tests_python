@@ -8,7 +8,7 @@ from helpers.helpers import read_data_from_json
 from api_objects.factom_wallet_api_objects import FactomWalletApiObjects
 
 
-@attr(last=True)
+@attr(entryblock=True)
 class FactomAPIEntryBlockTests(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
