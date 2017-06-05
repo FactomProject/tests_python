@@ -36,26 +36,10 @@ class FactomChainObjects(FactomBaseObject):
         return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
 
     def parse_directoryblock_data(self, entry_text):
-        # find start of json
-        json_start = 0
-        for line in entry_text.split("\n"):
-            if 'EntryBlock' in line:
-                break
-            json_start += 1
-
-        entry_text = entry_text.split('\n')
-        extract = entry_text[:json_start]
-
-        '''The multivalued json part of this text is stripped out and left here for further processing at a later time
-        should the data contained therein become needed'''
-        json = entry_text[json_start:-1]
-
-        return dict(item.split(": ") for item in str(extract)[1:-1].translate(None, "'").split(', '))
+        return self.parse_separate_data_from_json(entry_text, 'EntryBlock')
 
     def parse_entryblock_data(self, chainhead_text):
-        # strip json
-        chainhead_text = chainhead_text.split('\n')[:6]
-        return dict(item.split(": ") for item in str(chainhead_text).split(','))
+        return self.parse_separate_data_from_json(chainhead_text, 'EBEntry')
 
     def make_chain_from_binary_file(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
         ext_to_string = ' '.join(external_id_with_flags_list)
@@ -151,3 +135,21 @@ class FactomChainObjects(FactomBaseObject):
     def get_entryhash(self,entryhash):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entryhash, entryhash)))
         return text
+
+    def parse_separate_data_from_json(self, text, json_marker):
+        # find start of json
+        json_start = 0
+        for line in text.split("\n"):
+            if json_marker in line:
+                break
+            json_start += 1
+
+        entry_text = text.split('\n')
+        extract = entry_text[:json_start]
+
+        '''The multivalued json part of this text is stripped out and left here for further processing at a later time
+        should the data contained therein become needed'''
+        json = entry_text[json_start:-1]
+
+        return dict(item.split(": ") for item in str(extract)[1:-1].translate(None, "'").split(', '))
+

@@ -161,7 +161,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         self.assertTrue('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000' in text, 'Chainhead not found')
 
         # look for chainhead by hex external id return KeyMR
-        keyMR = self.factom_chain_object.parse_entryblock_data(text)['[\'EBlock'][:-1]
+        keyMR = self.factom_chain_object.parse_entryblock_data(text)['EBlock']
         factom_flags_list = chain_names_list + [' -K']
         self.assertEqual(keyMR, self.factom_chain_object.get_chainhead(flag_list=factom_flags_list), 'Key merkle root does not match')
 
