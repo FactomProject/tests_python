@@ -70,7 +70,7 @@ class FactomCliTransactionTest(unittest.TestCase):
             self.path = fout.name
         text = self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address1000, self.path,
                                                                     chain_names_list)
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        chain_dict = self.factom_chain_object.parse_simple_data(text)
         chain_id = chain_dict['ChainID']
         tx_id = chain_dict['CommitTxID']
         wait_for_ack(tx_id)
@@ -84,7 +84,7 @@ class FactomCliTransactionTest(unittest.TestCase):
             names_list = chain_names_list + ['-e', name_1, '-e', name_2]
             text = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000,
                                                                    self.path, names_list)
-            tx_id = self.factom_chain_object.parse_entry_data(text)['CommitTxID']
+            tx_id = self.factom_chain_object.parse_simple_data(text)['CommitTxID']
             wait_for_ack(tx_id)
             balance_last = self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000)
             self.assertEqual(int(balance_1st), int(balance_last) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
@@ -100,7 +100,7 @@ class FactomCliTransactionTest(unittest.TestCase):
             names_list = ['-c', chain_id, '-x', name_1, '-x', name_2]
             text = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000,
                                                                    self.path, names_list)
-            tx_id = self.factom_chain_object.parse_entry_data(text)['CommitTxID']
+            tx_id = self.factom_chain_object.parse_simple_data(text)['CommitTxID']
             wait_for_ack(tx_id)
             balance_1st = self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000)
             self.assertEqual(int(balance_last), int(balance_1st) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
@@ -120,14 +120,14 @@ class FactomCliTransactionTest(unittest.TestCase):
         self.assertTrue(chain_id in self.factom_chain_object.get_pending_entries(), 'Entry not shown as pending')
 
         # validate get firstentry command
-        wait_for_entry_in_block(chain_names_list)
-        self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry(chain_names_list),
+        wait_for_entry_in_block(flag_list=chain_names_list)
+        self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry(flag_list=chain_names_list),
                         'Chain not found')
 
         # validate get firstentry_return_entry_hash
-        factom_flags_list = ['-E']
-        entry_hash = self.factom_chain_object.get_firstentry([chain_id], flag_list=factom_flags_list)
-        self.assertTrue(entry_hash and "Entry [0]" in self.factom_chain_object.get_allentries([chain_id]),
+        factom_flags_list = [chain_id] + ['-E']
+        entry_hash = self.factom_chain_object.get_firstentry(flag_list=factom_flags_list)
+        self.assertTrue(entry_hash and "Entry [0]" in self.factom_chain_object.get_allentries(flag_list=[chain_id]),
                         'Entry not found')
 
     def test_force_make_entry_with_hex_external_chain_id(self):
@@ -170,19 +170,19 @@ class FactomCliTransactionTest(unittest.TestCase):
             "message" and "entry" in self.factom_chain_object.compose_entry_from_binary_file(self.entry_credit_address1000,
                                                                                              self.path, names_list))
         # wait for entry to arrive in block
-        wait_for_entry_in_block(chain_names_list)
+        wait_for_entry_in_block(flag_list=chain_names_list)
 
         # look for chainhead by hex external id
-        text = self.factom_chain_object.get_chainhead(chain_names_list)
+        text = self.factom_chain_object.get_chainhead(flag_list=chain_names_list)
         self.assertTrue('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000' in text, 'Chainhead not found')
 
         # look for chainhead by hex external id return KeyMR
         keyMR = self.factom_chain_object.parse_entryblock_data(text)['[\'EBlock'][:-1]
-        factom_flags_list = ['-K']
-        self.assertEqual(keyMR, self.factom_chain_object.get_chainhead(chain_names_list, flag_list=factom_flags_list), 'Key merkle root does not match')
+        factom_flags_list = chain_names_list + [' -K']
+        self.assertEqual(keyMR, self.factom_chain_object.get_chainhead(flag_list=factom_flags_list), 'Key merkle root does not match')
 
         # check get allentries by hex external id
-        self.assertTrue("Entry [0]" in self.factom_chain_object.get_allentries(chain_names_list), 'Chain not found')
+        self.assertTrue("Entry [0]" in self.factom_chain_object.get_allentries(flag_list=chain_names_list), 'Chain not found')
 
     def test_quiet_make_entry(self):
         ''' This test is only reliable on the 1st run on a given database.
@@ -233,16 +233,16 @@ class FactomCliTransactionTest(unittest.TestCase):
         chain_id = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, names_list, flag_list=factom_flags_list)
 
         # wait for entry to arrive in block
-        wait_for_entry_in_block(chain_names_list)
+        wait_for_entry_in_block(flag_list=chain_names_list)
 
-        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries([chain_id]), "Entry not found")
+        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries(flag_list=[chain_id]), "Entry not found")
 
         # look for chainhead by chain id
-        self.assertTrue('ChainID: ' + self.data['2nd_chain_id'] in self.factom_chain_object.get_chainhead([chain_id]), 'Chainhead not found')
+        self.assertTrue('ChainID: ' + self.data['2nd_chain_id'] in self.factom_chain_object.get_chainhead(flag_list=[chain_id]), 'Chainhead not found')
 
         # check get allentries by external id and returning entry hash
-        factom_flags_list = ['-E']
-        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries(chain_names_list, flag_list=factom_flags_list), "Entry not found")
+        factom_flags_list = chain_names_list + ['-E']
+        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries( flag_list=factom_flags_list), "Entry not found")
 
 
     def test_compose_entry(self):
@@ -255,7 +255,7 @@ class FactomCliTransactionTest(unittest.TestCase):
             self.path = fout.name
         text = self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address1000, self.path,
                                                                     chain_names_list)
-        chain_dict = self.factom_chain_object.parse_chain_data(text)
+        chain_dict = self.factom_chain_object.parse_simple_data(text)
         chain_id = chain_dict['ChainID']
 
         # compose entry by chain id

@@ -21,33 +21,37 @@ class FactomChainObjects(FactomBaseObject):
     _factom_get_entryblock = 'get eblock '
     _factom_get_entry_by_hash = 'get entry '
 
-    def parse_chain_data(self, chain_text):
+    def parse_simple_data(self, chain_text):
         return dict(item.split(": ") for item in chain_text.split('\n'))
 
     def parse_entry_data(self, entry_text):
-        return dict(item.split(": ") for item in entry_text.split('\n'))
+        entry_text = entry_text.split('\n')
+        content = ' '.join([entry_text[-3], entry_text[-2]])
+        del entry_text[-3:]
+        entry_text.append(content)
+        return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
 
-    def parse_first_entry_data(self, entry_text):
-        entry_text = entry_text.split('\n')[:4]
-        return dict(item.split(": ") for item in str(entry_text).split(','))
+    def parse_transaction_data(self, entry_text):
+        entry_text = entry_text.split('\n')
+        del entry_text[-1:]
+        return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
 
-    def parse_summary_transaction_data(self, transaction_text):
-        return dict(item.split(": ") for item in transaction_text.split('\n'))
+    def parse_directoryblock_data(self, entry_text):
+        # find start of json
+        json_start = 0
+        for line in entry_text.split("\n"):
+            if 'EntryBlock' in line:
+                break
+            json_start += 1
 
-    def parse_full_transaction_data(self, transaction_text):
-        # strip blank line
-        transaction_text = transaction_text[:-1]
-        return dict(item.split(": ") for item in transaction_text.split('\n'))
+        entry_text = entry_text.split('\n')
+        extract = entry_text[:json_start]
 
-    def parse_directoryblock_data(self, chainhead_text):
-        # strip json
-        chainhead_text = chainhead_text.split('\n')[:4]
-        return dict(item.split(": ") for item in str(chainhead_text).split(','))
+        '''The multivalued json part of this text is stripped out and left here for further processing at a later time
+        should the data contained therein become needed'''
+        json = entry_text[json_start:-1]
 
-    def parse_directoryblock_minus_MR_data(self, chainhead_text):
-        # strip json
-        chainhead_text = chainhead_text.split('\n')[:3]
-        return dict(item.split(": ") for item in str(chainhead_text).split(','))
+        return dict(item.split(": ") for item in str(extract)[1:-1].translate(None, "'").split(', '))
 
     def parse_entryblock_data(self, chainhead_text):
         # strip json
@@ -87,46 +91,32 @@ class FactomChainObjects(FactomBaseObject):
             (self._factom_cli_command, self._factomd_compose_entry, flags, ' ', ext_to_string + ' ', ecaddress, ' < ', file_data)))
         return text
 
-    def get_firstentry(self, external_id_with_flags_list, **kwargs):
-        ext_to_string = ' '.join(external_id_with_flags_list)
+    def get_firstentry(self, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_firstentry, flags, ' ', ext_to_string)))
+            (self._factom_cli_command, self._factom_get_firstentry, flags)))
 
-    def get_allentries(self, external_id_with_flags_list, **kwargs):
-        ext_to_string = ' '.join(external_id_with_flags_list)
+    def get_allentries(self, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_allentries, flags, ' ', ext_to_string)))
+            (self._factom_cli_command, self._factom_get_allentries, flags)))
 
-    def get_pending_entries(self, **kwargs):
+    def get_chainhead(self, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_pending_entries, flags)))
-        return text
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_chainhead, flags)))
 
-    def get_chainhead(self, external_id_with_flags_list, **kwargs):
-        ext_to_string = ' '.join(external_id_with_flags_list)
-        flags = ''
-        if kwargs:
-            flags = ' '.join(kwargs['flag_list'])
-        return send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_chainhead, flags, ' ', ext_to_string)))
+    def get_sequence_number_from_head(self):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
+        return text.split('\n')[3].split(' ')[1]
 
-    # def get_sequence_number_from_head(self):
-    #     text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
-    #     return text.split('\n')[3].split(' ')[1]
-    #
-    def get_latest_directory_block(self, **kwargs):
-        flags = ''
-        if kwargs:
-            flags = ' '.join(kwargs['flag_list'])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head, flags)))
+    def get_latest_directory_block(self):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
         return text
 
     def get_directory_block_height_from_head(self):

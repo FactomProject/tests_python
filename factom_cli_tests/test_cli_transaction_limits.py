@@ -26,7 +26,6 @@ class FactomCliTransactionLimits(unittest.TestCase):
 
     def test_transaction_limits_0(self):
         # attempt to add a 0 factoid input to a transaction
-        balance1 = self.factom_cli_create.check_wallet_address_balance(self.first_address)
         transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction_in_wallet(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction_in_wallet(transaction_name, self.first_address, '0')

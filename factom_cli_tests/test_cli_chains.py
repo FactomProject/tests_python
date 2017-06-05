@@ -57,8 +57,8 @@ class FactomChainTests(unittest.TestCase):
                                                              names_list)
 
         # look for chainhead by external id
-        wait_for_entry_in_block(names_list)
-        self.assertTrue('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000' in self.factom_chain_object.get_chainhead(names_list), 'Chainhead not found')
+        wait_for_entry_in_block(flag_list=names_list)
+        self.assertTrue('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000' in self.factom_chain_object.get_chainhead(flag_list=names_list), 'Chainhead not found')
 
         # try to make duplicate chain
         self.assertTrue('already exists' in self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address100, path, names_list), "Duplicate chain not detected")
@@ -97,9 +97,9 @@ class FactomChainTests(unittest.TestCase):
                                                                                             '1st_hex_entry_hash']))
 
         # validate get firstentry by hex external id command
-        wait_for_entry_in_block(names_list)
-        text = self.factom_chain_object.get_firstentry(names_list)
-        chain_id = self.factom_chain_object.parse_first_entry_data(text)[' \'ChainID'][:-1]
+        wait_for_entry_in_block(flag_list=names_list)
+        text = self.factom_chain_object.get_firstentry(flag_list=names_list)
+        chain_id = self.factom_chain_object.parse_entry_data(text)['ChainID']
         self.assertTrue(chain_id == self.data['1st_hex_chain_id'], 'Chain not found')
 
     def test_force_make_chain(self):
@@ -177,19 +177,19 @@ class FactomChainTests(unittest.TestCase):
 
         # get latest block sequence number
         text = self.factom_chain_object.get_latest_directory_block()
-        seq = self.factom_chain_object.parse_directoryblock_data(text)[' \'SequenceNumber'][:-2]
+        seq = self.factom_chain_object.parse_directoryblock_data(text)['SequenceNumber']
 
         # compare to block sequence number given by get heights
         self.assertTrue(seq == self.factom_chain_object.get_directory_block_height_from_head(), 'Directory block is not equal to sequence number')
 
         # get latest block previous merkel root
-        prevMR = self.factom_chain_object.parse_directoryblock_data(text)[' \'PrevBlockKeyMR'][:-1]
+        prevMR = self.factom_chain_object.parse_directoryblock_data(text)['PrevBlockKeyMR']
 
-        # compare to previous merkel root given by looking up directory block merkel root
-        keyMR = self.factom_chain_object.parse_directoryblock_data(text)['[\'DBlock'][:-1]
+        # compare to previous merkel root given by looking up directory block erkel root
+        keyMR = self.factom_chain_object.parse_directoryblock_data(text)['DBlock']
         text = self.factom_chain_object.get_directory_block(keyMR)
-        self.assertTrue(
-            prevMR == self.factom_chain_object.parse_directoryblock_minus_MR_data(text)['[\'PrevBlockKeyMR'][:-1], 'Get dblock by merkle root did not fetch correct directory block')
+        self.assertTrue(prevMR == self.factom_chain_object.parse_directoryblock_data(text)[
+    'PrevBlockKeyMR'], 'Get dblock by merkle root did not fetch correct directory block')
 
     def test_get_directory_block_by_merkel_root(self):
         factom_flags_list = ['-K']
