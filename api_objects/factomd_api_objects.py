@@ -8,6 +8,17 @@ class FactomApiObjects():
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
 
+    def send_post_request_with_params_dict(self, method, params_dict):
+        url = 'http://' + self.factomd_address + '/v2'
+        headers = {'content-type': 'text/plain'}
+        data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
+        r = requests.post(url, data=json.dumps(data), headers=headers)
+        print r.text
+        print params_dict
+        print data
+        return r.text
+
+
     def send_get_request_with_params_dict(self, method, params_dict):
         url = 'http://'+self.factomd_address+'/v2'
         headers = {'content-type': 'text/plain'}
