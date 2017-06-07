@@ -10,5 +10,6 @@
   "factomd_address_6": "10.41.0.16:8088",
   "factomd_address_prod1": "52.161.27.174:8088",
   "factomd_address_prod2": "mattdev2984.cloudapp.net:8088",
+  "factomd_address_prod3":"52.161.29.253:8088",
   "localhost": "localhost:8088"
 }

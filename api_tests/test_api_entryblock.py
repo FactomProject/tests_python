@@ -1,7 +1,9 @@
 import unittest
 import time
+import logging
 
 from nose.plugins.attrib import attr
+from collections import Counter
 
 from api_objects.factomd_api_objects import FactomApiObjects
 from helpers.helpers import read_data_from_json
@@ -15,7 +17,7 @@ class FactomAPIEntryBlockTests(unittest.TestCase):
     '''
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
-    factomd_address_prod = data['factomd_address_prod1']
+    factomd_address_prod = data['factomd_address_prod3']
     factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
     entrylist_eblock = []
     entrylist_ecblock = []
@@ -25,18 +27,30 @@ class FactomAPIEntryBlockTests(unittest.TestCase):
         self.factom_api_wallet = FactomWalletApiObjects()
 
     def test_ansible_entries(self):
+        logging.getLogger('api_command').info("Execution Started")
+        print "Execution Started"
         self.entrylist_eblock = self._fetch_entries_from_entryblock(self.factomd_address_prod)
-        #self.entrylist_ecblock = self._fetch_entries_from_ecblock(self.factomd_address_prod)
-        #if (self.entrylist_eblock == self.entrylist_ecblock):
-        #self._fetch_duplicates(self.entrylist_ecblock)
-        #print len((set(self.entrylist_eblock) - set(self.entrylist_ecblock)))
+        self.entrylist_ecblock = self._fetch_entries_from_ecblock(self.factomd_address_prod)
+        list.sort(self.entrylist_eblock)
+        list.sort(self.entrylist_ecblock)
+        self.compare_lists(self.entrylist_eblock,self.entrylist_ecblock)
+        print "end of first comparison"
+        self.compare_lists(self.entrylist_eblock, self.entrylist_ecblock)
+        print "end of second comparison"
+        self.identify_duplicates(self.entrylist_eblock)
+        self.identify_duplicates(self.entrylist_ecblock)
+        #list1=[7,8,1,2,3,4]
+        #list2 = [4,5,1,2]
+        #self.compare_lists(list1,list2)
+        print "-----"
+        #self.compare_lists(list2,list1)
 
 
     def _fetch_entries_from_entryblock(self, factomd_address):
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
         #for i in range(7500, height['entryblockheight']):
-        for i in range(53475,54000):
+        for i in range(91887,91888):
             dblock_keymr = self.factom_api.get_directory_block_by_height(i)
             dblock =self.factom_api.get_directory_block_by_keymr(dblock_keymr['keymr'])
             if len(dblock) > 3:
@@ -46,16 +60,17 @@ class FactomAPIEntryBlockTests(unittest.TestCase):
                     for y in range(0, len_entrylist):
                         self.entrylist_eblock.append(entry_block['entrylist'][y]['entryhash'])
                         #print (entry_block['entrylist'][y]['entryhash'])
-        print len(self.entrylist_eblock)
+        logging.getLogger('api_command').info("Total Hashes in Entryblocks = %d" %len(self.entrylist_eblock))
+        print "Total Hashes in Entryblocks = %d" %len(self.entrylist_eblock)
         time.sleep(5)
-        #print self.entrylist_eblock
+        print self.entrylist_eblock
         return self.entrylist_eblock
 
     def _fetch_entries_from_ecblock(self,factomd_address):
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
         #for i in range(7500, height['directoryblockheight']):
-        for i in range(53475, 54000):
+        for i in range(91887,91888):
             ecblock = self.factom_api.get_entry_credit_block_by_height(i)
             len_entries = len(ecblock['body']['entries'])
             if len_entries > 10:
@@ -66,9 +81,10 @@ class FactomAPIEntryBlockTests(unittest.TestCase):
                         #print(self.factom_api.get_entry_by_hash(ecblock['body']['entries'][x]['entryhash']))
                     #print "height = %s" % i
                     #print "-------------"
-        print len(self.entrylist_ecblock)
+        logging.getLogger('api_command').info("Total Entryhashes in ECBLOCK = %d" % len(self.entrylist_ecblock))
+        print "Total EntryCredit Blocks=%d" %len(self.entrylist_ecblock)
         time.sleep(5)
-        #print self.entrylist_ecblock
+        print self.entrylist_ecblock
         return self.entrylist_ecblock
 
 
@@ -91,3 +107,29 @@ class FactomAPIEntryBlockTests(unittest.TestCase):
                     entries = ecblock['body']['entries'][x]
                     if 'entryhash' in entries:
                         print "ECBLOCK ------- Height = %s Entryhash = %s, EntryCredits = %s" % (i, entries['entryhash'], entries['credits'])
+
+    def identify_duplicates(self,duplicatelist):
+        a = dict(Counter(duplicatelist))
+        sum = 0
+        print "Duplicates in the list"
+        for hash, value in a.iteritems():
+            if value > 1:
+                print "Hash=%s # of times repeated = %s" %(hash,value)
+                sum = sum + value
+        print sum
+        print "End of Duplicate function"
+
+    def compare_lists(self,list1,list2):
+        #list.sort(list1)
+        #list.sort(list2)
+        #for a in list1:
+          #  print a
+        #print "end of list1"
+        #for a in list2:
+         #   print a
+        #print "end of list2"
+        print "Start of Comparison Function"
+        for a in list1:
+            if a not in list2:
+                print a
+        print "End of Comparison Function"
