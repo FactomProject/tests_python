@@ -21,7 +21,8 @@ class FactomLoadNodes(unittest.TestCase):
         self.first_address = self.factom_cli_create.import_address_from_factoid(
             self.data['factoid_wallet_address'])
         self.ecrate = self.factom_cli_create.get_factom_change_entry_credit_conversion_rate()
-        self.entry_credit_address100 = fund_entry_credit_address(100)
+        self.entry_credit_address100 = fund_entry_credit_address(100000)
+        time.sleep(20)
 
 
     def test_make_chain_and_check_balance(self):
@@ -48,6 +49,9 @@ class FactomLoadNodes(unittest.TestCase):
                     names_list = ['-c', chain_id, '-e', name_1, '-e', name_2]
                     self.factom_chain_object.add_entry_to_chain(self.entry_credit_address100, path, names_list,
                                                                 flag_list=chain_flags_list)
-            time.sleep(5)
+
+                    self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address100)
+                    #time.sleep(1)
+                time.sleep(5)
             os.remove(path)
         time.sleep(30)
