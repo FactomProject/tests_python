@@ -38,8 +38,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         # check that output was added
         text = self.factom_cli_create.set_account_to_subtract_fee_from_transaction_output(transaction_name, self.second_address)
         transaction_dict = self.factom_chain_object.parse_transaction_data(text)
-        self.assertEqual(str(AMOUNT_SENT - float(self.ecrate) * 12), transaction_dict['TotalOutputs'], "Quiet output not "
-                                                                                         "accepted")
+        self.assertEqual(str(AMOUNT_SENT - float(self.ecrate) * 12), transaction_dict['TotalOutputs'], "Quiet output not accepted")
         self.factom_cli_create.sign_transaction_in_wallet(transaction_name)
 
         # compose transaction
@@ -50,7 +49,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         chain_dict = self.factom_chain_object.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
-        self.assertTrue(self.factom_cli_create.check_wallet_address_balance(self.second_address) is not 0, 'Factoids were not send to address: ' + self.second_address)
+        self.assertNotEqual(self.factom_cli_create.check_wallet_address_balance(self.second_address), 0, 'Factoids were not send to address: ' + self.second_address)
 
     def test_if_you_can_compose_wrong_transaction(self):
         self.assertTrue("Transaction name was not found" in self.factom_cli_create.compose_transaction('not_existing_trans'), 'Non-existent transaction was found in wallet')

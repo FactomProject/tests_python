@@ -76,11 +76,23 @@ class FactomChainObjects(FactomBaseObject):
 
     def get_firstentry(self, **kwargs):
         flags = ''
-        if kwargs:
+        if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        return send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_firstentry, flags)))
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
+        elif 'chain_id' in kwargs:
+            chain_identifier = kwargs['chain_id']
+        return send_command_to_cli_and_receive_text(
+            ''.join((self._factom_cli_command, self._factom_get_firstentry, flags, ' ', chain_identifier)))
 
+    # def get_firstentry(self, **kwargs):
+    #     flags = ''
+    #     if kwargs:
+    #         flags = ' '.join(kwargs['flag_list'])
+    #     return send_command_to_cli_and_receive_text(''.join(
+    #         (self._factom_cli_command, self._factom_get_firstentry, flags)))
+    #
     def get_allentries(self, **kwargs):
         flags = ''
         if kwargs:
@@ -90,11 +102,23 @@ class FactomChainObjects(FactomBaseObject):
 
     def get_chainhead(self, **kwargs):
         flags = ''
-        if kwargs:
+        if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        return send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_chainhead, flags)))
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
+        elif 'chain_id' in kwargs:
+            chain_identifier = kwargs['chain_id']
+        return send_command_to_cli_and_receive_text(
+            ''.join((self._factom_cli_command, self._factom_get_chainhead, flags, ' ', chain_identifier)))
 
+    # def get_chainhead(self, **kwargs):
+    #     flags = ''
+    #     if kwargs:
+    #         flags = ' '.join(kwargs['flag_list'])
+    #     return send_command_to_cli_and_receive_text(''.join(
+    #         (self._factom_cli_command, self._factom_get_chainhead, flags)))
+    #
     def get_sequence_number_from_head(self):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
         return text.split('\n')[3].split(' ')[1]
