@@ -8,6 +8,7 @@ from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
 
 import time
+import logging
 
 
 @attr(last=True)
@@ -69,9 +70,11 @@ class FactomHeightTests(unittest.TestCase):
 
     def test_wallet_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
+        logging.getLogger('height').info(directory_block_height)
         # transactions need to be listed for wallet to catch up the directory block height
         listtxs = self.factom_multiple_nodes.get_all_transactions()
         time.sleep(10)
         wallet_height = self.factom_multiple_nodes.get_wallet_height()
+        logging.getLogger('height').info(wallet_height)
 
         self.assertTrue(directory_block_height == wallet_height, "mismatch in wallet height")
