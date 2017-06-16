@@ -20,18 +20,14 @@ def wait_for_ack(transaction_id):
         time.sleep(1)
 
 def wait_for_entry_in_block(**kwargs):
-    flags = ''
-    if kwargs:
-        flags = ' '.join(kwargs['flag_list'])
+    chain_identifier = ''
+    if 'external_id_list' in kwargs:
+        chain_identifier = ' '.join(kwargs['external_id_list'])
 
-    '''****************************************************
-    Invalid Hash is an error in factomd coding and will corrected in the future to the correct message,
-    probably Entry Not Found.
-    When it is corrected, change it here to match the new message.
-    *******************************************************'''
+    # TODO replace Invalid Hash with correct error message once it is corrected in code
 
     for x in range(0, BLOCK_WAIT_TIME):
-        if 'Invalid Hash' not in factom_object.get_chainhead(flag_list=[flags]): break
+        if 'Invalid Hash' not in factom_object.get_chainhead(external_id_list=[chain_identifier]): break
         time.sleep(1)
 
 def fund_entry_credit_address(amount):
