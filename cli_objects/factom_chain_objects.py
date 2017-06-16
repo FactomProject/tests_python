@@ -41,37 +41,44 @@ class FactomChainObjects(FactomBaseObject):
     def parse_entryblock_data(self, chainhead_text):
         return self.parse_separate_data_from_json(chainhead_text, 'EBEntry')
 
-    def make_chain_from_binary_file(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
-        ext_to_string = ' '.join(external_id_with_flags_list)
+    def make_chain_from_binary_file(self, ecaddress, file_data, **kwargs):
         flags = ''
-        if kwargs:
+        if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' ', flags, ' ', ext_to_string, ' ', ecaddress, ' < ', file_data)))
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
 
-    def compose_chain_from_binary_file(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
-        ext_to_string = ' '.join(external_id_with_flags_list)
+    def compose_chain_from_binary_file(self, ecaddress, file_data, **kwargs):
         flags = ''
-        if kwargs:
+        if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, flags, ' ', ext_to_string, ' ', ecaddress, ' < ', file_data)))
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_compose_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
         return text
 
-    def add_entry_to_chain(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
-        ext_to_string = ' '.join(external_id_with_flags_list)
+    def add_entry_to_chain(self, ecaddress, file_data, **kwargs):
         flags = ''
-        if kwargs:
+        if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
         return send_command_to_cli_and_receive_text(
-            ''.join((self._factom_cli_command, self._factom_add_entries, ' ', flags, ' ',
-                     ext_to_string, ' ', ecaddress, ' < ', file_data)))
+            ''.join((self._factom_cli_command, self._factom_add_entries, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
 
-    def compose_entry_from_binary_file(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):
-        ext_to_string = ' '.join(external_id_with_flags_list)
+    def compose_entry_from_binary_file(self, ecaddress, file_data, **kwargs):
         flags = ''
-        if kwargs:
+        if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
         text = send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factomd_compose_entry, flags, ' ', ext_to_string + ' ', ecaddress, ' < ', file_data)))
+            (self._factom_cli_command, self._factomd_compose_entry, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
         return text
 
     def get_firstentry(self, **kwargs):
@@ -86,19 +93,17 @@ class FactomChainObjects(FactomBaseObject):
         return send_command_to_cli_and_receive_text(
             ''.join((self._factom_cli_command, self._factom_get_firstentry, flags, ' ', chain_identifier)))
 
-    # def get_firstentry(self, **kwargs):
-    #     flags = ''
-    #     if kwargs:
-    #         flags = ' '.join(kwargs['flag_list'])
-    #     return send_command_to_cli_and_receive_text(''.join(
-    #         (self._factom_cli_command, self._factom_get_firstentry, flags)))
-    #
     def get_allentries(self, **kwargs):
         flags = ''
-        if kwargs:
+        if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
+        elif 'chain_id' in kwargs:
+            chain_identifier = kwargs['chain_id']
         return send_command_to_cli_and_receive_text(''.join(
-            (self._factom_cli_command, self._factom_get_allentries, flags)))
+            (self._factom_cli_command, self._factom_get_allentries, flags, ' ', chain_identifier)))
 
     def get_chainhead(self, **kwargs):
         flags = ''
@@ -112,14 +117,6 @@ class FactomChainObjects(FactomBaseObject):
         return send_command_to_cli_and_receive_text(
             ''.join((self._factom_cli_command, self._factom_get_chainhead, flags, ' ', chain_identifier)))
 
-    # def get_chainhead(self, **kwargs):
-    #     flags = ''
-    #     if kwargs:
-    #         flags = ' '.join(kwargs['flag_list'])
-    #     return send_command_to_cli_and_receive_text(''.join(
-    #         (self._factom_cli_command, self._factom_get_chainhead, flags)))
-    #
-    def get_sequence_number_from_head(self):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
         return text.split('\n')[3].split(' ')[1]
 

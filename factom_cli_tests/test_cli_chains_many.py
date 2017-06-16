@@ -36,4 +36,4 @@ class FactomChainTests(unittest.TestCase):
             name_1 = create_random_string(5)
             name_2 = create_random_string(5)
             names_list = ['-n', name_1, '-n', name_2]
-            self.assertFalse("looking for beginning of value" in self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address, path, names_list), "Chain creation failed on chain " + str(i) + " with external ids " + str(names_list))
+            self.assertFalse("looking for beginning of value" in self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address, path, external_id_list=names_list), "Chain creation failed on chain " + str(i) + " with external ids " + str(names_list))
