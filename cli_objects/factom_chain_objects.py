@@ -36,7 +36,6 @@ class FactomChainObjects(FactomBaseObject):
     def parse_chainhead_data(self, chainhead_text):
         # strip json
         chainhead_text = chainhead_text.split('\n')[:6]
-        print 'chainhead_text', chainhead_text
         return dict(item.split(": ") for item in str(chainhead_text).split(','))
 
     def make_chain_from_binary_file(self, ecaddress, file_data, external_id_with_flags_list, **kwargs):

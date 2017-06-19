@@ -37,8 +37,8 @@ class FactomEntryTests(unittest.TestCase):
         self.factom_multiple_nodes.change_factomd_address(factomd_address)
         self.factom_chain_object.change_factomd_address(factomd_address)
         directory_block_head = self.factom_chain_object.get_directory_block_height_from_head()
-        #count the number of times entry is not found
 
+        # count the number of times entry is not found
         entrycount = 0
         for x in range(0, int(directory_block_head)):
             directory_block_height = self.factom_chain_object.get_directory_block_height(str(x))
