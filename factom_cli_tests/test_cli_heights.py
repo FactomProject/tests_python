@@ -7,6 +7,9 @@ from cli_objects.factom_multiple_nodes import FactomHeightObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
 
+import time
+import logging
+
 
 @attr(last=True)
 class FactomHeightTests(unittest.TestCase):
@@ -66,9 +69,14 @@ class FactomHeightTests(unittest.TestCase):
                                 "mismatch in factoid block at height %d" % (x))
 
     def test_wallet_height(self):
+        time.sleep(40)
+        self.factom_multiple_nodes.get_all_transactions()
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()
+        logging.getLogger('height').info(directory_block_height)
         # transactions need to be listed for wallet to catch up the directory block height
-        listtxs = self.factom_multiple_nodes.get_all_transactions()
+        self.factom_multiple_nodes.get_all_transactions()
+        self.factom_multiple_nodes.get_all_transactions()
         wallet_height = self.factom_multiple_nodes.get_wallet_height()
+        logging.getLogger('height').info(wallet_height)
 
         self.assertTrue(directory_block_height == wallet_height, "mismatch in wallet height")
