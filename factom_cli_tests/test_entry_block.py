@@ -41,7 +41,7 @@ class FactomEntryTests(unittest.TestCase):
         # count the number of times entry is not found
         entrycount = 0
         for x in range(0, int(directory_block_head)):
-            directory_block_height = self.factom_chain_object.get_directory_block_height(str(x))
+            directory_block_height = self.factom_chain_object.get_directory_block_by_height(str(x))
             directory_block_height = ast.literal_eval(directory_block_height)
             if len(directory_block_height['dblock']['dbentries']) > 3:
                 totalentryblocks = len(directory_block_height['dblock']['dbentries'])

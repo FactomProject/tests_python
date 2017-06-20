@@ -1,4 +1,5 @@
 {
+  "BLOCKTIME": 40,
   "factoid_wallet_address": "Fs2DNirmGDtnAZGXqca3XHkukTNMxoMGFFQxJA3bAjJnKzzsZBMH",
   "ec_wallet_address": "Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG",
   "test_file_path": "../test_data/testfile",
@@ -22,7 +23,7 @@
   "1st_hex_external_id1": "aa",
   "1st_hex_external_id2": "bb",
   "1st_hex_chain_id": "52d9c487ffe6f968a7c8db6391e625ddabe4679944c6298e38a1b72f46185ee4",
-  "1st_hex_entry_hash": "1fac9a9beb8bf3367fd8bfa8be2429d09746d471d2261f1c6f75dba6a7bb0958",
+  "1st_hex_entry_hash": "1fac9a9beb8bf3367fd8be2429d09746d471d2261f1c6f75dba6a7bb0958",
   "2nd_hex_external_id1": "cc",
   "2nd_hex_external_id2": "dd",
   "2nd_hex_chain_id": "e5967ce2a9c61c841495fd2e6acaeaec9cb5bc49f3a24eee25670a9b4ea5a0c9",
