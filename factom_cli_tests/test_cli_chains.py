@@ -104,7 +104,6 @@ class FactomChainTests(unittest.TestCase):
         text = self.factom_chain_object.get_firstentry(external_id_list=names_list)
         chain_id = self.factom_chain_object.parse_entry_data(text)['ChainID']
         self.assertTrue(chain_id == self.data['1st_hex_chain_id'], 'Chain not found')
- 
 
     def test_force_make_chain(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
@@ -189,7 +188,7 @@ class FactomChainTests(unittest.TestCase):
         # get latest block previous merkel root
         prevMR = self.factom_chain_object.parse_directoryblock_data(text)['PrevBlockKeyMR']
 
-        # compare to previous merkel root given by looking up directory block erkel root
+        # compare to previous merkel root given by looking up directory block merkel root
         keyMR = self.factom_chain_object.parse_directoryblock_data(text)['DBlock']
         text = self.factom_chain_object.get_directory_block(keyMR)
         self.assertTrue(prevMR == self.factom_chain_object.parse_directoryblock_data(text)[
