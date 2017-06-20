@@ -106,6 +106,13 @@ class FactomChainObjects(FactomBaseObject):
         return send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_get_allentries, flags, ' ', chain_identifier)))
 
+    def get_pending_entries(self, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_pending_entries, flags)))
+        return text
+
     def get_chainhead(self, **kwargs):
         flags = ''
         if 'flag_list' in kwargs:
@@ -117,8 +124,13 @@ class FactomChainObjects(FactomBaseObject):
             chain_identifier = kwargs['chain_id']
         return send_command_to_cli_and_receive_text(
             ''.join((self._factom_cli_command, self._factom_get_chainhead, flags, ' ', chain_identifier)))
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
-        return text.split('\n')[3].split(' ')[1]
+
+    def get_latest_directory_block(self, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head, flags)))
+        return text
 
     def get_latest_directory_block(self):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
