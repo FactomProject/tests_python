@@ -52,8 +52,8 @@ class FactomChainTests(unittest.TestCase):
                     if chainid not in self.chainlist:
 
                         # compare keyMR for each chain found in entry block with chainhead from factomd
-                        chainhead = self.factom_chain_object.get_chainhead([chainid])
-                        EBlock = self.factom_chain_object.parse_chainhead_data(chainhead)['[\'EBlock'][:-1]
+                        chainhead = self.factom_chain_object.get_chainhead(chain_id=chainid)
+                        EBlock = self.factom_chain_object.parse_entryblock_data(chainhead)['EBlock']
                         self.assertEqual(EBlock, keyMR, 'for chain ' +
 chainid + ' chainhead ' + EBlock + ' does not match chain keyMR ' + keyMR + ' in entry block')
 
