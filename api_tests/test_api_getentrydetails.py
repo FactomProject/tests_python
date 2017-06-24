@@ -36,7 +36,7 @@ class FactomAPIEntryTests(unittest.TestCase):
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
         for i in range(90000, height['entryblockheight']):
-            logging.getLogger('api_command').info("Height = %s" %height)
+            logging.getLogger('api_command').info("Height = %s" %i)
             dblock_keymr = self.factom_api.get_directory_block_by_height(i)
             dblock =self.factom_api.get_directory_block_by_keymr(dblock_keymr['keymr'])
             if len(dblock) > 3:
@@ -59,3 +59,4 @@ class FactomAPIEntryTests(unittest.TestCase):
     def _parse_and_display_chain_details(self,chainiddict):
         for chainid, entryhash in chainiddict.items():
             logging.getLogger('api_command').info("ChainID = %s ===>>  total entries = %s" % (chainid, str(len(entryhash))))
+        logging.getLogger('api_command').info("Total Chains in the Blockchain = %s" % str(len(chainiddict)))
