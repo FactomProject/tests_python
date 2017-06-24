@@ -35,7 +35,7 @@ class FactomAPIEntryTests(unittest.TestCase):
     def _fetch_keymr_from_dblock(self,factomd_address):
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
-        for i in range(90000, height['entryblockheight']):
+        for i in range(0, height['entryblockheight']):
             logging.getLogger('api_command').info("Height = %s" %i)
             dblock_keymr = self.factom_api.get_directory_block_by_height(i)
             dblock =self.factom_api.get_directory_block_by_keymr(dblock_keymr['keymr'])
