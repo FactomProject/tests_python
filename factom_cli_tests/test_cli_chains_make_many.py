@@ -1,9 +1,7 @@
 import unittest
 import os, binascii
-import time
 
 from nose.plugins.attrib import attr
-from flaky import flaky
 
 from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_chain_objects import FactomChainObjects

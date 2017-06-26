@@ -1,6 +1,5 @@
 import unittest
 import os, binascii
-import time
 
 from nose.plugins.attrib import attr
 from flaky import flaky
@@ -180,18 +179,18 @@ class FactomChainTests(unittest.TestCase):
 
         # get latest block sequence number
         text = self.factom_chain_object.get_latest_directory_block()
-        seq = self.factom_chain_object.parse_directoryblock_data(text)['SequenceNumber']
+        seq = self.factom_chain_object.parse_directoryblock_data(text)['fixed']['SequenceNumber']
 
         # compare to block sequence number given by get heights
         self.assertTrue(seq == self.factom_chain_object.get_directory_block_height_from_head(), 'Directory block is not equal to sequence number')
 
         # get latest block previous merkel root
-        prevMR = self.factom_chain_object.parse_directoryblock_data(text)['PrevBlockKeyMR']
+        prevMR = self.factom_chain_object.parse_directoryblock_data(text)['fixed']['PrevBlockKeyMR']
 
         # compare to previous merkel root given by looking up directory block merkel root
-        keyMR = self.factom_chain_object.parse_directoryblock_data(text)['DBlock']
+        keyMR = self.factom_chain_object.parse_directoryblock_data(text)['fixed']['DBlock']
         text = self.factom_chain_object.get_directory_block(keyMR)
-        self.assertTrue(prevMR == self.factom_chain_object.parse_directoryblock_data(text)[
+        self.assertTrue(prevMR == self.factom_chain_object.parse_directoryblock_data(text)['fixed'][
     'PrevBlockKeyMR'], 'Get dblock by merkle root did not fetch correct directory block')
 
     def test_get_directory_block_by_merkel_root(self):
