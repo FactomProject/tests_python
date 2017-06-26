@@ -197,4 +197,3 @@ class FactomChainTests(unittest.TestCase):
         factom_flags_list = ['-K']
         keyMR = self.factom_chain_object.get_latest_directory_block(flag_list=factom_flags_list)
         self.assertFalse('Block not found' in self.factom_chain_object.get_directory_block(keyMR), 'Bad merkel root')
-
