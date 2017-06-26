@@ -14,11 +14,12 @@ class FactomChainObjects(FactomBaseObject):
     _factom_add_entries = 'addentry'
     _factom_get_firstentry = ' get firstentry '
     _factom_get_allentries = ' get allentries '
+    _factom_pending_entries = 'get pendingentries '
     _factom_get_chainhead = ' get chainhead '
     _factom_wallet_backup_wallet = 'backupwallet'
     _factom_get_directoryblock = 'get dblock '
     _factom_get_entryblock = 'get eblock '
-    _factom_get_entryhash = 'get entry '
+    _factom_get_entry_by_hash = 'get entry '
 
     def parse_simple_data(self, chain_text):
         return dict(item.split(": ") for item in chain_text.split('\n'))
@@ -105,6 +106,13 @@ class FactomChainObjects(FactomBaseObject):
         return send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factom_get_allentries, flags, ' ', chain_identifier)))
 
+    def get_pending_entries(self, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_pending_entries, flags)))
+        return text
+
     def get_chainhead(self, **kwargs):
         flags = ''
         if 'flag_list' in kwargs:
@@ -116,9 +124,6 @@ class FactomChainObjects(FactomBaseObject):
             chain_identifier = kwargs['chain_id']
         return send_command_to_cli_and_receive_text(
             ''.join((self._factom_cli_command, self._factom_get_chainhead, flags, ' ', chain_identifier)))
-
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head)))
-        return text.split('\n')[3].split(' ')[1]
 
     def get_latest_directory_block(self, **kwargs):
         flags = ''
@@ -156,8 +161,8 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entryblock, keymr)))
         return text
 
-    def get_entryhash(self,entryhash):
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entryhash, entryhash)))
+    def get_entry_by_hash(self, entryhash):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entry_by_hash, entryhash)))
         return text
 
     def parse_separate_data_from_json(self, text, json_marker):
