@@ -8,7 +8,8 @@ class FactomBaseObject():
     factomd_address = data['factomd_address']
     factomd_address_2 = data['factomd_address_2']
 
-    _gopath = os.environ['GOPATH']
+    #_gopath = os.environ['GOPATH']
+    _gopath = ""
     _factom_cli_command = _gopath + '/bin/factom-cli -w ' \
                                     ''+wallet_address+' -s '+factomd_address+' '
 

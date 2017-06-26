@@ -72,7 +72,7 @@ class FactomAPIEntryTests(unittest.TestCase):
         factomd_address = self.factomd_address_prod
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
-        for i in range(94500, height['entryblockheight']):
+        for i in range(0, height['entryblockheight']):
             logging.getLogger('api_command').info("Height = %s" % i)
             print strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
             print "height = %d" % i
