@@ -72,7 +72,7 @@ class FactomAPIEntryTests(unittest.TestCase):
         factomd_address = self.factomd_address_prod
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
-        for i in range(0, height['entryblockheight']):
+        for i in range(94550, height['entryblockheight']):
             logging.getLogger('api_command').info("Height = %s" % i)
             print strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
             print "height = %d" % i
@@ -93,8 +93,7 @@ class FactomAPIEntryTests(unittest.TestCase):
         factomd_address = self.factomd_address_prod
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
-        count = 0
-        for i in range(0, height['entryblockheight']):
+        for i in range(94600, height['entryblockheight']):
             logging.getLogger('api_command').info("Height = %s" % i)
             print strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
             print "height = %d" % i
@@ -103,20 +102,15 @@ class FactomAPIEntryTests(unittest.TestCase):
             if len(dblock) > 3:
                 for x in range(3, len(dblock)):
                     chainid = dblock[x]['chainid']
+                    print "calling insert function"
+                    print chainid
                     insert_to_db(factomd_conn,chainid)
+                    print "insert function over"
         cur = factomd_conn.cursor()
         fetch_from_db(cur)
-        for result in cur:
-            print cur.fetchone()
-            logging.getLogger('api_command').info("Chain ID = %s" %(cur.fetchone()))
-            count += 1
-        print count
-        logging.getLogger('api_command').info("Length of Chain = %s" % (count))
+        chainidlist = cur.fetchall()
+        print chainidlist
+        print len(chainidlist)
+        logging.getLogger('api_command').info("Chain ID = %s" %(chainidlist))
+        logging.getLogger('api_command').info("Length of Chain = %s" % len(chainidlist))
         close_connection_to_db(factomd_conn)
-
-
-
-
-
-
-
