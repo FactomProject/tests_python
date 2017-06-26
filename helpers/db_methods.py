@@ -6,8 +6,8 @@ def connect_to_db():
     return conn
 
 def create_table(conn):
-    conn.execute('drop table entries')
-    conn.execute('create table entries(chainid UNIQUE)')
+    #conn.execute('DROP TABLE [IF EXISTS] entries')
+    conn.execute('create table if not exists entries(chainid UNIQUE)')
 
 
 def insert_to_db(conn,chainid):
