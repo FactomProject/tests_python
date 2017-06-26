@@ -72,7 +72,7 @@ class FactomAPIEntryTests(unittest.TestCase):
         factomd_address = self.factomd_address_prod
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
-        for i in range(94550, height['entryblockheight']):
+        for i in range(0, height['entryblockheight']):
             logging.getLogger('api_command').info("Height = %s" % i)
             print strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
             print "height = %d" % i
@@ -100,7 +100,13 @@ class FactomAPIEntryTests(unittest.TestCase):
             if len(dblock) > 3:
                 for x in range(3, len(dblock)):
                     chainid = dblock[x]['chainid']
-                    insert_to_db(factomd_conn,chainid)
+                    entry_block = self.factom_api.get_entry_block(dblock[x]['keymr'])
+                    len_entrylist = len(entry_block['entrylist'])
+                    for y in range(0, len_entrylist):
+                        entryhash = entry_block['entrylist'][y]['entryhash']
+                        output = self.factom_api.get_entry_by_hash(entryhash)
+                        size = len(output['content'])
+                        insert_to_db(factomd_conn,entryhash,chainid,size)
         cur = factomd_conn.cursor()
         fetch_from_db(cur)
         chainidlist = cur.fetchall()
