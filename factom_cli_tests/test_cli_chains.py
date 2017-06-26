@@ -189,10 +189,15 @@ class FactomChainTests(unittest.TestCase):
         # get latest block previous merkel root
         prevMR = self.factom_chain_object.parse_directoryblock_data(text)['PrevBlockKeyMR']
 
-        # compare to previous merkel root given by looking up directory block erkel root
+        # compare to previous merkel root given by looking up directory block merkel root
         keyMR = self.factom_chain_object.parse_directoryblock_data(text)['DBlock']
         text = self.factom_chain_object.get_directory_block(keyMR)
         self.assertTrue(prevMR == self.factom_chain_object.parse_directoryblock_data(text)[
     'PrevBlockKeyMR'], 'Get dblock by merkle root did not fetch correct directory block')
+
+    def test_get_directory_block_by_merkel_root(self):
+        factom_flags_list = ['-K']
+        keyMR = self.factom_chain_object.get_latest_directory_block(flag_list=factom_flags_list)
+        self.assertFalse('Block not found' in self.factom_chain_object.get_directory_block(keyMR), 'Bad merkel root')
 
 
