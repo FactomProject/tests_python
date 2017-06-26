@@ -134,6 +134,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         name_2 = binascii.b2a_hex(os.urandom(2))
         chain_names_list = ['-h', name_1, '-h', name_2]
         text = self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=chain_names_list)
+        chain_id = self.factom_chain_object.parse_simple_data(text)['ChainID']
         entry_hash = self.factom_chain_object.parse_simple_data(text)['Entryhash']
 
         # make entry
@@ -145,13 +146,14 @@ class FactomCliTransactionTest(unittest.TestCase):
         names_list = chain_names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-f', '-T']
         tx_id = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000,
-                                                               self.path, external_id_list=names_list, flag_list=factom_flags_list)
+                      self.path, external_id_list=names_list, flag_list=factom_flags_list)
+
         # check for pending entries return entry hash
         factom_flags_list = ['-E']
         entry_hash_list = self.factom_chain_object.get_pending_entries(flag_list=factom_flags_list)
         for entry_hash in entry_hash_list.split('\n'):
             text = self.factom_chain_object.get_entry_by_hash(entry_hash)
-            entry_chain_id = self.factom_chain_object.parse_first_entry_data(text)[' \'ChainID'][:-1]
+            entry_chain_id = self.factom_chain_object.parse_entry_data(text)['ChainID']
             if entry_chain_id == chain_id:
                found = True
                break

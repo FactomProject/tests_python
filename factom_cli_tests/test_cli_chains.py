@@ -73,7 +73,6 @@ class FactomChainTests(unittest.TestCase):
         names_list = ['-n', name_1, '-n', name_2]
         chain_flag_list = ['-E']
         balance_before = self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address100)
-        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entry_by_hash(entry_hash),
         entry_hash = self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list, flag_list=chain_flag_list)
         self.assertTrue("Entry not found" not in self.factom_chain_object.get_entry_by_hash(entry_hash),
                         "Chain not revealed")
@@ -104,12 +103,6 @@ class FactomChainTests(unittest.TestCase):
         wait_for_entry_in_block(external_id_list=names_list)
         text = self.factom_chain_object.get_firstentry(external_id_list=names_list)
         chain_id = self.factom_chain_object.parse_entry_data(text)['ChainID']
-        self.assertTrue(chain_id == self.data['1st_hex_chain_id'], 'Chain not found')
-
-        # validate get firstentry by hex external id command
-        wait_for_entry_in_block(names_list)
-        text = self.factom_chain_object.get_firstentry(names_list)
-        chain_id = self.factom_chain_object.parse_first_entry_data(text)[' \'ChainID'][:-1]
         self.assertTrue(chain_id == self.data['1st_hex_chain_id'], 'Chain not found')
 
     def test_force_make_chain(self):
