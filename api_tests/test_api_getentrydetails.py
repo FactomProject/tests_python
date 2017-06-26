@@ -1,7 +1,7 @@
 import unittest
 import time
 import logging
-
+from time import localtime, strftime
 from nose.plugins.attrib import attr
 from collections import Counter
 
@@ -28,15 +28,18 @@ class FactomAPIEntryTests(unittest.TestCase):
         self.factom_api = FactomApiObjects()
         self.factom_api_wallet = FactomWalletApiObjects()
 
-    def test_get_allentries(self):
+    def notest_get_allentries(self):
         self.chaindict=self._fetch_keymr_from_dblock(self.factomd_address_prod)
         self._parse_and_display_chain_details(self.chaindict)
 
     def _fetch_keymr_from_dblock(self,factomd_address):
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
-        for i in range(0, height['entryblockheight']):
+        #for i in range(58750, height['entryblockheight']):
+        for i in range(58750,58800):
             logging.getLogger('api_command').info("Height = %s" %i)
+            print strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
+            print "height = %d" %i
             dblock_keymr = self.factom_api.get_directory_block_by_height(i)
             dblock =self.factom_api.get_directory_block_by_keymr(dblock_keymr['keymr'])
             if len(dblock) > 3:
@@ -54,9 +57,31 @@ class FactomAPIEntryTests(unittest.TestCase):
                             self.chaindict[chainid].update(entryhashlist)
                         else:
                             self.chaindict[chainid] = entryhashlist
+            #print self.chaindict
         return self.chaindict
 
     def _parse_and_display_chain_details(self,chainiddict):
         for chainid, entryhash in chainiddict.items():
             logging.getLogger('api_command').info("ChainID = %s ===>>  total entries = %s" % (chainid, str(len(entryhash))))
+            print chainid + "===>" + str(len(entryhash))
         logging.getLogger('api_command').info("Total Chains in the Blockchain = %s" % str(len(chainiddict)))
+        print len(chainiddict)
+
+    def test_fetch_chains(self):
+        factomd_address = self.factomd_address_prod
+        self.factom_api.change_factomd_address(factomd_address)
+        height = self.factom_api.get_heights()
+        for i in range(0, height['entryblockheight']):
+        #for i in range(58750, 58800):
+            logging.getLogger('api_command').info("Height = %s" % i)
+            print strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
+            print "height = %d" % i
+            chainid = []
+            dblock_keymr = self.factom_api.get_directory_block_by_height(i)
+            dblock = self.factom_api.get_directory_block_by_keymr(dblock_keymr['keymr'])
+            if len(dblock) > 3:
+                for x in range(3, len(dblock)):
+                    chainid.append(dblock[x]['chainid'])
+        print len(chainid)
+        print chainid
+
