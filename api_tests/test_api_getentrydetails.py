@@ -95,22 +95,15 @@ class FactomAPIEntryTests(unittest.TestCase):
         height = self.factom_api.get_heights()
         for i in range(94600, height['entryblockheight']):
             logging.getLogger('api_command').info("Height = %s" % i)
-            print strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
-            print "height = %d" % i
             dblock_keymr = self.factom_api.get_directory_block_by_height(i)
             dblock = self.factom_api.get_directory_block_by_keymr(dblock_keymr['keymr'])
             if len(dblock) > 3:
                 for x in range(3, len(dblock)):
                     chainid = dblock[x]['chainid']
-                    print "calling insert function"
-                    print chainid
                     insert_to_db(factomd_conn,chainid)
-                    print "insert function over"
         cur = factomd_conn.cursor()
         fetch_from_db(cur)
         chainidlist = cur.fetchall()
-        print chainidlist
-        print len(chainidlist)
         logging.getLogger('api_command').info("Chain ID = %s" %(chainidlist))
         logging.getLogger('api_command').info("Length of Chain = %s" % len(chainidlist))
         close_connection_to_db(factomd_conn)
