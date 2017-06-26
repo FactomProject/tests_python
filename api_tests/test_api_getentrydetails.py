@@ -72,16 +72,19 @@ class FactomAPIEntryTests(unittest.TestCase):
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
         for i in range(0, height['entryblockheight']):
-        #for i in range(58750, 58800):
             logging.getLogger('api_command').info("Height = %s" % i)
-            print strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
-            print "height = %d" % i
             chainid = []
             dblock_keymr = self.factom_api.get_directory_block_by_height(i)
             dblock = self.factom_api.get_directory_block_by_keymr(dblock_keymr['keymr'])
             if len(dblock) > 3:
                 for x in range(3, len(dblock)):
                     chainid.append(dblock[x]['chainid'])
+        logging.getLogger('api_command').info("Length of Chain = %s" %len(chainid))
+        logging.getLogger('api_command').info("List of Chains = %s" %chainid)
         print len(chainid)
         print chainid
+
+# print strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())
+# print "height = %d" % i
+
 
