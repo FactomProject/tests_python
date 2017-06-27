@@ -40,10 +40,10 @@ class FactomChainObjects(FactomBaseObject):
         return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
 
     def parse_directoryblock_data(self, entry_text):
-        return self.parse_separate_data_from_json(entry_text, 'EntryBlock')
+        return self.parse_separate_fixed_from_repeating_data(entry_text, 'EntryBlock')
 
     def parse_entryblock_data(self, chainhead_text):
-        return self.parse_separate_data_from_json(chainhead_text, 'EBEntry')
+        return self.parse_separate_fixed_from_repeating_data(chainhead_text, 'EBEntry')
 
     def make_chain_from_binary_file(self, ecaddress, file_data, **kwargs):
         flags = ''
@@ -181,7 +181,7 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_raw, hash)))
         return text
 
-    def parse_separate_data_from_json(self, text, repeating_marker):
+    def parse_separate_fixed_from_repeating_data(self, text, repeating_marker):
         # find start of repeating
         repeating_start = 0
         for line in text.split("\n"):
@@ -189,35 +189,13 @@ class FactomChainObjects(FactomBaseObject):
                 break
             repeating_start += 1
 
-        entry_text = text.split('\n')
-        extract = entry_text[:repeating_start]
-        print 'extract', extract
-        fixed = dict(item.split(": ") for item in str(extract)[1:-1].translate(None, "'").split(', '))
-        print 'fixed', fixed
-
-        repeating = str(entry_text[repeating_start:-1])
-        print 'repeating', repeating
-        repeating = re.sub(' ([0-9]|[a-f])', '\': \'', repeating)
-        repeating = re.sub('\'' + repeating_marker + ' {\'\,', '{', repeating)
+        text = text.split('\n')
+        fixed = dict(item.split(": ") for item in str(text[:repeating_start])[1:-1].translate(None, "'").split(', '))
+        repeating = str(text[repeating_start:-1])
+        repeating = re.sub('\'', '"', repeating)
+        repeating = re.sub(' ([0-9]|[a-f])', '": "', repeating)
+        repeating = re.sub('"' + repeating_marker + ' {"\,', '{', repeating)
         repeating = re.sub('\\\\t', '', repeating)
-        repeating = re.sub('\, \'}\'', ' }', repeating)
-        print 'repeating', repeating
+        repeating = re.sub('\, "}"', ' }', repeating)
+        repeating = '{ "' + repeating_marker + '": ' + repeating + '}'
         return {'fixed':fixed, 'repeating':repeating}
-
-    # def parse_separate_data_from_json(self, text, json_marker):
-    #     # find start of json
-    #     json_start = 0
-    #     for line in text.split("\n"):
-    #         if json_marker in line:
-    #             break
-    #         json_start += 1
-    #
-    #     entry_text = text.split('\n')
-    #     extract = entry_text[:json_start]
-    #     print 'dict', dict(item.split(": ") for item in str(extract)[1:-1].translate(None, "'").split(', '))
-    #
-    #     '''The multivalued json part of this text is stripped out and left here for further processing at a later time
-    #     should the data contained therein become needed'''
-    #     json = entry_text[json_start:-1]
-    #     print 'json', json
-    #     return (dict(item.split(": ") for item in str(extract)[1:-1].translate(None, "'").split(', ')), json)

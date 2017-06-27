@@ -1,6 +1,6 @@
 import unittest
 import json
-
+import re
 from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_create import FactomCliCreate
@@ -42,14 +42,9 @@ class FactomCliEndToEndTest(unittest.TestCase):
         ENTRY = 3
         keyMR = dblock['dblock']['dbentries'][ENTRY]['keymr']
         eblock = self.factom_chain_object.get_entry_block(keyMR)
-        print 'eblock', eblock
-        ehashlist = ''
-        for entry in eblock:
-            ehashlist = ehashlist + eblock['Entryhash']
-            entrycontents = self.factom_chain_object.get_entry_by_hash(entryhash)
-
-        dhash=dblock['dblock']['dbhash']
-        self.assertEquals(dblock['rawdata'], self.factom_chain_object.get_raw(dhash), 'Incorrect raw data fetched for Directory Block at height ' + str(BLOCK_HEIGHT))
+        eblock = self.factom_chain_object.parse_entryblock_data(eblock)
+        repeating = json.loads(eblock['repeating'])
+        self.assertIn(repeating['EBEntry'][0]['EntryHash'], self.factom_chain_object.get_raw(keyMR), 'Incorrect raw data fetched for Entry Block at height ' + str(BLOCK_HEIGHT))
 
         # TODO Once factomd code is corrected, insert correct hash field and activate this test
 
