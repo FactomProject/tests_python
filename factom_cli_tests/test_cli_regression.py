@@ -173,9 +173,6 @@ class FactomCliEndToEndTest(unittest.TestCase):
         # TODO When get_pending_transactions code is repaired, insert code here that verifies its proper functioning
 
         balance_after = self.factom_cli_create.check_wallet_address_balance(self.first_address)
-        # print 'balance1_after', float(balance_after)
-        # print 'balance1', float(balance)
-        # print 'ecrate', format(float(self.ecrate) * 8, 'f')
         self.assertTrue(abs(float(balance_after) - (float(balance_before) - float(self.ecrate) * 8)) <= 0.0000001, 'Balance is not subtracted correctly')
 
     def test_create_transaction_with_input_to_ec_quiet_addfee(self):
