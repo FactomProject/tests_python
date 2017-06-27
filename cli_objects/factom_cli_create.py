@@ -111,7 +111,7 @@ class FactomCliCreate(FactomBaseObject):
     def remove_transaction_from_wallet(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_remove_tx, transaction_name)))
 
-    def add_entry_credit_output_to_transaction_in_wallet(self, transaction_name, wallet_address, amount, **kwargs):
+    def add_entry_credit_output_to_transaction(self, transaction_name, wallet_address, amount, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])

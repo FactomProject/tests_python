@@ -185,8 +185,8 @@ class FactomCliEndToEndTest(unittest.TestCase):
         transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction(transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction(transaction_name, self.first_address, str(FACTOID_AMOUNT))
-        self.factom_cli_create.add_entry_credit_output_to_transaction_in_wallet(transaction_name,
-                                self.entry_credit_address, str(FACTOID_AMOUNT))
+        self.factom_cli_create.add_entry_credit_output_to_transaction(transaction_name,
+                                                                      self.entry_credit_address, str(FACTOID_AMOUNT))
 
         # test add_fee_to_transaction quiet flag
         factom_flags_list = ['-q']
@@ -214,7 +214,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
         # check add_entry_credit_output_to_transaction quiet flag
         factom_flags_list = ['-q']
-        self.factom_cli_create.add_entry_credit_output_to_transaction_in_wallet(transaction_name, self.entry_credit_address, str(ENTRY_CREDIT_AMOUNT), flag_list=factom_flags_list)
+        self.factom_cli_create.add_entry_credit_output_to_transaction(transaction_name, self.entry_credit_address, str(ENTRY_CREDIT_AMOUNT), flag_list=factom_flags_list)
         self.assertNotIn("Inputs and outputs don't add up", self.factom_cli_create.subtract_fee_from_transaction_output(transaction_name, self.second_address),
             "Entry credit output not added")
 
