@@ -112,14 +112,14 @@ class FactomCliTransactionTest(unittest.TestCase):
         name_2 = create_random_string(2)
         names_list = ['-c', chain_id, '-e', name_1, '-e', name_2]
 
-        self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list))
+        self.assertIn("Entry cannot be larger than 10KB", self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list))
 
         # check for pending entries
-        self.assertTrue(chain_id in self.factom_chain_object.get_pending_entries(), 'Entry not shown as pending')
+        self.assertIn(chain_id, self.factom_chain_object.get_pending_entries(), 'Entry not shown as pending')
 
         # validate get firstentry command
         wait_for_entry_in_block(external_id_list=chain_names_list)
-        self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry(external_id_list=chain_names_list), 'Chain not found')
+        self.assertIn("ExtID: " + firstentry_ext_id, self.factom_chain_object.get_firstentry(external_id_list=chain_names_list), 'Chain not found')
 
         # validate get firstentry_return_entry_hash
         factom_flags_list = ['-E']

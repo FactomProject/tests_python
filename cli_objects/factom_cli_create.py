@@ -54,7 +54,7 @@ class FactomCliCreate(FactomBaseObject):
     def create_new_transaction(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_newtx, transaction_name)))
 
-    def add_factoid_input_to_transaction_in_wallet(self, transaction_name, wallet_address, amount, **kwargs):
+    def add_factoid_input_to_transaction(self, transaction_name, wallet_address, amount, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
@@ -69,7 +69,7 @@ class FactomCliCreate(FactomBaseObject):
     def subtract_fee_from_transaction_output(self, transaction_name, wallet_address):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_substract_fee_on_tx, transaction_name, ' ', wallet_address)))
 
-    def set_account_to_add_fee_to_transaction_input(self, transaction_name, wallet_address, **kwargs):
+    def add_fee_to_transaction_input(self, transaction_name, wallet_address, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
