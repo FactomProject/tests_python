@@ -6,6 +6,7 @@ from nose.plugins.attrib import attr
 from collections import Counter
 import helpers.db_methods
 from helpers.db_methods import *
+import csv
 
 from api_objects.factomd_api_objects import FactomApiObjects
 from helpers.helpers import read_data_from_json
@@ -93,8 +94,9 @@ class FactomAPIEntryTests(unittest.TestCase):
         factomd_address = self.factomd_address_prod
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
-        for i in range(0, height['entryblockheight']):
+        for i in range(0,25000):
             logging.getLogger('api_command').info("Height = %s" % i)
+            print i
             dblock_keymr = self.factom_api.get_directory_block_by_height(i)
             dblock = self.factom_api.get_directory_block_by_keymr(dblock_keymr['keymr'])
             if len(dblock) > 3:
@@ -107,9 +109,23 @@ class FactomAPIEntryTests(unittest.TestCase):
                         output = self.factom_api.get_entry_by_hash(entryhash)
                         size = len(output['content'])
                         insert_to_db(factomd_conn,entryhash,chainid,size)
+                        if i == 1000:
+                            commit_to_db(factomd_conn)
         cur = factomd_conn.cursor()
         fetch_from_db(cur)
         chainidlist = cur.fetchall()
+        print chainidlist
+        print len(chainidlist)
         logging.getLogger('api_command').info("Chain ID = %s" %(chainidlist))
         logging.getLogger('api_command').info("Length of Chain = %s" % len(chainidlist))
         close_connection_to_db(factomd_conn)
+
+
+    def notest_fetch_data_and_write_to_csv(self):
+        csvWriter = csv.writer(open("output.csv", "w"))
+        conn = connect_to_db()
+        cur = conn.cursor()
+        fetch_from_db(cur)
+        rows = cur.fetchall()
+        csvWriter.writerows(rows)
+        close_connection_to_db(conn)

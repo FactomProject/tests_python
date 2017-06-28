@@ -1,8 +1,7 @@
 import sqlite3
 
 def connect_to_db():
-    conn = sqlite3.connect('factomd-automation1.db')
-    print conn
+    conn = sqlite3.connect('factomd-automation.db')
     return conn
 
 def create_table(conn):
@@ -14,6 +13,9 @@ def insert_to_db(conn,entry_hash,chainid,size):
     #conn.execute('INSERT INTO entries(chainid) SELECT (?) '
                  #'WHERE NOT EXISTS (SELECT chainid FROM entries WHERE chainid = (?))',(str(chainid),str(chainid),))
 
+
+def commit_to_db(conn):
+    conn.commit()
 
 def fetch_from_db(conn):
      result = conn.execute('SELECT * from chain_entries')
