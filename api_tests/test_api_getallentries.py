@@ -13,7 +13,7 @@ from helpers.helpers import read_data_from_json
 from api_objects.factom_wallet_api_objects import FactomWalletApiObjects
 
 
-@attr(entry=True)
+@attr(allentry=True)
 class FactomAPIEntryTests(unittest.TestCase):
     '''
     testcases to get all entries and entry size in the blockchain
