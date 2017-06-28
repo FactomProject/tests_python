@@ -1,7 +1,7 @@
 import sqlite3
 
 def connect_to_db():
-    conn = sqlite3.connect('factomd-automation.db')
+    conn = sqlite3.connect('factomd-automation25k.db')
     return conn
 
 def create_table(conn):
