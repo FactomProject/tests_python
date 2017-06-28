@@ -38,7 +38,7 @@ class FactomChainTests(unittest.TestCase):
 
         # work backwards through directory block chain
         for x in range(int(directory_block_head), 0, -1):
-            directory_block_height = self.factom_chain_object.get_directory_block_height(str(x))
+            directory_block_height = self.factom_chain_object.get_directory_block_by_height(str(x))
             directory_block_height = ast.literal_eval(directory_block_height)
 
             # ignore 1st 3 entries in Entry Block which are administrative
