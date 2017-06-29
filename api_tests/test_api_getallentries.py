@@ -78,9 +78,7 @@ class FactomAPIEntryTests(unittest.TestCase):
         create_table_ecblock(factomd_conn)
         self.factom_api.change_factomd_address(self.factomd_address_prod)
         height = self.factom_api.get_heights()
-        counter=1
         for i in range(0,25000):
-            counter += 1
             ecblock = self.factom_api.get_entry_credit_block_by_height(i)
             len_entries = len(ecblock['body']['entries'])
             logging.getLogger('api_command').info("Height = %s" % i)
@@ -91,8 +89,7 @@ class FactomAPIEntryTests(unittest.TestCase):
                     if 'entryhash' in entries:
                         entryhash = ecblock['body']['entries'][x]['entryhash']
                         credits = ecblock['body']['entries'][x]['credits']
-                        counter = "a" + str(counter)
-                        insert_to_ecblock(counter,factomd_conn,entryhash,credits,i)
+                        insert_to_ecblock(factomd_conn,entryhash,credits,i)
                         if i % 100 == 0:
                             commit_to_db(factomd_conn)
         cur = factomd_conn.cursor()
