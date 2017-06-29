@@ -78,7 +78,7 @@ class FactomAPIEntryTests(unittest.TestCase):
         create_table_ecblock(factomd_conn)
         self.factom_api.change_factomd_address(self.factomd_address_prod)
         height = self.factom_api.get_heights()
-        for i in range(0,25000):
+        for i in range(25000,35000):
             ecblock = self.factom_api.get_entry_credit_block_by_height(i)
             len_entries = len(ecblock['body']['entries'])
             logging.getLogger('api_command').info("Height = %s" % i)

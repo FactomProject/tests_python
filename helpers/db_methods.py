@@ -1,7 +1,7 @@
 import sqlite3
 
 def connect_to_db():
-    conn = sqlite3.connect('factomd-ecblock-025k.db')
+    conn = sqlite3.connect('factomd-ecblock-25k35k.db')
     return conn
 
 def create_table(conn):
