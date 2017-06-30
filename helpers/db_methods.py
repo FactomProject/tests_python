@@ -12,7 +12,7 @@ def create_table_ecblock(conn):
     conn.execute('create table if not exists ecblock(entryhash,credits INT,height INT)')
 
 def insert_to_db(conn,entry_hash,chainid,size,height):
-    conn.execute('INSERT OR IGNORE INTO chain_entries(entryhash,chainid,size,height)  VALUES (?,?,?)',(str(entry_hash),str(chainid),size,height,))
+    conn.execute('INSERT OR IGNORE INTO chain_entries(entryhash,chainid,size,height)  VALUES (?,?,?,?)',(str(entry_hash),str(chainid),size,height,))
 
 
 def insert_to_ecblock(conn,entryhash,credits,height):
