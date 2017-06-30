@@ -51,9 +51,8 @@ class FactomAPIEntryTests(unittest.TestCase):
                         output = self.factom_api.get_entry_by_hash(entryhash)
                         size = len(output['content'])
                         insert_to_db(factomd_conn, entryhash, chainid, size,i)
-                        commit_to_db(factomd_conn)
-                        #if i % 100 == 0:
-                            #commit_to_db(factomd_conn)
+                        if i % 100 == 0:
+                            commit_to_db(factomd_conn)
         cur = factomd_conn.cursor()
         fetch_from_db(cur)
         chainidlist = cur.fetchall()
