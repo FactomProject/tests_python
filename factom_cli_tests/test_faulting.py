@@ -33,8 +33,8 @@ class FactomTestFaulting(unittest.TestCase):
         :return:
         '''
         self.assertIn(
-            self.data['audit_2_hash'] + ' online', get_data_dump_from_server(self.data['default_server_address']))
+            self.data['audit_2_hash'] + ' online', get_data_dump_from_server(self.data['default_server_address']), 'Audit server ' + self.data['audit_2_hash'] + ' is not online so can\'t be faulted')
         send_command_to_cli_and_receive_text(self._faulting_command + self.data['federated'])
         time.sleep(self.data['BLOCK_TIME'])
         self.assertTrue(
-            self.data['audit_1_hash'] + ' offline' and  self.data['master_hash'] + ' offline' in get_data_dump_from_server(self.data['default_server_address']))
+            self.data['audit_1_hash'] + ' offline' and  self.data['master_hash'] + ' offline' in get_data_dump_from_server(self.data['default_server_address']), 'Leader server ' + self.data['master_hash'] + ' not faulted')
