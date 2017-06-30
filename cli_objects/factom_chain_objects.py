@@ -132,6 +132,10 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_head, flags)))
         return text
 
+    def get_heights(self):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_heights)))
+        return text
+
     def get_directory_block_height_from_head(self):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_heights)))
         return text.split('\n')[0].split(' ')[1]
