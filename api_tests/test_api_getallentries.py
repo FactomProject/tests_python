@@ -30,13 +30,13 @@ class FactomAPIEntryTests(unittest.TestCase):
         self.factom_api = FactomApiObjects()
         self.factom_api_wallet = FactomWalletApiObjects()
 
-    def notest_fetch_chains_from_db(self):
+    def test_fetch_chains_from_db(self):
         factomd_conn = connect_to_db()
         create_table(factomd_conn)
         factomd_address = self.factomd_address_prod
         self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
-        for i in range(85000,85001):
+        for i in range(0,25000):
             logging.getLogger('api_command').info("Height = %s" % i)
             print i
             dblock_keymr = self.factom_api.get_directory_block_by_height(i)
@@ -51,9 +51,8 @@ class FactomAPIEntryTests(unittest.TestCase):
                         output = self.factom_api.get_entry_by_hash(entryhash)
                         size = len(output['content'])
                         insert_to_db(factomd_conn, entryhash, chainid, size)
-                        commit_to_db(factomd_conn)
-                        #if i % 100 == 0:
-                            #commit_to_db(factomd_conn)
+                        if i % 100 == 0:
+                            commit_to_db(factomd_conn)
         cur = factomd_conn.cursor()
         fetch_from_db(cur)
         chainidlist = cur.fetchall()
@@ -73,7 +72,7 @@ class FactomAPIEntryTests(unittest.TestCase):
         csvWriter.writerows(rows)
         close_connection_to_db(conn)
 
-    def test_fetch_entries_from_ecblock(self):
+    def notest_fetch_entries_from_ecblock(self):
         factomd_conn = connect_to_db()
         create_table_ecblock(factomd_conn)
         self.factom_api.change_factomd_address(self.factomd_address_prod)
