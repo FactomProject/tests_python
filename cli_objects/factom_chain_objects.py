@@ -21,8 +21,8 @@ class FactomChainObjects(FactomBaseObject):
     _factom_get_entryblock = 'get eblock '
     _factom_get_entry_by_hash = 'get entry '
 
-    def parse_simple_data(self, chain_text):
-        return dict(item.split(": ") for item in chain_text.split('\n'))
+    def parse_simple_data(self, text):
+        return dict(item.split(": ") for item in text.split('\n'))
 
     def parse_entry_data(self, entry_text):
         entry_text = entry_text.split('\n')
@@ -134,7 +134,8 @@ class FactomChainObjects(FactomBaseObject):
 
     def get_directory_block_height_from_head(self):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_heights)))
-        return text.split('\n')[0].split(' ')[1]
+        dict = self.parse_transaction_data(text)
+        return dict['DirectoryBlockHeight']
 
     def get_factoid_block_height(self, height):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_fbheight, height)))
@@ -144,7 +145,7 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_abheight, height)))
         return text
 
-    def get_directory_block_by_height(self, height):
+    def get_directory_block_height(self, height):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_dbheight, height)))
         return text
 

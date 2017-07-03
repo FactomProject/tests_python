@@ -11,7 +11,7 @@ import ast
 
 class FactomChainTests(unittest.TestCase):
     data = read_data_from_json('addresses.json')
-    factomd_address_prod = data['factomd_address_prod2']
+    factomd_address_prod = data['factomd_address_prod3']
     factomd_address_ansible = data['factomd_address']
 
     def setUp(self):
@@ -24,7 +24,7 @@ class FactomChainTests(unittest.TestCase):
     def test_production_chains(self):
         self.verify_chains(self.factomd_address_prod)
 
-    @attr(fast=True)
+    @attr(fast=False)
     def test_ansible_chains(self):
         self.verify_chains(self.factomd_address_ansible)
 
