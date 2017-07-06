@@ -249,3 +249,10 @@ class FactomApiObjects():
         blocks = json.loads(self.send_get_request_with_params_dict('send-raw-message', {'message': message}))
         return blocks['result']
 
+    def get_current_minute(self):
+        '''
+        Get current minute of the directory block
+        :return: current minute currentblocktime
+        '''
+        blocks = json.loads(self.send_get_request_with_method('current-minute'))
+        return blocks['result']

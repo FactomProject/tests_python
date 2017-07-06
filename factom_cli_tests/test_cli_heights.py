@@ -40,9 +40,9 @@ class FactomHeightTests(unittest.TestCase):
         for factomd_address_custom in self.factomd_address_custom_list:
             for x in range(0, int(directory_block_head)):
                 self.factom_chain_object.change_factomd_address(self.factomd_address)
-                directory_block_height = self.factom_chain_object.get_directory_block_by_height(str(x))
+                directory_block_height = self.factom_chain_object.get_directory_block_height(str(x))
                 self.factom_chain_object.change_factomd_address(factomd_address_custom)
-                directory_block_height_1 = self.factom_chain_object.get_directory_block_by_height(str(x))
+                directory_block_height_1 = self.factom_chain_object.get_directory_block_height(str(x))
                 self.assertTrue(directory_block_height == directory_block_height_1,
                                 "mismatch in directory block at height %d" % (x))
 

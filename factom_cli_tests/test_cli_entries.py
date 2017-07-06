@@ -204,8 +204,7 @@ class FactomCliTransactionTest(unittest.TestCase):
         names_list = names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-q']
         self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list, flag_list=factom_flags_list)
-        self.assertFalse("Entry not found" in self.factom_chain_object.get_entry_by_hash(self.data[
-                                                                                            '3rd_over_2nd_entry_hash']))
+        self.assertFalse("Entry not found" in self.factom_chain_object.get_entry_by_hash(self.data[                                                          '3rd_over_2nd_entry_hash']))
 
     def test_make_entry_return_chain_id(self):
         ''' This test is only reliable on the 1st run on a given database.

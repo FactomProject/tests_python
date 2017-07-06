@@ -11,3 +11,10 @@ def get_data_dump_from_server(server_address):
     data = {"item": "dataDump"}
     r = requests.get(server_address + '/factomd', params=data, auth=('relay','myunreachableyou'))
     return r.text
+
+def get_data_dump_from_nonansible_server(server_address):
+    #url=http://54.171.122.102:8090/factomd?item=dataDump&value=
+    data = {"item": "dataDump"}
+    r = requests.get(server_address + '/factomd', params=data)
+    return r.text
+
