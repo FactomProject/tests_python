@@ -153,6 +153,9 @@ class FactomCliTransactionTest(unittest.TestCase):
         entry_hash_list = self.factom_chain_object.get_pending_entries(flag_list=factom_flags_list)
         for entry_hash in entry_hash_list.split('\n'):
             text = self.factom_chain_object.get_entry_by_hash(entry_hash)
+
+            # print trying to catxch intermittent error
+            print 'text', text
             entry_chain_id = self.factom_chain_object.parse_entry_data(text)['ChainID']
             if entry_chain_id == chain_id:
                found = True
@@ -174,8 +177,9 @@ class FactomCliTransactionTest(unittest.TestCase):
         self.assertIn('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000', text, 'Chainhead not found')
 
         # look for chainhead by hex external id return KeyMR
-        keyMR = self.factom_chain_object.parse_entryblock_data(text)['fixed']['EBlock']
-        factom_flags_list = [' -K']
+        keyMR = self.factom_chain_object.parse_block_data(text)['EBlock']
+        # keyMR = self.factom_chain_object.parse_entryblock_data(text)['fixed']['EBlock']
+        factom_flags_list = ['-K']
         self.assertEqual(keyMR, self.factom_chain_object.get_chainhead(external_id_list=chain_names_list, flag_list=factom_flags_list), 'Key merkle root does not match')
 
         # check get allentries by hex external id

@@ -42,9 +42,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
         ENTRY = 3
         keyMR = dblock['dblock']['dbentries'][ENTRY]['keymr']
         eblock = self.factom_chain_object.get_entry_block(keyMR)
-        eblock = self.factom_chain_object.parse_entryblock_data(eblock)
-        repeating = json.loads(eblock['repeating'])
-        self.assertIn(repeating['EBEntry'][0]['EntryHash'], self.factom_chain_object.get_raw(keyMR), 'Incorrect raw data fetched for Entry Block at height ' + str(BLOCK_HEIGHT))
+        self.assertIn(self.factom_chain_object.parse_block_data(eblock)['EBEntry'][0]['EntryHash'], self.factom_chain_object.get_raw(keyMR), 'Incorrect raw data fetched for Entry Block at height ' + str(BLOCK_HEIGHT))
 
         # TODO Once factomd get ecbheight code is corrected, insert correct hash field and activate this test
 

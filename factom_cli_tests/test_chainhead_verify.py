@@ -52,7 +52,7 @@ class FactomChainTests(unittest.TestCase):
                         # compare keyMR for each chain found in entry block with chainhead from factomd
                         keyMR = dblock['dblock']['dbentries'][x]['keymr']
                         chainhead = self.factom_chain_object.get_chainhead(chain_id=chainid)
-                        EBlock = self.factom_chain_object.parse_entryblock_data(chainhead)['fixed']['EBlock']
+                        EBlock = self.factom_chain_object.parse_block_data(chainhead)['EBlock']
                         self.assertEqual(EBlock, keyMR, 'for chain ' +
 chainid + ' chainhead ' + EBlock + ' does not match chain keyMR ' + keyMR + ' in entry block')
 

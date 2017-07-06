@@ -1,4 +1,6 @@
 import re
+
+from collections import defaultdict
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
 from base_object import FactomBaseObject
 
@@ -39,11 +41,34 @@ class FactomChainObjects(FactomBaseObject):
         del entry_text[-1:]
         return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
 
-    def parse_directoryblock_data(self, entry_text):
-        return self.parse_separate_fixed_from_repeating_data(entry_text, 'EntryBlock')
+    def parse_block_data(self, text):
+        parsed_dict = defaultdict(list)
+        starts = []
+        ends = []
+        lines = text.split("\n")
 
-    def parse_entryblock_data(self, chainhead_text):
-        return self.parse_separate_fixed_from_repeating_data(chainhead_text, 'EBEntry')
+        for index, line in enumerate(lines):
+
+            if ": " in line:
+                line_parsed = line.split(": ")
+                parsed_dict[line_parsed[0]] = line_parsed[1]
+
+            elif "{" in line:
+                starts.append(index)
+
+            elif "}" in line:
+                ends.append(index)
+
+        final_repeated_list = []
+
+        for start, end in zip(starts, ends):
+            final_repeated_list.append(''.join(lines[start:end]))
+
+        for elements in final_repeated_list:
+            dict_parsing = elements.split(" {")
+            parsed_dict[dict_parsing[0]].append(dict(x.split(' ') for x in dict_parsing[1].split('\t')[1:]))
+
+        return parsed_dict
 
     def make_chain_from_binary_file(self, ecaddress, file_data, **kwargs):
         flags = ''
@@ -180,22 +205,3 @@ class FactomChainObjects(FactomBaseObject):
     def get_raw(self, hash):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_raw, hash)))
         return text
-
-    def parse_separate_fixed_from_repeating_data(self, text, repeating_marker):
-        # find start of repeating
-        repeating_start = 0
-        for line in text.split("\n"):
-            if repeating_marker in line:
-                break
-            repeating_start += 1
-
-        text = text.split('\n')
-        fixed = dict(item.split(": ") for item in str(text[:repeating_start])[1:-1].translate(None, "'").split(', '))
-        repeating = str(text[repeating_start:-1])
-        repeating = re.sub('\'', '"', repeating)
-        repeating = re.sub(' ([0-9]|[a-f])', '": "', repeating)
-        repeating = re.sub('"' + repeating_marker + ' {"\,', '{', repeating)
-        repeating = re.sub('\\\\t', '', repeating)
-        repeating = re.sub('\, "}"', ' }', repeating)
-        repeating = '{ "' + repeating_marker + '": ' + repeating + '}'
-        return {'fixed':fixed, 'repeating':repeating}
