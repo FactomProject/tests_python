@@ -4,20 +4,20 @@ import time
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_chain_objects import FactomChainObjects
+from cli_objects.cli_objects_create import CLIObjectsCreate
+from cli_objects.cli_objects_chain import CLIObjectsChain
 
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import fund_entry_credit_address
 from random import randint
 
 @attr(load=True)
-class FactomLoadNodes(unittest.TestCase):
+class CLITestsLoadNodes(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
-        self.factom_chain_object = FactomChainObjects()
+        self.factom_cli_create = CLIObjectsCreate()
+        self.factom_chain_object = CLIObjectsChain()
         self.first_address = self.factom_cli_create.import_address_from_factoid(
             self.data['factoid_wallet_address'])
         self.ecrate = self.factom_cli_create.get_entry_credit_rate()

@@ -2,22 +2,22 @@ import unittest
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_multiple_nodes import FactomHeightObjects
-from cli_objects.factom_chain_objects import FactomChainObjects
+from cli_objects.cli_objects_create import CLIObjectsCreate
+from cli_objects.cli_objects_multiple_nodes import CLIObjectsMultipleNodes
+from cli_objects.cli_objects_chain import CLIObjectsChain
 from helpers.helpers import read_data_from_json
 import ast
 
 
-class FactomChainTests(unittest.TestCase):
+class CLITestsChainhead(unittest.TestCase):
     data = read_data_from_json('addresses.json')
     factomd_address_prod = data['factomd_address_prod3']
     factomd_address_ansible = data['factomd_address']
 
     def setUp(self):
-        self.factom_chain_object = FactomChainObjects()
-        self.factom_multiple_nodes = FactomHeightObjects()
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_chain_object = CLIObjectsChain()
+        self.factom_multiple_nodes = CLIObjectsMultipleNodes()
+        self.factom_cli_create = CLIObjectsCreate()
         self.chainlist = {}
 
     @attr(production=True)

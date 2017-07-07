@@ -1,7 +1,7 @@
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
-from base_object import FactomBaseObject
+from cli_objects_base_ import CLIObjectsBase
 
-class FactomCliCreate(FactomBaseObject):
+class CLIObjectsCreate(CLIObjectsBase):
     _factom_importaddress = "importaddress "
     _factom_newfctaddress = "newfctaddress "
     _factom_importwords = "importkoinify "

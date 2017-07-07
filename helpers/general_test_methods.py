@@ -1,16 +1,16 @@
 import time
 
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_chain_objects import FactomChainObjects
+from cli_objects.cli_objects_create import CLIObjectsCreate
+from cli_objects.cli_objects_chain import CLIObjectsChain
 from helpers import read_data_from_json
 
-factom_cli_create = FactomCliCreate()
-factom_chain_object = FactomChainObjects()
+factom_cli = CLIObjectsCreate()
+factom_object = CLIObjectsChain()
 data = read_data_from_json('shared_test_data.json')
-factom_cli = FactomCliCreate()
-factom_object = FactomChainObjects()
+
 # all entry credit addresses are funded from first_address
-first_address = factom_cli_create.import_address_from_factoid(data['factoid_wallet_address'])
+first_address = factom_cli.import_address_from_factoid(data['factoid_wallet_address'])
+
 ACK_WAIT_TIME = 20
 BLOCK_WAIT_TIME = 50
 
@@ -32,9 +32,10 @@ def wait_for_entry_in_block(**kwargs):
 
 def fund_entry_credit_address(amount):
     # all entry credit addresses are funded from first_address
-    entry_credit_address = factom_cli_create.create_entry_credit_address()
-    text = factom_cli_create.buy_ec(first_address, entry_credit_address, str(amount))
-    chain_dict = factom_chain_object.parse_simple_data(text)
+    entry_credit_address = factom_cli.create_entry_credit_address()
+
+    text = factom_cli.buy_ec(first_address, entry_credit_address, str(amount))
+    chain_dict = factom_object.parse_simple_data(text)
     tx_id = chain_dict['TxID']
     wait_for_ack(tx_id)
     return entry_credit_address

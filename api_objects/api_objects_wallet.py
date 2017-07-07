@@ -4,7 +4,7 @@ import json
 from helpers.helpers import read_data_from_json
 
 
-class FactomWalletApiObjects():
+class APIObjectsWallet():
 
     data = read_data_from_json('addresses.json')
     wallet_address = data['wallet_address']

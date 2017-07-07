@@ -2,7 +2,7 @@ import os
 
 from helpers.helpers import read_data_from_json
 
-class FactomBaseObject():
+class CLIObjectsBase():
     data = read_data_from_json('addresses.json')
     wallet_address = data['wallet_address']
     factomd_address = data['factomd_address']

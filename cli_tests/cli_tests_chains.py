@@ -1,28 +1,27 @@
 import unittest
 import os, binascii
-import time
 
 from nose.plugins.attrib import attr
 from flaky import flaky
 
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_chain_objects import FactomChainObjects
-from api_objects.factomd_api_objects import FactomApiObjects
+from cli_objects.cli_objects_create import CLIObjectsCreate
+from cli_objects.cli_objects_chain import CLIObjectsChain
+from api_objects.api_objects_factomd import APIObjectsFactomd
 
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack, wait_for_entry_in_block, fund_entry_credit_address
 
 @flaky(max_runs=3, min_passes=1)
 @attr(fast=True)
-class FactomChainTests(unittest.TestCase):
+class CLITestsChains(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     TIME_TO_WAIT = 5
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
-        self.factom_chain_object = FactomChainObjects()
-        self.factomd_api_objects = FactomApiObjects()
+        self.factom_cli_create = CLIObjectsCreate()
+        self.factom_chain_object = CLIObjectsChain()
+        self.factomd_api_objects = APIObjectsFactomd()
         self.ecrate = self.factom_cli_create.get_entry_credit_rate()
         self.first_address = self.factom_cli_create.import_address_from_factoid(
             self.data['factoid_wallet_address'])

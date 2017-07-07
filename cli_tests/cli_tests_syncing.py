@@ -3,13 +3,13 @@ import time
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_chain_objects import FactomChainObjects
+from cli_objects.cli_objects_create import CLIObjectsCreate
+from cli_objects.cli_objects_chain import CLIObjectsChain
 from helpers.helpers import read_data_from_json
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
 @attr(slow=True)
-class FactomTestFaulting(unittest.TestCase):
+class CLITestsSyncing(unittest.TestCase):
     data_shared = read_data_from_json('shared_test_data.json')
     data_fault = read_data_from_json('faulting.json')
     data_sync = read_data_from_json('syncing.json')
@@ -17,8 +17,8 @@ class FactomTestFaulting(unittest.TestCase):
     _restart_command = 'docker start factom-factomd-'
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
-        self.factom_chain_object = FactomChainObjects()
+        self.factom_cli_create = CLIObjectsCreate()
+        self.factom_chain_object = CLIObjectsChain()
 
 
     def test_sync_stopped_node(self):

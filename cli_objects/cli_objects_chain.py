@@ -1,7 +1,7 @@
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
-from base_object import FactomBaseObject
+from cli_objects_base_ import CLIObjectsBase
 
-class FactomChainObjects(FactomBaseObject):
+class CLIObjectsChain(CLIObjectsBase):
     _factomd_add_chain = 'addchain'
     _factomd_compose_chain = 'composechain '
     _factom_get_head = 'get head '
@@ -149,7 +149,7 @@ class FactomChainObjects(FactomBaseObject):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_abheight, height)))
         return text
 
-    def get_directory_block_height(self, height):
+    def get_directory_block_by_height(self, height):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_dbheight, height)))
         return text
 

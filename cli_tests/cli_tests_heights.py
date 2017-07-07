@@ -2,9 +2,9 @@ import unittest
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_multiple_nodes import FactomHeightObjects
-from cli_objects.factom_chain_objects import FactomChainObjects
+from cli_objects.cli_objects_chain import CLIObjectsChain
+from cli_objects.cli_objects_create import CLIObjectsCreate
+from cli_objects.cli_objects_multiple_nodes import CLIObjectsMultipleNodes
 from helpers.helpers import read_data_from_json
 
 import time
@@ -12,7 +12,7 @@ import logging
 
 
 @attr(last=True)
-class FactomHeightTests(unittest.TestCase):
+class CLITestsHeight(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
     '''
@@ -21,9 +21,9 @@ class FactomHeightTests(unittest.TestCase):
     factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
 
     def setUp(self):
-        self.factom_chain_object = FactomChainObjects()
-        self.factom_multiple_nodes = FactomHeightObjects()
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_chain_object = CLIObjectsChain()
+        self.factom_cli_create = CLIObjectsCreate()
+        self.factom_multiple_nodes = CLIObjectsMultipleNodes()
 
     def test_check_admin_block_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()

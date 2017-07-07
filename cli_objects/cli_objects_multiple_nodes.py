@@ -1,8 +1,8 @@
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
-from base_object import FactomBaseObject
+from cli_objects_base_ import CLIObjectsBase
 from helpers.helpers import create_random_string, read_data_from_json
 
-class FactomHeightObjects(FactomBaseObject):
+class CLIObjectsMultipleNodes(CLIObjectsBase):
     _factom_get_head = ' get head '
     _factom_get_heights = ' get heights'
     _factom_get_fbheight = ' get fbheight '

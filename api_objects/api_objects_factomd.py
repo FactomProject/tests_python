@@ -4,7 +4,7 @@ import json
 from helpers.helpers import read_data_from_json
 
 
-class FactomApiObjects():
+class APIObjectsFactomd():
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
 

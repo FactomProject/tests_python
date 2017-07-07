@@ -5,17 +5,17 @@ import time
 
 from nose.plugins.attrib import attr
 
-from api_objects.factom_wallet_api_objects import FactomWalletApiObjects
-from api_objects.factomd_api_objects import FactomApiObjects
+from api_objects.api_objects_wallet import APIObjectsWallet
+from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import read_data_from_json
 
 @attr(fast=True)
-class FactomWalletApiTest(unittest.TestCase):
+class ApiTestsWallet(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.wallet_api_objects = FactomWalletApiObjects()
-        self.factomd_api_objects = FactomApiObjects()
+        self.wallet_api_objects = APIObjectsWallet()
+        self.factomd_api_objects = APIObjectsFactomd()
         self.first_address = self.wallet_api_objects.import_addres_by_secret(self.data['factoid_wallet_address'])
         self.second_address = self.wallet_api_objects.generate_factoid_address()
         self.ecrate = self.factomd_api_objects.get_entry_credits_rate()

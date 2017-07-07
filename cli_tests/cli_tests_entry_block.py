@@ -2,15 +2,15 @@ import unittest
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_multiple_nodes import FactomHeightObjects
-from cli_objects.factom_chain_objects import FactomChainObjects
+from cli_objects.cli_objects_chain import CLIObjectsChain
+from cli_objects.cli_objects_create import CLIObjectsCreate
+from cli_objects.cli_objects_multiple_nodes import CLIObjectsMultipleNodes
 from helpers.helpers import read_data_from_json
 import ast
 import re
 
 
-class FactomEntryTests(unittest.TestCase):
+class CLITestsEntryBlock(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
     '''
@@ -19,9 +19,9 @@ class FactomEntryTests(unittest.TestCase):
     factomd_address_ansible = data['factomd_address']
 
     def setUp(self):
-        self.factom_chain_object = FactomChainObjects()
-        self.factom_multiple_nodes = FactomHeightObjects()
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_chain_object = CLIObjectsChain()
+        self.factom_cli_create = CLIObjectsCreate()
+        self.factom_multiple_nodes = CLIObjectsMultipleNodes()
 
     @attr(production=True)
     def test_production_entries(self):
@@ -41,7 +41,7 @@ class FactomEntryTests(unittest.TestCase):
         # count the number of times entry is not found
         entrycount = 0
         for x in range(0, int(directory_block_head)):
-            directory_block_height = self.factom_chain_object.get_directory_block_height(str(x))
+            directory_block_height = self.factom_chain_object.get_directory_block_by_height(str(x))
             directory_block_height = ast.literal_eval(directory_block_height)
             if len(directory_block_height['dblock']['dbentries']) > 3:
                 totalentryblocks = len(directory_block_height['dblock']['dbentries'])

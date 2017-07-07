@@ -2,19 +2,19 @@ import unittest
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
-from cli_objects.factom_chain_objects import FactomChainObjects
-from api_objects.factomd_api_objects import FactomApiObjects
+from cli_objects.cli_objects_create import CLIObjectsCreate
+from cli_objects.cli_objects_chain import CLIObjectsChain
+from api_objects.api_objects_factomd import APIObjectsFactomd
 
 from helpers.helpers import read_data_from_json
 
 @attr(last=True)
-class FactomChainTests(unittest.TestCase):
+class CLITestsBalances(unittest.TestCase):
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
-        self.factom_chain_object = FactomChainObjects()
-        self.factomd_api_objects = FactomApiObjects()
+        self.factom_cli_create = CLIObjectsCreate()
+        self.factom_chain_object = CLIObjectsChain()
+        self.factomd_api_objects = APIObjectsFactomd()
 
     def test_all_addresses_balances(self):
         """

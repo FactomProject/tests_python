@@ -1,20 +1,18 @@
 import unittest
-import string
-import random
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.cli_objects_create import CLIObjectsCreate
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack
 
 @attr(fast=True)
-class FactomCliTransactionLimits(unittest.TestCase):
+class CLITestsTransactionLimits(unittest.TestCase):
 
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = CLIObjectsCreate()
         self.first_address = self.factom_cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
         self.second_address = self.factom_cli_create.create_new_factoid_address()
         words = '"' + self.data['words'] + '"'

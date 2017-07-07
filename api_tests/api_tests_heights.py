@@ -2,13 +2,13 @@ import unittest
 
 from nose.plugins.attrib import attr
 
-from api_objects.factomd_api_objects import FactomApiObjects
+from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import read_data_from_json
-from api_objects.factom_wallet_api_objects import FactomWalletApiObjects
+from api_objects.api_objects_wallet import APIObjectsWallet
 
 
 @attr(last=True)
-class FactomAPIHeightTests(unittest.TestCase):
+class APITestsHeights(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
     '''
@@ -17,8 +17,8 @@ class FactomAPIHeightTests(unittest.TestCase):
     factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
 
     def setUp(self):
-        self.factom_api = FactomApiObjects()
-        self.factom_api_wallet = FactomWalletApiObjects()
+        self.factom_api = APIObjectsFactomd()
+        self.factom_api_wallet = APIObjectsWallet()
 
     def test_check_admin_block_height(self):
         blocks = self.factom_api.get_heights()
