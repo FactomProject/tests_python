@@ -9,7 +9,7 @@ from helpers.helpers import read_data_from_json
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
 @attr(slow=True)
-class FactomTestFaulting(unittest.TestCase):
+class FactomTestSyncing(unittest.TestCase):
     data_shared = read_data_from_json('shared_test_data.json')
     data_fault = read_data_from_json('faulting.json')
     data_sync = read_data_from_json('syncing.json')
