@@ -6,7 +6,7 @@ from cli_objects.factom_cli_create import FactomCliCreate
 from cli_objects.factom_multiple_nodes import FactomHeightObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
-import ast
+import json
 import re
 
 
@@ -41,12 +41,11 @@ class FactomEntryTests(unittest.TestCase):
         # count the number of times entry is not found
         entrycount = 0
         for x in range(0, int(directory_block_head)):
-            directory_block_height = self.factom_chain_object.get_directory_block_by_height(str(x))
-            directory_block_height = ast.literal_eval(directory_block_height)
-            if len(directory_block_height['dblock']['dbentries']) > 3:
-                totalentryblocks = len(directory_block_height['dblock']['dbentries'])
+            dblock = json.loads(self.factom_chain_object.get_directory_block_by_height(x))
+            if len(dblock['dblock']['dbentries']) > 3:
+                totalentryblocks = len(dblock['dblock']['dbentries'])
                 for x in range(3, totalentryblocks):
-                    keymr = directory_block_height['dblock']['dbentries'][x]['keymr']
+                    keymr = dblock['dblock']['dbentries'][x]['keymr']
                     entryblock =  self.factom_chain_object.get_entry_block(keymr)
                     entryblock = "".join(entryblock.split())
                     pattern = re.compile('EntryHash.{64}')
