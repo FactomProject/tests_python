@@ -4,19 +4,19 @@ import time
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import fund_entry_credit_address
 from random import randint
 
-@attr(load=True)
+@attr(load_tool=True)
 class FactomLoadNodes(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
         self.factom_chain_object = FactomChainObjects()
         self.first_address = self.factom_cli_create.import_address_from_factoid(
             self.data['factoid_wallet_address'])

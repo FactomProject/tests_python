@@ -2,7 +2,7 @@ import unittest
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from cli_objects.factom_multiple_nodes import FactomHeightObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
@@ -17,14 +17,14 @@ class FactomChainTests(unittest.TestCase):
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
         self.factom_multiple_nodes = FactomHeightObjects()
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
         self.chainlist = {}
 
-    @attr(production=True)
+    @attr(production_tool=True)
     def test_production_chains(self):
         self.verify_chains(self.factomd_address_prod)
 
-    @attr(fast=False)
+    @attr(local_tool=True)
     def test_ansible_chains(self):
         self.verify_chains(self.factomd_address_ansible)
 

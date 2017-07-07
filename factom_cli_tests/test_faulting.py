@@ -3,7 +3,7 @@ import time
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from helpers.helpers import read_data_from_json
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
@@ -13,7 +13,7 @@ class FactomTestFaulting(unittest.TestCase):
     _faulting_command = 'docker stop factom-factomd-'
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
 
 
     def _fault_audit_server(self):
