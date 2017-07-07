@@ -1,13 +1,13 @@
 import time
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers import read_data_from_json
 
-factom_cli_create = FactomCliCreate()
+factom_cli_create = FactomCliMainObjects()
 factom_chain_object = FactomChainObjects()
 data = read_data_from_json('shared_test_data.json')
-factom_cli = FactomCliCreate()
+factom_cli = FactomCliMainObjects()
 factom_object = FactomChainObjects()
 # all entry credit addresses are funded from first_address
 first_address = factom_cli_create.import_address_from_factoid(data['factoid_wallet_address'])

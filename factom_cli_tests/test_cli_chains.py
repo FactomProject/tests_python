@@ -4,7 +4,7 @@ import os, binascii
 from nose.plugins.attrib import attr
 from flaky import flaky
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from api_objects.factomd_api_objects import FactomApiObjects
 
@@ -19,7 +19,7 @@ class FactomChainTests(unittest.TestCase):
     TIME_TO_WAIT = 5
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
         self.factom_chain_object = FactomChainObjects()
         self.factomd_api_objects = FactomApiObjects()
         self.ecrate = self.factom_cli_create.get_entry_credit_rate()

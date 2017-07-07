@@ -3,7 +3,7 @@ import os, binascii
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from api_objects.factomd_api_objects import FactomApiObjects
 
@@ -13,16 +13,16 @@ from helpers.general_test_methods import wait_for_ack, fund_entry_credit_address
 '''This bulk test checks for the rare occurrence of a chain being created and the server returning a server error
 rather than a Chain ID.
 Many chains are created because the error is rare.
-@attr(fast=False) because it takes a long time and shouldn't be run regularly'''
+'''
 
 NUMBER_OF_RUNS = 200000
 
-@attr(fast=False)
+@attr(local_tool=True)
 class FactomChainTests(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
         self.factom_chain_object = FactomChainObjects()
         self.factomd_api_objects = FactomApiObjects()
 
