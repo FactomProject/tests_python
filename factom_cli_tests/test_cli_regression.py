@@ -78,13 +78,15 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
         # send transaction
         text = self.factom_cli_create.send_transaction(transaction_name)
-
-        # check for pending transaction
-        self.factom_chain_object.get_pending_transactions()
-        # TODO When get_pending_transactions code is repaired, insert assert code here that verifies its proper functioning
-
         chain_dict = self.factom_chain_object.parse_simple_data(text)
         tx_id = chain_dict['TxID']
+
+        # check for pending transaction
+        pending_text = self.factom_chain_object.get_pending_transactions()
+        pending_dict = self.factom_chain_object.parse_simple_data(pending_text)
+        pending_tx_id = pending_dict['TxID']
+        self.assertEqual(pending_tx_id, tx_id,'Sent transaction not pending')
+
         wait_for_ack(tx_id)
 
         self.assertNotEqual(self.factom_cli_create.check_wallet_address_balance(self.second_address), 0, 'Factoids were not send to address: ' + self.second_address)
@@ -162,13 +164,16 @@ class FactomCliEndToEndTest(unittest.TestCase):
 
         self.factom_cli_create.sign_transaction(transaction_name)
         self.assertIn(transaction_name, self.factom_cli_create.list_local_transactions(), 'Transaction was created')
-        self.factom_cli_create.send_transaction(transaction_name)
 
-        # check for pending transaction return transaction id
+        # send transaction
+        text = self.factom_cli_create.send_transaction(transaction_name)
+        chain_dict = self.factom_chain_object.parse_simple_data(text)
+        tx_id = chain_dict['TxID']
+
+        # check for pending transaction by address return transaction id
         factom_flags_list = ['-T']
-        self.factom_chain_object.get_pending_transactions(flag_list=factom_flags_list)
-
-        # TODO When get_pending_transactions code is repaired, insert code here that verifies its proper functioning
+        pending_tx_id = self.factom_chain_object.get_pending_transactions(address=self.first_address, flag_list=factom_flags_list)
+        self.assertEqual(pending_tx_id, tx_id,'Sent transaction not pending')
 
         balance_after = self.factom_cli_create.check_wallet_address_balance(self.first_address)
         self.assertTrue(abs(float(balance_after) - (float(balance_before) - float(self.ecrate) * 8)) <= 0.0000001, 'Balance is not subtracted correctly')
@@ -223,7 +228,15 @@ class FactomCliEndToEndTest(unittest.TestCase):
         text = self.factom_cli_create.send_transaction(transaction_name)
         chain_dict = self.factom_chain_object.parse_simple_data(text)
         tx_id = chain_dict['TxID']
+
+        # check pending transactions for entry credit address
+        pending_text = self.factom_chain_object.get_pending_transactions(address=self.entry_credit_address)
+        pending_dict = self.factom_chain_object.parse_simple_data(pending_text)
+        pending_tx_id = pending_dict['TxID']
+        self.assertEqual(pending_tx_id, tx_id,'Sent transaction not pending')
+
         wait_for_ack(tx_id)
+
         balance_after = int(self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address))
         balance_expected = int(round(int(balance_before) + ENTRY_CREDIT_AMOUNT / float(self.ecrate)))
         self.assertEqual(balance_after, balance_expected, 'Wrong output of transaction')
