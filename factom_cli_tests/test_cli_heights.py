@@ -2,7 +2,7 @@ import unittest
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from cli_objects.factom_multiple_nodes import FactomHeightObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
@@ -23,7 +23,7 @@ class FactomHeightTests(unittest.TestCase):
     def setUp(self):
         self.factom_chain_object = FactomChainObjects()
         self.factom_multiple_nodes = FactomHeightObjects()
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
 
     def test_check_admin_block_height(self):
         directory_block_height = self.factom_chain_object.get_directory_block_height_from_head()

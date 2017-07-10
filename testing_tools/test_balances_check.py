@@ -2,17 +2,17 @@ import unittest
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from api_objects.factomd_api_objects import FactomApiObjects
 
 from helpers.helpers import read_data_from_json
 
-@attr(last=True)
+@attr(local_tool=True)
 class FactomChainTests(unittest.TestCase):
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
         self.factom_chain_object = FactomChainObjects()
         self.factomd_api_objects = FactomApiObjects()
 

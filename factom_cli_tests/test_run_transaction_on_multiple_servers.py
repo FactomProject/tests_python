@@ -4,7 +4,7 @@ from multiprocessing import Process
 from nose.plugins.attrib import attr
 from flaky import flaky
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from helpers.helpers import read_data_from_json
 
 @flaky(max_runs=3, min_passes=1)
@@ -14,7 +14,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
     addresses = read_data_from_json('addresses.json')
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
         self.first_address = self.factom_cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
         self.second_address = self.factom_cli_create.create_new_factoid_address()
         words = '"'+self.data['words']+'"'
@@ -25,12 +25,12 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
 
     def test_create_multiple_same_transactions_on_different_nodes(self):
-        cli_one = FactomCliCreate()
-        cli_two = FactomCliCreate()
+        cli_one = FactomCliMainObjects()
+        cli_two = FactomCliMainObjects()
         cli_two.change_factomd_address(self.addresses['factomd_address_4'])
-        cli_three = FactomCliCreate()
+        cli_three = FactomCliMainObjects()
         cli_three.change_factomd_address(self.addresses['factomd_address_5'])
-        cli_four = FactomCliCreate()
+        cli_four = FactomCliMainObjects()
         cli_four.change_factomd_address(self.addresses['factomd_address_6'])
 
         cli_one.send_factoids(self.first_address, self.second_address, '200')

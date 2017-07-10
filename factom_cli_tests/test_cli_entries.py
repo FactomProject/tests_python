@@ -3,7 +3,7 @@ import os, binascii
 import json
 from flaky import flaky
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack, wait_for_entry_in_block, fund_entry_credit_address
@@ -16,7 +16,7 @@ class FactomCliTransactionTest(unittest.TestCase):
     path = ''
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
         self.factom_chain_object = FactomChainObjects()
         self.first_address = self.factom_cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
         self.ecrate = self.factom_cli_create.get_entry_credit_rate()
