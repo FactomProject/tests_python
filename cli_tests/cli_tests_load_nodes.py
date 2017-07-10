@@ -16,11 +16,11 @@ class CLITestsLoadNodes(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.factom_cli_create = CLIObjectsCreate()
-        self.factom_chain_object = CLIObjectsChain()
-        self.first_address = self.factom_cli_create.import_address_from_factoid(
+        self.cli_create = CLIObjectsCreate()
+        self.chain_objects = CLIObjectsChain()
+        self.first_address = self.cli_create.import_address_from_factoid(
             self.data['factoid_wallet_address'])
-        self.ecrate = self.factom_cli_create.get_entry_credit_rate()
+        self.ecrate = self.cli_create.get_entry_credit_rate()
         self.entry_credit_address1000000 = fund_entry_credit_address(1000000)
 
     def test_make_chain_and_check_balance(self):
@@ -32,7 +32,7 @@ class CLITestsLoadNodes(unittest.TestCase):
         CONTINUOUS = True
 
         print 'sleep time', float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK'])
-        self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000000)
+        self.cli_create.check_wallet_address_balance(self.entry_credit_address1000000)
         chain_flags_list = ['-f', '-C']
         for i in xrange(20):
             path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
@@ -44,7 +44,7 @@ class CLITestsLoadNodes(unittest.TestCase):
                 name_1 = create_random_string(5)
                 name_2 = create_random_string(5)
                 names_list = ['-n', name_1, '-n', name_2]
-                chain_id = self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address1000000, path, external_id_list=names_list, flag_list=chain_flags_list)
+                chain_id = self.chain_objects.make_chain_from_binary_file(self.entry_credit_address1000000, path, external_id_list=names_list, flag_list=chain_flags_list)
 
                 for i in range(120):
                     with open('output_file', 'wb') as fout:
@@ -53,7 +53,7 @@ class CLITestsLoadNodes(unittest.TestCase):
                     name_1 = create_random_string(5)
                     name_2 = create_random_string(5)
                     names_list = ['-c', chain_id, '-e', name_1, '-e', name_2]
-                    self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000000, path, external_id_list=names_list, flag_list=chain_flags_list)
+                    self.chain_objects.add_entry_to_chain(self.entry_credit_address1000000, path, external_id_list=names_list, flag_list=chain_flags_list)
                     if not CONTINUOUS: time.sleep(float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK']) * 0.2)
-                    self.assertFalse('0' == self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000000), 'out of entry credits')
+                    self.assertFalse('0' == self.cli_create.check_wallet_address_balance(self.entry_credit_address1000000), 'out of entry credits')
             os.remove(path)

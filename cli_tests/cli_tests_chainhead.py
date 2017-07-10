@@ -15,9 +15,9 @@ class CLITestsChainhead(unittest.TestCase):
     factomd_address_ansible = data['factomd_address']
 
     def setUp(self):
-        self.factom_chain_object = CLIObjectsChain()
-        self.factom_multiple_nodes = CLIObjectsMultipleNodes()
-        self.factom_cli_create = CLIObjectsCreate()
+        self.chain_objects = CLIObjectsChain()
+        self.multiple_nodes = CLIObjectsMultipleNodes()
+        self.cli_create = CLIObjectsCreate()
         self.chainlist = {}
 
     @attr(production=True)
@@ -29,16 +29,16 @@ class CLITestsChainhead(unittest.TestCase):
         self.verify_chains(self.factomd_address_ansible)
 
     def verify_chains(self, factomd_address):
-        self.factom_cli_create.change_factomd_address(factomd_address)
-        self.factom_multiple_nodes.change_factomd_address(factomd_address)
-        self.factom_chain_object.change_factomd_address(factomd_address)
+        self.cli_create.change_factomd_address(factomd_address)
+        self.multiple_nodes.change_factomd_address(factomd_address)
+        self.chain_objects.change_factomd_address(factomd_address)
 
         # start at most recent directory block
-        directory_block_head = self.factom_chain_object.get_directory_block_height_from_head()
+        directory_block_head = self.chain_objects.get_directory_block_height_from_head()
 
         # work backwards through directory block chain
         for x in range(int(directory_block_head), 0, -1):
-            dblock = json.loads(self.factom_chain_object.get_directory_block_by_height(x))
+            dblock = json.loads(self.chain_objects.get_directory_block_by_height(x))
 
             # ignore 1st 3 entries in Entry Block which are administrative
             if len(dblock['dblock']['dbentries']) > 3:
@@ -51,8 +51,8 @@ class CLITestsChainhead(unittest.TestCase):
 
                         # compare keyMR for each chain found in entry block with chainhead from factomd
                         keyMR = dblock['dblock']['dbentries'][x]['keymr']
-                        chainhead = self.factom_chain_object.get_chainhead(chain_id=chainid)
-                        EBlock = self.factom_chain_object.parse_block_data(chainhead)['EBlock']
+                        chainhead = self.chain_objects.get_chainhead(chain_id=chainid)
+                        EBlock = self.chain_objects.parse_block_data(chainhead)['EBlock']
                         self.assertEqual(EBlock, keyMR, 'for chain ' +
 chainid + ' chainhead ' + EBlock + ' does not match chain keyMR ' + keyMR + ' in entry block')
 

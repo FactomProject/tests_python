@@ -6,7 +6,7 @@ from nose.plugins.attrib import attr
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from cli_objects.cli_objects_chain import CLIObjectsChain
 from helpers.helpers import read_data_from_json
-from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
+from helpers.cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
 @attr(slow=True)
 class CLITestsSyncing(unittest.TestCase):
@@ -17,8 +17,8 @@ class CLITestsSyncing(unittest.TestCase):
     _restart_command = 'docker start factom-factomd-'
 
     def setUp(self):
-        self.factom_cli_create = CLIObjectsCreate()
-        self.factom_chain_object = CLIObjectsChain()
+        self.cli_create = CLIObjectsCreate()
+        self.chain_objects = CLIObjectsChain()
 
 
     def test_sync_stopped_node(self):
@@ -34,15 +34,15 @@ class CLITestsSyncing(unittest.TestCase):
         # restart node
         send_command_to_cli_and_receive_text(self._restart_command + self.data_fault['audit'])
 
-        while "connection refused" in self.factom_chain_object.get_heights(): pass
+        while "connection refused" in self.chain_objects.get_heights(): pass
 
         # wait for node to resync
         synced = False
         start_time = time.time()
         while (time.time() - start_time < self.data_sync['SECONDS_TO_WAIT_FOR_SYNC']):
-            heights = self.factom_chain_object.get_heights()
-            directory_block_height = self.factom_chain_object.parse_transaction_data(heights)['DirectoryBlockHeight']
-            leader_block_height = self.factom_chain_object.parse_transaction_data(heights)['LeaderHeight']
+            heights = self.chain_objects.get_heights()
+            directory_block_height = self.chain_objects.parse_transaction_data(heights)['DirectoryBlockHeight']
+            leader_block_height = self.chain_objects.parse_transaction_data(heights)['LeaderHeight']
             if (directory_block_height == leader_block_height):
                 synced = True
                 break

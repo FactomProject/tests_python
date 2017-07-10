@@ -14,15 +14,15 @@ class CLITestsTransactionsMultipleServers(unittest.TestCase):
     addresses = read_data_from_json('addresses.json')
 
     def setUp(self):
-        self.factom_cli_create = CLIObjectsCreate()
-        self.first_address = self.factom_cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
-        self.second_address = self.factom_cli_create.create_new_factoid_address()
+        self.cli_create = CLIObjectsCreate()
+        self.first_address = self.cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
+        self.second_address = self.cli_create.create_new_factoid_address()
         words = '"'+self.data['words']+'"'
-        self.third_address = self.factom_cli_create.import_words_from_koinify_into_wallet(words)
-        self.ecrate = self.factom_cli_create.get_entry_credit_rate()
-        self.entry_creds_wallet1 = self.factom_cli_create.import_address_from_factoid(
+        self.third_address = self.cli_create.import_words_from_koinify_into_wallet(words)
+        self.ecrate = self.cli_create.get_entry_credit_rate()
+        self.entry_creds_wallet1 = self.cli_create.import_address_from_factoid(
             self.data['ec_wallet_address'])
-        self.entry_creds_wallet2 = self.factom_cli_create.create_entry_credit_address()
+        self.entry_creds_wallet2 = self.cli_create.create_entry_credit_address()
 
     def test_create_multiple_same_transactions_on_different_nodes(self):
         cli_one = CLIObjectsCreate()
@@ -34,7 +34,7 @@ class CLITestsTransactionsMultipleServers(unittest.TestCase):
         cli_four.change_factomd_address(self.addresses['factomd_address_6'])
 
         cli_one.send_factoids(self.first_address, self.second_address, '200')
-        third_address = self.factom_cli_create.create_new_factoid_address()
+        third_address = self.cli_create.create_new_factoid_address()
 
         for i in range(100):
             p1 = Process(

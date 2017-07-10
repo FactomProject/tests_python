@@ -1,17 +1,17 @@
-from api_objects.api_objects_factomd import FactomApiObjects
+from api_objects.api_objects_factomd import APIObjectsFactomd
 import unittest
 
 from nose.plugins.attrib import attr
 import re
 
-from helpers.factom_cli_methods import get_data_dump_from_nonansible_server
+from helpers.cli_methods import get_data_dump_from_nonansible_server
 from helpers.helpers import read_data_from_json
 
 @attr(api=True)
 class APITests(unittest.TestCase):
 
     def setUp(self):
-        self.factom_api = FactomApiObjects()
+        self.factom_api = APIObjectsFactomd()
         data = read_data_from_json('addresses.json')
         self.factomd_address = data['factomd_controlpanel']
 
