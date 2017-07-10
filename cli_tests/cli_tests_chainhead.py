@@ -6,7 +6,7 @@ from cli_objects.cli_objects_create import CLIObjectsCreate
 from cli_objects.cli_objects_multiple_nodes import CLIObjectsMultipleNodes
 from cli_objects.cli_objects_chain import CLIObjectsChain
 from helpers.helpers import read_data_from_json
-import ast
+import json
 
 
 class CLITestsChainhead(unittest.TestCase):
@@ -38,22 +38,21 @@ class CLITestsChainhead(unittest.TestCase):
 
         # work backwards through directory block chain
         for x in range(int(directory_block_head), 0, -1):
-            directory_block_height = self.factom_chain_object.get_directory_block_by_height(str(x))
-            directory_block_height = ast.literal_eval(directory_block_height)
+            dblock = json.loads(self.factom_chain_object.get_directory_block_by_height(x))
 
             # ignore 1st 3 entries in Entry Block which are administrative
-            if len(directory_block_height['dblock']['dbentries']) > 3:
-                totalentryblocks = len(directory_block_height['dblock']['dbentries'])
+            if len(dblock['dblock']['dbentries']) > 3:
+                totalentryblocks = len(dblock['dblock']['dbentries'])
                 for x in range(3, totalentryblocks):
-                    keyMR = directory_block_height['dblock']['dbentries'][x]['keymr']
-                    chainid = directory_block_height['dblock']['dbentries'][x]['chainid']
+                    chainid = dblock['dblock']['dbentries'][x]['chainid']
 
                     # only check most recent entry block for the chain
                     if chainid not in self.chainlist:
 
                         # compare keyMR for each chain found in entry block with chainhead from factomd
+                        keyMR = dblock['dblock']['dbentries'][x]['keymr']
                         chainhead = self.factom_chain_object.get_chainhead(chain_id=chainid)
-                        EBlock = self.factom_chain_object.parse_entryblock_data(chainhead)['EBlock']
+                        EBlock = self.factom_chain_object.parse_block_data(chainhead)['EBlock']
                         self.assertEqual(EBlock, keyMR, 'for chain ' +
 chainid + ' chainhead ' + EBlock + ' does not match chain keyMR ' + keyMR + ' in entry block')
 

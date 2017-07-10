@@ -1,3 +1,4 @@
+from collections import defaultdict
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
 from cli_objects_base_ import CLIObjectsBase
 
@@ -15,11 +16,13 @@ class CLIObjectsChain(CLIObjectsBase):
     _factom_get_firstentry = ' get firstentry '
     _factom_get_allentries = ' get allentries '
     _factom_pending_entries = 'get pendingentries '
+    _factom_pending_transactions = 'get pendingtransactions '
     _factom_get_chainhead = ' get chainhead '
     _factom_wallet_backup_wallet = 'backupwallet'
     _factom_get_directoryblock = 'get dblock '
     _factom_get_entryblock = 'get eblock '
     _factom_get_entry_by_hash = 'get entry '
+    _factom_get_raw = 'get raw '
 
     def parse_simple_data(self, text):
         return dict(item.split(": ") for item in text.split('\n'))
@@ -36,11 +39,34 @@ class CLIObjectsChain(CLIObjectsBase):
         del entry_text[-1:]
         return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
 
-    def parse_directoryblock_data(self, entry_text):
-        return self.parse_separate_data_from_json(entry_text, 'EntryBlock')
+    def parse_block_data(self, text):
+        parsed_dict = defaultdict(list)
+        starts = []
+        ends = []
+        lines = text.split("\n")
 
-    def parse_entryblock_data(self, chainhead_text):
-        return self.parse_separate_data_from_json(chainhead_text, 'EBEntry')
+        for index, line in enumerate(lines):
+
+            if ": " in line:
+                line_parsed = line.split(": ")
+                parsed_dict[line_parsed[0]] = line_parsed[1]
+
+            elif "{" in line:
+                starts.append(index)
+
+            elif "}" in line:
+                ends.append(index)
+
+        final_repeated_list = []
+
+        for start, end in zip(starts, ends):
+            final_repeated_list.append(''.join(lines[start:end]))
+
+        for elements in final_repeated_list:
+            dict_parsing = elements.split(" {")
+            parsed_dict[dict_parsing[0]].append(dict(x.split(' ') for x in dict_parsing[1].split('\t')[1:]))
+
+        return parsed_dict
 
     def make_chain_from_binary_file(self, ecaddress, file_data, **kwargs):
         flags = ''
@@ -113,6 +139,14 @@ class CLIObjectsChain(CLIObjectsBase):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_pending_entries, flags)))
         return text
 
+    def get_pending_transactions(self, **kwargs):
+        flags = ''
+        if kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        text = send_command_to_cli_and_receive_text(
+            ''.join((self._factom_cli_command, self._factom_pending_transactions, flags)))
+        return text
+
     def get_chainhead(self, **kwargs):
         flags = ''
         if 'flag_list' in kwargs:
@@ -141,20 +175,20 @@ class CLIObjectsChain(CLIObjectsBase):
         dict = self.parse_transaction_data(text)
         return dict['DirectoryBlockHeight']
 
-    def get_factoid_block_height(self, height):
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_fbheight, height)))
+    def get_factoid_block_by_height(self, height):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_fbheight, str(height))))
         return text
 
-    def get_admin_block_height(self, height):
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_abheight, height)))
+    def get_admin_block_by_height(self, height):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_abheight, str(height))))
         return text
 
     def get_directory_block_by_height(self, height):
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_dbheight, height)))
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_dbheight, str(height))))
         return text
 
-    def get_entrycredit_block_height(self, height):
-        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_ecbheight, height)))
+    def get_entrycredit_block_by_height(self, height):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_ecbheight, str(height))))
         return text
 
     def get_directory_block(self, keymr):
@@ -170,20 +204,6 @@ class CLIObjectsChain(CLIObjectsBase):
         text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_entry_by_hash, entryhash)))
         return text
 
-    def parse_separate_data_from_json(self, text, json_marker):
-        # find start of json
-        json_start = 0
-        for line in text.split("\n"):
-            if json_marker in line:
-                break
-            json_start += 1
-
-        entry_text = text.split('\n')
-        extract = entry_text[:json_start]
-
-        '''The multivalued json part of this text is stripped out and left here for further processing at a later time
-        should the data contained therein become needed'''
-        json = entry_text[json_start:-1]
-
-        return dict(item.split(": ") for item in str(extract)[1:-1].translate(None, "'").split(', '))
-
+    def get_raw(self, hash):
+        text = send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_get_raw, hash)))
+        return text

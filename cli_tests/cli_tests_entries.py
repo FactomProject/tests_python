@@ -1,5 +1,6 @@
 import unittest
 import os, binascii
+import json
 from flaky import flaky
 
 from cli_objects.cli_objects_create import CLIObjectsCreate
@@ -42,7 +43,7 @@ class CLITestsEntries(unittest.TestCase):
         names_list = names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-E']
         entry_hash = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list, flag_list=factom_flags_list)
-        self.assertTrue("Entry not found" not in self.factom_chain_object.get_entry_by_hash(entry_hash),
+        self.assertNotIn("Entry not found", self.factom_chain_object.get_entry_by_hash(entry_hash),
                         "Entry not revealed")
 
     def test_verify_entry_costs(self):
@@ -111,14 +112,14 @@ class CLITestsEntries(unittest.TestCase):
         name_2 = create_random_string(2)
         names_list = ['-c', chain_id, '-e', name_1, '-e', name_2]
 
-        self.assertTrue("Entry cannot be larger than 10KB" in self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list))
+        self.assertIn("Entry cannot be larger than 10KB", self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list))
 
         # check for pending entries
-        self.assertTrue(chain_id in self.factom_chain_object.get_pending_entries(), 'Entry not shown as pending')
+        self.assertIn(chain_id, self.factom_chain_object.get_pending_entries(), 'Entry not shown as pending')
 
         # validate get firstentry command
         wait_for_entry_in_block(external_id_list=chain_names_list)
-        self.assertTrue("ExtID: " + firstentry_ext_id in self.factom_chain_object.get_firstentry(external_id_list=chain_names_list), 'Chain not found')
+        self.assertIn("ExtID: " + firstentry_ext_id, self.factom_chain_object.get_firstentry(external_id_list=chain_names_list), 'Chain not found')
 
         # validate get firstentry_return_entry_hash
         factom_flags_list = ['-E']
@@ -145,13 +146,16 @@ class CLITestsEntries(unittest.TestCase):
         names_list = chain_names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-f', '-T']
         tx_id = self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000,
-                      self.path, external_id_list=names_list, flag_list=factom_flags_list)
+                     self.path, external_id_list=names_list, flag_list=factom_flags_list)
 
         # check for pending entries return entry hash
         factom_flags_list = ['-E']
         entry_hash_list = self.factom_chain_object.get_pending_entries(flag_list=factom_flags_list)
         for entry_hash in entry_hash_list.split('\n'):
             text = self.factom_chain_object.get_entry_by_hash(entry_hash)
+
+            # print trying to catxch intermittent error
+            print 'text', text
             entry_chain_id = self.factom_chain_object.parse_entry_data(text)['ChainID']
             if entry_chain_id == chain_id:
                found = True
@@ -159,7 +163,7 @@ class CLITestsEntries(unittest.TestCase):
         self.assertTrue(found, 'Entry not shown as pending')
 
         wait_for_ack(tx_id)
-        self.assertTrue("TransactionACK" in self.factom_cli_create.request_transaction_acknowledgement(tx_id),
+        self.assertIn("TransactionACK", self.factom_cli_create.request_transaction_acknowledgement(tx_id),
                         "Forced entry was not revealed")
 
         # compose entry by external chain id
@@ -170,16 +174,17 @@ class CLITestsEntries(unittest.TestCase):
 
         # look for chainhead by hex external id
         text = self.factom_chain_object.get_chainhead(external_id_list=chain_names_list)
-        self.assertTrue('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000' in text, 'Chainhead not found')
+        self.assertIn('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000', text, 'Chainhead not found')
 
         # look for chainhead by hex external id return KeyMR
-        keyMR = self.factom_chain_object.parse_entryblock_data(text)['EBlock']
-        factom_flags_list = [' -K']
+        keyMR = self.factom_chain_object.parse_block_data(text)['EBlock']
+        # keyMR = self.factom_chain_object.parse_entryblock_data(text)['fixed']['EBlock']
+        factom_flags_list = ['-K']
         self.assertEqual(keyMR, self.factom_chain_object.get_chainhead(external_id_list=chain_names_list, flag_list=factom_flags_list), 'Key merkle root does not match')
 
         # check get allentries by hex external id
         factom_flags_list = [' -E']
-        self.assertTrue(entry_hash in self.factom_chain_object.get_allentries(flag_list=factom_flags_list, external_id_list=chain_names_list), 'Chain not found')
+        self.assertIn(entry_hash, self.factom_chain_object.get_allentries(flag_list=factom_flags_list, external_id_list=chain_names_list), 'Chain not found')
 
     def test_quiet_make_entry(self):
         ''' This test is only reliable on the 1st run on a given database.
@@ -203,7 +208,7 @@ class CLITestsEntries(unittest.TestCase):
         names_list = names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-q']
         self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list, flag_list=factom_flags_list)
-        self.assertFalse("Entry not found" in self.factom_chain_object.get_entry_by_hash(self.data[                                                          '3rd_over_2nd_entry_hash']))
+        self.assertNotIn("Entry not found", self.factom_chain_object.get_entry_by_hash(self.data[                                                          '3rd_over_2nd_entry_hash']))
 
     def test_make_entry_return_chain_id(self):
         ''' This test is only reliable on the 1st run on a given database.
@@ -232,14 +237,14 @@ class CLITestsEntries(unittest.TestCase):
         wait_for_entry_in_block(external_id_list=chain_names_list)
         print '4th_over_2nd_entry_hash', self.data['4th_over_2nd_entry_hash']
 
-        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries(chain_id=chain_id), "Entry not found")
+        self.assertIn(self.data['4th_over_2nd_entry_hash'], self.factom_chain_object.get_allentries(chain_id=chain_id), "Entry not found")
 
         # look for chainhead by chain id
-        self.assertTrue('ChainID: ' + self.data['2nd_chain_id'] in self.factom_chain_object.get_chainhead(chain_id=chain_id), 'Chainhead not found')
+        self.assertIn('ChainID: ' + self.data['2nd_chain_id'], self.factom_chain_object.get_chainhead(chain_id=chain_id), 'Chainhead not found')
 
         # check get allentries by external id and returning entry hash
         factom_flags_list = ['-E']
-        self.assertTrue(self.data['4th_over_2nd_entry_hash'] in self.factom_chain_object.get_allentries(external_id_list=chain_names_list, flag_list=factom_flags_list), "Entry not found")
+        self.assertIn(self.data['4th_over_2nd_entry_hash'], self.factom_chain_object.get_allentries(external_id_list=chain_names_list, flag_list=factom_flags_list), "Entry not found")
 
 
     def test_compose_entry(self):

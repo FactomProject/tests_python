@@ -1,7 +1,5 @@
 import unittest
-import os, binascii
-import time
-
+import os
 from nose.plugins.attrib import attr
 from flaky import flaky
 

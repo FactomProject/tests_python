@@ -51,32 +51,32 @@ class CLIObjectsCreate(CLIObjectsBase):
     def get_entry_credit_rate(self):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_ecrate)))
 
-    def create_new_transaction_in_wallet(self, transaction_name):
+    def create_new_transaction(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_newtx, transaction_name)))
 
-    def add_factoid_input_to_transaction_in_wallet(self, transaction_name, wallet_address, amount, **kwargs):
+    def add_factoid_input_to_transaction(self, transaction_name, wallet_address, amount, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_f_input, flags, ' ', transaction_name, ' ', wallet_address, ' ', amount)))
 
-    def add_factoid_output_to_transaction_in_wallet(self, transaction_name, wallet_address, amount, **kwargs):
+    def add_factoid_output_to_transaction(self, transaction_name, wallet_address, amount, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_f_output, flags, ' ', transaction_name, ' ', wallet_address, ' ', amount)))
 
-    def set_account_to_subtract_fee_from_transaction_output(self, transaction_name, wallet_address):
+    def subtract_fee_from_transaction_output(self, transaction_name, wallet_address):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_substract_fee_on_tx, transaction_name, ' ', wallet_address)))
 
-    def set_account_to_add_fee_to_transaction_input(self, transaction_name, wallet_address, **kwargs):
+    def add_fee_to_transaction_input(self, transaction_name, wallet_address, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
         return send_command_to_cli_and_receive_text(''.join(
             (self._factom_cli_command, self._factomd_add_fee_on_tx, flags, ' ', transaction_name, ' ', wallet_address)))
 
-    def sign_transaction_in_wallet(self, transaction_name):
+    def sign_transaction(self, transaction_name):
         return send_command_to_cli_and_receive_text((''.join((self._factom_cli_command, self._factom_sign_transaction, transaction_name))))
 
     def compose_transaction(self, transaction_name):
@@ -111,7 +111,7 @@ class CLIObjectsCreate(CLIObjectsBase):
     def remove_transaction_from_wallet(self, transaction_name):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_remove_tx, transaction_name)))
 
-    def add_entry_credit_output_to_transaction_in_wallet(self, transaction_name, wallet_address, amount, **kwargs):
+    def add_entry_credit_output_to_transaction(self, transaction_name, wallet_address, amount, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
