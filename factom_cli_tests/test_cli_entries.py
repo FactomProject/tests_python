@@ -10,7 +10,7 @@ from helpers.general_test_methods import wait_for_ack, wait_for_entry_in_block, 
 from nose.plugins.attrib import attr
 
 @flaky(max_runs=3, min_passes=1)
-@attr(fast=True)
+@attr(issue=True)
 class FactomCliTransactionTest(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
     path = ''
