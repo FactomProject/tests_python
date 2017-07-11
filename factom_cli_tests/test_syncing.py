@@ -3,7 +3,7 @@ import time
 
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import read_data_from_json
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
@@ -17,7 +17,7 @@ class FactomTestSyncing(unittest.TestCase):
     _restart_command = 'docker start factom-factomd-'
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
         self.factom_chain_object = FactomChainObjects()
 
 
