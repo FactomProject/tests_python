@@ -1,6 +1,5 @@
 import unittest
 import os, binascii
-import json
 from flaky import flaky
 
 from cli_objects.factom_cli_objects import FactomCliMainObjects

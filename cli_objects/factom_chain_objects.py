@@ -1,5 +1,3 @@
-import re
-
 from collections import defaultdict
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
 from base_object import FactomBaseObject
