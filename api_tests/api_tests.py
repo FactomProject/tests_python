@@ -7,7 +7,7 @@ import re
 from helpers.factom_cli_methods import get_data_dump_from_nonansible_server
 from helpers.helpers import read_data_from_json
 
-@attr(api=True)
+@attr(fast=True)
 class FactomChainTests(unittest.TestCase):
 
     def setUp(self):
