@@ -21,7 +21,7 @@ class FactomAPIHeightTests(unittest.TestCase):
         self.factom_api = FactomApiObjects()
         self.factom_api_wallet = FactomWalletApiObjects()
 
-    def test_check_admin_block_height(self):
+    def ntest_check_admin_block_height(self):
         blocks = self.factom_api.get_heights()
         directory_block_height = blocks['directoryblockheight']
         for factomd_address_custom in self.factomd_address_custom_list:
@@ -45,7 +45,7 @@ class FactomAPIHeightTests(unittest.TestCase):
                 #logging.getLogger('api_command').info(dblock_height_1)
                 self.assertTrue(dblock_height == dblock_height_1,"mismatch in directory block at height %d and server = %s" % (x,factomd_address_custom))
 
-    def test_check_entrycredit_block_height(self):
+    def ntest_check_entrycredit_block_height(self):
         blocks = self.factom_api.get_heights()
         directory_block_height = blocks['directoryblockheight']
         for factomd_address_custom in self.factomd_address_custom_list:
@@ -71,7 +71,7 @@ class FactomAPIHeightTests(unittest.TestCase):
                 self.assertTrue(factoid_block_height == factoid_block_height_1,
                                 "mismatch in factoid block at height %d and server = %s" % (x,factomd_address_custom))
 
-    def test_wallet_height(self):
+    def ntest_wallet_height(self):
         blocks = self.factom_api.get_heights()
         directory_block_height = blocks['directoryblockheight']
         # transactions need to be listed for wallet to catch up the directory block height
