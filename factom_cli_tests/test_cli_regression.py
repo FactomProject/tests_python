@@ -117,14 +117,13 @@ class FactomCliEndToEndTest(unittest.TestCase):
         self.factom_cli_create.add_factoid_input_to_transaction(transaction_name, self.first_address, format(float(self.ecrate) * 8, 'f'))
         self.factom_cli_create.sign_transaction(transaction_name)
         text = self.factom_cli_create.send_transaction(transaction_name)
-        print 'text', text
         chain_dict = self.factom_chain_object.parse_simple_data(text)
         tx_id = chain_dict['TxID']
 
         # check for pending transaction by address return transaction id
         factom_flags_list = ['-T']
         pending_tx_id = self.factom_chain_object.get_pending_transactions(address=self.first_address, flag_list=factom_flags_list)
-        self.assertEqual(pending_tx_id, tx_id,'Sent transaction not pending')
+        self.assertIn(tx_id, pending_tx_id,'Sent transaction not pending')
 
     def test_pending_transaction_for_entry_credit_address(self):
         # make transaction
