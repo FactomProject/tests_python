@@ -38,7 +38,9 @@ class FactomChainObjects(FactomBaseObject):
 
     def parse_transaction_data(self, entry_text):
         entry_text = entry_text.split('\n')
+        print entry_text
         del entry_text[-1:]
+        print entry_text
         return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
 
     def parse_block_data(self, text):
@@ -78,6 +80,19 @@ class FactomChainObjects(FactomBaseObject):
         if 'external_id_list' in kwargs:
             chain_identifier = ' '.join(kwargs['external_id_list'])
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
+
+
+    def make_chain_from_binary_data(self, ecaddress, data, **kwargs):
+        flags = ''
+        if 'flag_list' in kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' ',
+                                                             flags, ' ', chain_identifier, ' ', ecaddress,
+                                                             data)))
+
 
     def compose_chain_from_binary_file(self, ecaddress, file_data, **kwargs):
         flags = ''

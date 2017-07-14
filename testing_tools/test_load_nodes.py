@@ -1,6 +1,7 @@
 import unittest
 import os
 import time
+import io
 
 from nose.plugins.attrib import attr
 
@@ -57,3 +58,14 @@ class FactomLoadNodes(unittest.TestCase):
                     if not CONTINUOUS: time.sleep(float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK']) * 0.2)
                     self.assertFalse('0' == self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000000), 'out of entry credits')
             os.remove(path)
+
+    def test_to_test(self):
+        chain_flags_list = ['-f', '-C']
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list = ['-n', name_1, '-n', name_2]
+        data = io.BytesIO(os.urandom(randint(100, 5000)))
+        chain_id = self.factom_chain_object.make_chain_from_binary_data(self.entry_credit_address1000000, data,
+                                                                        external_id_list=names_list,
+                                                                        flag_list=chain_flags_list)
+        print chain_id
