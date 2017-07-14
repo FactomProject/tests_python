@@ -3,7 +3,7 @@ import json
 import re
 from nose.plugins.attrib import attr
 
-from cli_objects.factom_cli_create import FactomCliCreate
+from cli_objects.factom_cli_objects import FactomCliMainObjects
 from cli_objects.factom_chain_objects import FactomChainObjects
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack
@@ -13,7 +13,7 @@ class FactomCliEndToEndTest(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.factom_cli_create = FactomCliCreate()
+        self.factom_cli_create = FactomCliMainObjects()
         self.factom_chain_object = FactomChainObjects()
         self.first_address = self.factom_cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
         self.second_address = self.factom_cli_create.create_new_factoid_address()
@@ -24,37 +24,45 @@ class FactomCliEndToEndTest(unittest.TestCase):
             self.data['ec_wallet_address'])
 
     def test_raw_blocks(self):
-        # BLOCK_HEIGHT = 2 because Directory Block at height = 2 has some entries
-        BLOCK_HEIGHT = 2
 
-        # admin block raw data
-        ablock=json.loads(self.factom_chain_object.get_admin_block_by_height(BLOCK_HEIGHT))
-        ahash=ablock['ablock']['backreferencehash']
-        self.assertEquals(ablock['rawdata'], self.factom_chain_object.get_raw(ahash), 'Incorrect raw data fetched for Admin Block at height ' + str(BLOCK_HEIGHT))
+        # find a directory block with entries
+        block_height = 0
+        head_height = int(self.factom_chain_object.get_directory_block_height_from_head())
+        for x in range(0, head_height):
+            dblock = json.loads(self.factom_chain_object.get_directory_block_by_height(x))
+            entries = len(dblock['dblock']['dbentries'])
+            if entries > 3:
+                block_height = x
+                break
+        self.assertNotEquals(block_height, 0, 'Network has no identities')
 
         # directory block raw data
-        dblock=json.loads(self.factom_chain_object.get_directory_block_by_height(BLOCK_HEIGHT))
         dhash=dblock['dblock']['dbhash']
-        self.assertEquals(dblock['rawdata'], self.factom_chain_object.get_raw(dhash), 'Incorrect raw data fetched for Directory Block at height ' + str(BLOCK_HEIGHT))
+        self.assertEquals(dblock['rawdata'], self.factom_chain_object.get_raw(dhash), 'Incorrect raw data fetched for Directory Block at height ' + str(block_height))
 
         # entry block raw data
         # ENTRY = 3 skips over administrative entries
         ENTRY = 3
         keyMR = dblock['dblock']['dbentries'][ENTRY]['keymr']
         eblock = self.factom_chain_object.get_entry_block(keyMR)
-        self.assertIn(self.factom_chain_object.parse_block_data(eblock)['EBEntry'][0]['EntryHash'], self.factom_chain_object.get_raw(keyMR), 'Incorrect raw data fetched for Entry Block at height ' + str(BLOCK_HEIGHT))
+        self.assertIn(self.factom_chain_object.parse_block_data(eblock)['EBEntry'][0]['EntryHash'], self.factom_chain_object.get_raw(keyMR), 'Incorrect raw data fetched for Entry Block at height ' + str(block_height))
+
+        # admin block raw data
+        ablock=json.loads(self.factom_chain_object.get_admin_block_by_height(block_height))
+        ahash=ablock['ablock']['backreferencehash']
+        self.assertEquals(ablock['rawdata'], self.factom_chain_object.get_raw(ahash), 'Incorrect raw data fetched for Admin Block at height ' + str(block_height))
 
         # TODO Once factomd get ecbheight code is corrected, insert correct hash field and activate this test
 
         # entry credit block raw data
-        # ecblock=json.loads(self.factom_chain_object.get_entrycredit_block_by_height(BLOCK_HEIGHT))
+        # ecblock=json.loads(self.factom_chain_object.get_entrycredit_block_by_height(block_height))
         # echash=ecblock['ecblock']['header']['????hash']
-        # self.assertEquals(ecblock['rawdata'], self.factom_chain_object.get_raw(echash), 'Incorrect raw data fetched for Entry Credit Block at height ' + str(BLOCK_HEIGHT))
+        # self.assertEquals(ecblock['rawdata'], self.factom_chain_object.get_raw(echash), 'Incorrect raw data fetched for Entry Credit Block at height ' + str(block_height))
 
         # factoid block raw data
-        fblock=json.loads(self.factom_chain_object.get_factoid_block_by_height(BLOCK_HEIGHT))
+        fblock=json.loads(self.factom_chain_object.get_factoid_block_by_height(block_height))
         fhash=fblock['fblock']['keymr']
-        self.assertEquals(fblock['rawdata'], self.factom_chain_object.get_raw(fhash), 'Incorrect raw data fetched for Factoid Block at height ' + str(BLOCK_HEIGHT))
+        self.assertEquals(fblock['rawdata'], self.factom_chain_object.get_raw(fhash), 'Incorrect raw data fetched for Factoid Block at height ' + str(block_height))
 
     def test_allocate_funds_to_factoid_wallet_address_quiet_output(self):
         AMOUNT_SENT = 1
