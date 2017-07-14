@@ -89,9 +89,10 @@ class FactomChainObjects(FactomBaseObject):
         chain_identifier = ''
         if 'external_id_list' in kwargs:
             chain_identifier = ' '.join(kwargs['external_id_list'])
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' ',
-                                                             flags, ' ', chain_identifier, ' ', ecaddress,
-                                                             data)))
+        send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' ',
+                                                             flags, ' ', chain_identifier, ' ', ecaddress)))
+
+        return send_command_to_cli_and_receive_text(data)
 
 
     def compose_chain_from_binary_file(self, ecaddress, file_data, **kwargs):

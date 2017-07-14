@@ -64,7 +64,7 @@ class FactomLoadNodes(unittest.TestCase):
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
-        data = io.BytesIO(os.urandom(randint(100, 5000)))
+        data = create_random_string(randint(100, 5000))
         chain_id = self.factom_chain_object.make_chain_from_binary_data(self.entry_credit_address1000000, data,
                                                                         external_id_list=names_list,
                                                                         flag_list=chain_flags_list)
