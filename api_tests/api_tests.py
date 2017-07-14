@@ -6,6 +6,7 @@ import re
 
 from helpers.factom_cli_methods import get_data_dump_from_nonansible_server
 from helpers.helpers import read_data_from_json
+import logging
 
 @attr(api=True)
 class FactomChainTests(unittest.TestCase):
@@ -30,7 +31,12 @@ class FactomChainTests(unittest.TestCase):
     def test_get_current_minute(self):
         datadump = get_data_dump_from_nonansible_server(self.factomd_address)
         datadumplist = datadump.split('/')
-        minute = datadumplist[4]
+        temp = datadumplist[4]
+        controlpanel_minute = int(re.search('[0-9]', temp).group())
+        logging.getLogger('api_command').info(temp)
         result = self.factom_api.get_current_minute()
-        current_minute = result['minute']
-        self.assertEqual(int(re.search('[0-9]', minute).group()),(int(current_minute)-1),"minutes are not matching")
+        current_minute = result['minute'] - 1
+        logging.getLogger('api_command').info(current_minute)
+        if controlpanel_minute == 9:
+            current_minute = 0
+        self.assertEqual(controlpanel_minute,current_minute,"minutes are not matching")
