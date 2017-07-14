@@ -23,11 +23,11 @@ class CLITestsEntryBlock(unittest.TestCase):
         self.cli_create = CLIObjectsCreate()
         self.multiple_nodes = CLIObjectsMultipleNodes()
 
-    @attr(production=True)
+    @attr(production_tool=True)
     def test_production_entries(self):
         self._missing_entries(self.factomd_address_prod)
 
-    @attr(fast=True)
+    @attr(local_tool=True)
     def test_ansible_entries(self):
         self._missing_entries(self.factomd_address_ansible)
 

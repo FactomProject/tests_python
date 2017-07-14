@@ -1,7 +1,7 @@
 import unittest
 import os
+
 from nose.plugins.attrib import attr
-from flaky import flaky
 
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from cli_objects.cli_objects_chain import CLIObjectsChain
@@ -13,11 +13,11 @@ from helpers.general_test_methods import fund_entry_credit_address
 '''This bulk test checks for the rare occurrence of a chain being created and the server returning a server error
 rather than a Chain ID.
 Many chains are created because the error is rare.
-@attr(fast=False) because it takes a long time and shouldn't be run regularly'''
+'''
 
 NUMBER_OF_RUNS = 200000
 
-@attr(fast=False)
+@attr(local_tool=True)
 class CLITestsChainsMakeMany(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 

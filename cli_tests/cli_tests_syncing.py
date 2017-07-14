@@ -20,7 +20,6 @@ class CLITestsSyncing(unittest.TestCase):
         self.cli_create = CLIObjectsCreate()
         self.chain_objects = CLIObjectsChain()
 
-
     def test_sync_stopped_node(self):
 
         # stop node

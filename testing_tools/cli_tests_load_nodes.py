@@ -11,7 +11,7 @@ from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import fund_entry_credit_address
 from random import randint
 
-@attr(load=True)
+@attr(load_tool=True)
 class CLITestsLoadNodes(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
@@ -25,9 +25,9 @@ class CLITestsLoadNodes(unittest.TestCase):
 
     def test_make_chain_and_check_balance(self):
 
-        # BLOCKTIME and ENTRIES_PER_BLOCK are variables in shared_test_dat.json
-        # increasing ENTRIES_PER_BLOCK decreases sleep time between entries
-        # set CONTINUOUS for no sleeping at all
+        '''BLOCKTIME and ENTRIES_PER_BLOCK are variables in shared_test_dat.json
+        increasing ENTRIES_PER_BLOCK decreases sleep time between entries.
+        set CONTINUOUS for no sleeping at all.'''
 
         CONTINUOUS = True
 

@@ -23,8 +23,7 @@ class CLITestsChains(unittest.TestCase):
         self.chain_objects = CLIObjectsChain()
         self.api_objects = APIObjectsFactomd()
         self.ecrate = self.cli_create.get_entry_credit_rate()
-        self.first_address = self.cli_create.import_address_from_factoid(
-            self.data['factoid_wallet_address'])
+        self.first_address = self.cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
         self.entry_credit_address = self.cli_create.import_address_from_factoid(
             self.data['ec_wallet_address'])
 
