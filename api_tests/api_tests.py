@@ -19,6 +19,7 @@ class APITests(unittest.TestCase):
         keymr = self.factom_api.get_directory_block_head()
         self.assertTrue('000000000000000000000000000000000000000000000000000000000000000a' ==
                         self.factom_api.get_directory_block_by_keymr(keymr)['chainid'])
+
     def test_get_heights(self):
         self.assertTrue('entryheight' in self.factom_api.get_heights())
 

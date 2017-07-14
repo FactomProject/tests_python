@@ -22,7 +22,7 @@ class ApiTestsWallet(unittest.TestCase):
         self.entry_creds_wallet2 = self.wallet_api_objects.import_address_by_secret(self.data['ec_wallet_address'])
         self.entry_creds_wallet2 = self.wallet_api_objects.generate_ec_address()
 
-    def test_allocate_founds_to_factoid_wallet_address(self):
+    def test_allocate_funds_to_factoid_wallet_address(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))
 
         self.wallet_api_objects.create_new_transaction(transaction_name)
@@ -33,7 +33,7 @@ class ApiTestsWallet(unittest.TestCase):
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         self.assertTrue("Successfully submitted" in self.api_objects.submit_factoid_by_transaction(transaction)['message'])
 
-    def test_alocate_too_small_founds(self):
+    def test_allocate_too_few_funds(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))
 
 
