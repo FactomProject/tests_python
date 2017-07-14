@@ -28,9 +28,9 @@ class FactomChainTests(unittest.TestCase):
         self.assertTrue('keymr' in self.factom_api.get_directory_block_by_height(directory_block_height))
 
     def test_get_current_minute(self):
-        result = self.factom_api.get_current_minute()
-        current_minute = result['minute']
         datadump = get_data_dump_from_nonansible_server(self.factomd_address)
         datadumplist = datadump.split('/')
         minute = datadumplist[4]
+        result = self.factom_api.get_current_minute()
+        current_minute = result['minute'] - 1
         self.assertEqual(int(re.search('[0-9]', minute).group()),int(current_minute),"minutes are not matching")
