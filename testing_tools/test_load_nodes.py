@@ -36,36 +36,22 @@ class FactomLoadNodes(unittest.TestCase):
         self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000000)
         chain_flags_list = ['-f', '-C']
         for i in xrange(20):
-            path = os.path.join(os.path.dirname(__file__), '../test_data/testfile')
 
             for i in range(80):
-                with open('output_file', 'wb') as fout:
-                    fout.write(os.urandom(randint(100, 5000)))
-                    path = fout.name
+
                 name_1 = create_random_string(5)
                 name_2 = create_random_string(5)
                 names_list = ['-n', name_1, '-n', name_2]
-                chain_id = self.factom_chain_object.make_chain_from_binary_file(self.entry_credit_address1000000, path, external_id_list=names_list, flag_list=chain_flags_list)
+                data = create_random_string(randint(100, 5000))
+                chain_id = self.factom_chain_object.make_chain_from_string(self.entry_credit_address1000000, data, external_id_list=names_list, flag_list=chain_flags_list)
 
                 for i in range(120):
-                    with open('output_file', 'wb') as fout:
-                        fout.write(os.urandom(randint(100, 5000)))
-                        path = fout.name
                     name_1 = create_random_string(5)
                     name_2 = create_random_string(5)
                     names_list = ['-c', chain_id, '-e', name_1, '-e', name_2]
-                    self.factom_chain_object.add_entry_to_chain(self.entry_credit_address1000000, path, external_id_list=names_list, flag_list=chain_flags_list)
+                    data = create_random_string(randint(100, 5000))
+                    self.factom_chain_object.add_entry_to_chain_by_string(self.entry_credit_address1000000, data, external_id_list=names_list, flag_list=chain_flags_list)
                     if not CONTINUOUS: time.sleep(float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK']) * 0.2)
                     self.assertFalse('0' == self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000000), 'out of entry credits')
-            os.remove(path)
 
-    def test_to_test(self):
-        chain_flags_list = ['-f', '-C']
-        name_1 = create_random_string(5)
-        name_2 = create_random_string(5)
-        names_list = ['-n', name_1, '-n', name_2]
-        data = create_random_string(randint(100, 5000))
-        chain_id = self.factom_chain_object.make_chain_from_binary_data(self.entry_credit_address1000000, data,
-                                                                        external_id_list=names_list,
-                                                                        flag_list=chain_flags_list)
-        print chain_id
+
