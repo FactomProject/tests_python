@@ -140,14 +140,19 @@ class FactomApiObjects():
         blocks = json.loads(self.send_get_request_with_params_dict('transaction', {'hash': hash()}))
         return blocks['result']['factoidtransaction']
 
-    def get_pending_transactions_by_address(self, address):
+    def get_pending_transactions(self, *address):
         '''
-        Gets pending transaction by wallet address
-        :param address: wallet adress
+        Gets pending transaction
+        :param address: wallet address
         :return: list with transaction ids and statuses
         '''
 
-        blocks = json.loads(self.send_get_request_with_params_dict('pending-transactions', {'address': address}))
+        if address:
+            blocks = json.loads(
+                self.send_get_request_with_params_dict('pending-transactions', {'address': address[0]})[0])
+        else:
+            blocks = json.loads(self.send_get_request_with_method('pending-transactions'))
+
         return blocks['result']
 
     def get_chain_head_by_chain_id(self, chain_id):
