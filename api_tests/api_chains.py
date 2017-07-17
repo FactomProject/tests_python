@@ -18,21 +18,21 @@ class APIEntriesTests(unittest.TestCase):
 
     def test_commit_chain(self):
         # commit chain
-        message, external_ids = self.compose_chain()
+        message, external_ids = self.__compose_chain()
         commit_success, commit_response = self.factom_api.commit_chain_by_message(message)
         if not commit_success:
-            fail_message, info, entryhash = self.failure_data(commit_response)
+            fail_message, info, entryhash = self.__failure_data(commit_response)
             self.assertTrue(False, 'Chain commit failed - ' + fail_message + ' - ' + info + ' - entryhash ' + entryhash)
 
     def test_repeated_commits(self):
         balance_before = self.factom_api.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
 
         # commit chain
-        message, external_ids = self.compose_chain()
+        message, external_ids = self.__compose_chain()
         commit_success, commit_response = self.factom_api.commit_chain_by_message(message)
 
         if not commit_success:
-            fail_message, info, entryhash = self.failure_data(commit_response)
+            fail_message, info, entryhash = self.__failure_data(commit_response)
             self.assertNotIn('Repeated Commit', fail_message,
                              'Chain commit failed - ' + fail_message + ' - ' + info + ' - entryhash ' + entryhash)
             # failed for some other reason
@@ -48,7 +48,7 @@ class APIEntriesTests(unittest.TestCase):
         if commit_success:
             self.assertFalse(True, 'Repeated commit allowed - entryhash ' + str(commit_response['entryhash']))
         else:
-            fail_message, info, entryhash = self.failure_data(commit_response)
+            fail_message, info, entryhash = self.__failure_data(commit_response)
             self.assertIn('Repeated Commit', fail_message, 'Chain commit failed because of - ' + fail_message + ' - ' + info + ' instead of Repeated Commit - entryhash ' + entryhash)
 
         # see if 2nd commit has been mistakenly paid for
@@ -56,7 +56,7 @@ class APIEntriesTests(unittest.TestCase):
         balance_after = self.factom_api.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
         self.assertEqual(balance_before, balance_after + 12, 'Balance before commit = ' + str(balance_before) + '. Balance after commit = ' + str(balance_after) + '. Balance after single commit SHOULD be = ' + str(balance_after + 12))
 
-    def compose_chain(self):
+    def __compose_chain(self):
 
         # external ids must be in hex
         name_1 = binascii.b2a_hex(os.urandom(2))
@@ -73,7 +73,7 @@ class APIEntriesTests(unittest.TestCase):
 
         return message, external_ids
 
-    def failure_data(self, commit_response):
+    def __failure_data(self, commit_response):
         message = str(commit_response['message'])
         info = str(commit_response['data']['info'])
         entryhash = str(commit_response['data']['entryhash'])
