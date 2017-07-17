@@ -21,8 +21,8 @@ class APIEntriesTests(unittest.TestCase):
         message, external_ids = self.compose_chain()
         commit_success, commit_response = self.factom_api.commit_chain_by_message(message)
         if not commit_success:
-            self.assertTrue(False, 'Chain commit failed - ' + str(commit_response['message']) + ' - ' + str(
-        commit_response['data']['info']) + ' - entryhash ' + str(commit_response['data']['entryhash']))
+            fail_message, info, entryhash = self.failure_data(commit_response)
+            self.assertTrue(False, 'Chain commit failed - ' + fail_message + ' - ' + info + ' - entryhash ' + entryhash)
 
     def test_repeated_commits(self):
         balance_before = self.factom_api.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
@@ -32,12 +32,11 @@ class APIEntriesTests(unittest.TestCase):
         commit_success, commit_response = self.factom_api.commit_chain_by_message(message)
 
         if not commit_success:
-            self.assertNotIn('Repeated Commit', commit_response['message'],
-                             'Chain commit failed - ' + str(commit_response['message']) + ' - ' + str(
-                                 commit_response['data']['info']) + ' - entryhash ' + str(
-                                 commit_response['data']['entryhash']))
+            fail_message, info, entryhash = self.failure_data(commit_response)
+            self.assertNotIn('Repeated Commit', fail_message,
+                             'Chain commit failed - ' + fail_message + ' - ' + info + ' - entryhash ' + entryhash)
             # failed for some other reason
-            self.assertTrue(False, 'Chain commit failed - ' + str(commit_response['message']))
+            self.assertTrue(False, 'Chain commit failed - ' + fail_message)
         else:
             # wait for 1st commit to be acknowledged
             tx_id = commit_response['txid']
@@ -49,10 +48,8 @@ class APIEntriesTests(unittest.TestCase):
         if commit_success:
             self.assertFalse(True, 'Repeated commit allowed - entryhash ' + str(commit_response['entryhash']))
         else:
-            self.assertIn('Repeated Commit', commit_response['message'],
-                          'Chain commit failed because of - ' + str(commit_response['message']) + ' - ' + str(
-                              commit_response['data']['info']) + ' instead of Repeated Commit - entryhash ' + str(
-                              commit_response['data']['entryhash']))
+            fail_message, info, entryhash = self.failure_data(commit_response)
+            self.assertIn('Repeated Commit', fail_message, 'Chain commit failed because of - ' + fail_message + ' - ' + info + ' instead of Repeated Commit - entryhash ' + entryhash)
 
         # see if 2nd commit has been mistakenly paid for
         wait_for_entry_in_block(external_id_list=external_ids)
@@ -75,3 +72,9 @@ class APIEntriesTests(unittest.TestCase):
         message, entry = self.wallet_api_objects.compose_chain(external_ids, content, self.entry_credit_address1000)
 
         return message, external_ids
+
+    def failure_data(self, commit_response):
+        message = str(commit_response['message'])
+        info = str(commit_response['data']['info'])
+        entryhash = str(commit_response['data']['entryhash'])
+        return message, info, entryhash
