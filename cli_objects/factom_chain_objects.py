@@ -1,6 +1,8 @@
 from collections import defaultdict
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
 from base_object import FactomBaseObject
+from subprocess import Popen, PIPE, STDOUT
+import shlex
 
 class FactomChainObjects(FactomBaseObject):
     _factomd_add_chain = 'addchain'
@@ -77,6 +79,21 @@ class FactomChainObjects(FactomBaseObject):
             chain_identifier = ' '.join(kwargs['external_id_list'])
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_add_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
 
+    def make_chain_from_string(self, ecaddress, data, **kwargs):
+        flags = ''
+        if 'flag_list' in kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
+        args = shlex.split(''.join((self._factom_cli_command, self._factomd_add_chain, ' ',
+                                                             flags, ' ', chain_identifier, ' ', ecaddress)))
+        p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        p.stdin.write(data)
+        p.stdin.close()
+        text = p.stdout.read(1024)
+        return text
+
     def compose_chain_from_binary_file(self, ecaddress, file_data, **kwargs):
         flags = ''
         if 'flag_list' in kwargs:
@@ -96,6 +113,21 @@ class FactomChainObjects(FactomBaseObject):
             chain_identifier = ' '.join(kwargs['external_id_list'])
         return send_command_to_cli_and_receive_text(
             ''.join((self._factom_cli_command, self._factom_add_entries, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
+
+    def add_entry_to_chain_by_string(self, ecaddress, data, **kwargs):
+        flags = ''
+        if 'flag_list' in kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
+        args =  shlex.split(''.join((self._factom_cli_command, self._factom_add_entries, ' ', flags, ' ', chain_identifier, ' ',
+                     ecaddress)))
+        p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        p.stdin.write(data)
+        p.stdin.close()
+        text = p.stdout.read(1024)
+        return text
 
     def compose_entry_from_binary_file(self, ecaddress, file_data, **kwargs):
         flags = ''
