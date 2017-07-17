@@ -141,8 +141,11 @@ class CLIObjectsChain(CLIObjectsBase):
 
     def get_pending_transactions(self, **kwargs):
         flags = ''
-        if kwargs:
+        if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
+        address_id = ''
+        if 'address' in kwargs:
+            address_id = kwargs['address']
         text = send_command_to_cli_and_receive_text(
             ''.join((self._cli_command, self._pending_transactions, flags)))
         return text

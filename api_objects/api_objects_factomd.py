@@ -3,7 +3,6 @@ import json
 
 from helpers.helpers import read_data_from_json
 
-
 class APIObjectsFactomd():
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
@@ -105,7 +104,7 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_params_dict('receipt', {'hash': hash}))
         return blocks['result']['Receipt']
 
-    def get_entry_blcok(self, key_mr):
+    def get_entry_block(self, key_mr):
         '''
         Get entry block by key_mr
         :param key_mr: str - keymr
@@ -141,14 +140,19 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_params_dict('transaction', {'hash': hash()}))
         return blocks['result']['factoidtransaction']
 
-    def get_pending_transactions_by_address(self, address):
+    def get_pending_transactions(self, *address):
         '''
-        Gets pending transaction by wallet address
-        :param address: wallet adress
+        Gets pending transaction
+        :param address: wallet address
         :return: list with transaction ids and statuses
         '''
 
-        blocks = json.loads(self.send_get_request_with_params_dict('pending-transactions', {'address': address}))
+        if address:
+            blocks = json.loads(
+                self.send_get_request_with_params_dict('pending-transactions', {'address': address[0]})[0])
+        else:
+            blocks = json.loads(self.send_get_request_with_method('pending-transactions'))
+
         return blocks['result']
 
     def get_chain_head_by_chain_id(self, chain_id):
@@ -166,7 +170,7 @@ class APIObjectsFactomd():
         :param ec_address: str - ec address
         :return: int - balance
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address})[0])
         return blocks['result']['balance']
 
     def get_factoid_balance_by_factoid_address(self, factoid_address):
@@ -211,7 +215,12 @@ class APIObjectsFactomd():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message})[0])
-        return blocks['result']
+        if 'error' in blocks:
+            success = False
+            return success, blocks['error']
+        else:
+            success = True
+            return success, blocks['result']
 
     def reveal_chain_by_entry(self, entry):
         '''
@@ -239,6 +248,11 @@ class APIObjectsFactomd():
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('reveal-entry', {'entry': entry}))
         return blocks['result']
+
+    def get_status(self, hash_or_tx_id, chain_id):
+        # chainid for factoid transaction is always 000...f, abbreviated to just f
+        blocks = json.loads(self.send_get_request_with_params_dict('ack', {'hash': hash_or_tx_id, 'chainid': chain_id})[0])
+        return blocks["result"]
 
     def send_raw_message(self, message):
         '''

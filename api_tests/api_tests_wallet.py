@@ -28,19 +28,28 @@ class ApiTestsWallet(unittest.TestCase):
         self.wallet_api_objects.create_new_transaction(transaction_name)
         self.wallet_api_objects.add_input_to_transaction(transaction_name, self.first_address, 100000000)
         self.wallet_api_objects.add_output_to_transaction(transaction_name, self.second_address, 100000000)
-        self.wallet_api_objects.subtract_fee_in_transaction(transaction_name, self.second_address)
+        self.wallet_api_objects.subtract_fee_from_transaction(transaction_name, self.second_address)
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
-        self.assertTrue("Successfully submitted" in self.api_objects.submit_factoid_by_transaction(transaction)['message'])
+        result = self.api_objects.submit_factoid_by_transaction(transaction)
+        self.assertIn("Successfully submitted", result['message'], 'Factoid transaction not successful')
 
-    def test_allocate_too_few_funds(self):
+        # chain id for factoid transaction is always 000...f, abbreviated to just f
+        for x in range(0, 300):
+            status = self.api_objects.get_status(result['txid'], 'f')['status']
+            if (status == 'TransactionACK'):
+                break
+            time.sleep(1)
+        self.assertLess(x, 299, 'Factoid transaction not acknowledged within 5 minutes')
+
+    def test_allocate_not_enough_funds(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))
 
 
         self.wallet_api_objects.create_new_transaction(transaction_name)
         self.wallet_api_objects.add_input_to_transaction(transaction_name, self.first_address, 1)
         self.wallet_api_objects.add_output_to_transaction(transaction_name, self.second_address, 1)
-        self.wallet_api_objects.subtract_fee_in_transaction(transaction_name, self.second_address)
+        self.wallet_api_objects.subtract_fee_from_transaction(transaction_name, self.second_address)
 
         self.assertTrue('Error totalling Outputs: Amount is out of range' in
                         self.wallet_api_objects.sign_transaction(transaction_name)['error']['data'])
@@ -55,13 +64,12 @@ class ApiTestsWallet(unittest.TestCase):
         self.wallet_api_objects.create_new_transaction(transaction_name)
         self.wallet_api_objects.add_input_to_transaction(transaction_name, self.first_address, 100000000)
         self.wallet_api_objects.add_output_to_transaction(transaction_name, self.second_address, 100000000)
-        self.wallet_api_objects.subtract_fee_in_transaction(transaction_name, self.second_address)
+        self.wallet_api_objects.subtract_fee_from_transaction(transaction_name, self.second_address)
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         txid = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
         time.sleep(10)
-        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)['transactions'][0]['inputs'][0]['amount']
-                        == 100000000, 'Transaction is not listed')
+        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)['transactions'][0]['inputs'][0]['amount'] == 100000000, 'Transaction is not listed')
 
     def test_list_current_working_transactions_in_wallet(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
@@ -84,7 +92,7 @@ class ApiTestsWallet(unittest.TestCase):
         self.wallet_api_objects.create_new_transaction(transaction_name)
         self.wallet_api_objects.add_input_to_transaction(transaction_name, self.first_address, 100000000)
         self.wallet_api_objects.add_entry_credit_output_to_transaction(transaction_name, self.second_address, 100000000)
-        self.wallet_api_objects.subtract_fee_in_transaction(transaction_name, self.second_address)
+        self.wallet_api_objects.subtract_fee_from_transaction(transaction_name, self.second_address)
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         self.assertTrue("Successfully submitted" in self.api_objects.submit_factoid_by_transaction(transaction)['message'])

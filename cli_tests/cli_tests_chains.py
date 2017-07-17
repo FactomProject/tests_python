@@ -84,9 +84,6 @@ class CLITestsChains(unittest.TestCase):
          it will still be there even if subsequent runs fail.'''
 
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        print 'dir', os.path.dirname(__file__)
-        print ' test', self.data['test_file_path']
-        print ' all', os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         # path = '/home/factom/PyCharm/tests_python/test_data/testfile'
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = self.data['1st_hex_external_id1']

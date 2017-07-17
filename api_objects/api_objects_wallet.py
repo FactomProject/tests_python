@@ -30,6 +30,7 @@ class APIObjectsWallet():
         r = requests.get(url, data=json.dumps(data), headers=headers)
         return r.text
 
+
     def check_address_by_public_address(self, address):
         '''
         Import address by public address
@@ -143,7 +144,7 @@ class APIObjectsWallet():
                                                                                  'address': address}))
         return blocks["result"]
 
-    def subtract_fee_in_transaction(self, transaction_name, address):
+    def subtract_fee_from_transaction(self, transaction_name, address):
         blocks = json.loads(self.send_post_request_with_params_dict('sub-fee', {'tx-name': transaction_name,
                                                                                'address': address}))
         return blocks
@@ -151,6 +152,11 @@ class APIObjectsWallet():
     def sign_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('sign-transaction', {'tx-name': transaction_name}))
         return blocks
+
+    def compose_chain(self, external_ids, content, ecpub):
+        blocks = json.loads(self.send_post_request_with_params_dict('compose-chain',
+                 {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ecpub}))
+        return blocks['result']['commit']['params']['message'], blocks['result']['reveal']['params']['entry']
 
     def compose_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-transaction',

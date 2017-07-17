@@ -49,13 +49,14 @@ class CLITestsEntries(unittest.TestCase):
         # create chain
         ONE_K_MINUS_8 = 1016
         '''entry cost = 1 ec per 1024 bytes
-        There are 4 bytes overhead and we are using 2 external ids of 2 bytes each
-        1024 - 4(overhead) - 4(2x2 external ids) = 1016'''
+        overhead = total length of external ids + 2 bytes per external id
+        There are 2 external ids of 2 bytes each
+        1024 - 4(2 external ids x 2 bytes length) - 4(2 bytes x 2 external ids) = 1016'''
 
         MAX_ENTRY_SIZE_MINUS_7 = 10233
         '''largest allowable entry is 10K = 10240 bytes
         smallest too large entry = 10241 bytes
-        10241 - 4(overhead) - 4(2x2 external ids) = 10233'''
+        10241 - 4(2 external ids x 2 bytes length) - 4(2 bytes x 2 external id) = 10233'''
 
         chain_name_1 = create_random_string(5)
         chain_name_2 = create_random_string(5)
@@ -153,8 +154,6 @@ class CLITestsEntries(unittest.TestCase):
         for entry_hash in entry_hash_list.split('\n'):
             text = self.chain_object.get_entry_by_hash(entry_hash)
 
-            # print trying to catxch intermittent error
-            print 'text', text
             entry_chain_id = self.chain_object.parse_entry_data(text)['ChainID']
             if entry_chain_id == chain_id:
                found = True
@@ -234,7 +233,6 @@ class CLITestsEntries(unittest.TestCase):
 
         # wait for entry to arrive in block
         wait_for_entry_in_block(external_id_list=chain_names_list)
-        print '4th_over_2nd_entry_hash', self.data['4th_over_2nd_entry_hash']
 
         self.assertIn(self.data['4th_over_2nd_entry_hash'], self.chain_object.get_allentries(chain_id=chain_id), "Entry not found")
 

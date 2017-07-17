@@ -3,8 +3,8 @@ import unittest
 from nose.plugins.attrib import attr
 
 from api_objects.api_objects_factomd import APIObjectsFactomd
-from helpers.helpers import read_data_from_json
 from api_objects.api_objects_wallet import APIObjectsWallet
+from helpers.helpers import read_data_from_json
 
 
 @attr(last=True)
