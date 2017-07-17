@@ -38,9 +38,7 @@ class FactomChainObjects(FactomBaseObject):
 
     def parse_transaction_data(self, entry_text):
         entry_text = entry_text.split('\n')
-        print entry_text
         del entry_text[-1:]
-        print entry_text
         return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
 
     def parse_block_data(self, text):
