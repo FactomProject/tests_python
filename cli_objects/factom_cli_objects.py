@@ -58,13 +58,13 @@ class FactomCliMainObjects(FactomBaseObject):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_f_input, flags, ' ', transaction_name, ' ', wallet_address, ' ', amount)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_f_input, flags, ' ', transaction_name, ' ', wallet_address, ' ', str(amount))))
 
     def add_factoid_output_to_transaction(self, transaction_name, wallet_address, amount, **kwargs):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_f_output, flags, ' ', transaction_name, ' ', wallet_address, ' ', amount)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_f_output, flags, ' ', transaction_name, ' ', wallet_address, ' ', str(amount))))
 
     def subtract_fee_from_transaction_output(self, transaction_name, wallet_address):
         return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factomd_substract_fee_on_tx, transaction_name, ' ', wallet_address)))
@@ -115,7 +115,7 @@ class FactomCliMainObjects(FactomBaseObject):
         flags = ''
         if kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_ec_output, flags, ' ', transaction_name, ' ', wallet_address, ' ', amount)))
+        return send_command_to_cli_and_receive_text(''.join((self._factom_cli_command, self._factom_add_transaction_ec_output, flags, ' ', transaction_name, ' ', wallet_address, ' ', str(amount))))
 
     def buy_ec(self, wallet_address, ec_wallet_address, amount, **kwargs):
         flags = ''

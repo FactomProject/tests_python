@@ -28,7 +28,7 @@ class FactomCliTransactionLimits(unittest.TestCase):
         # attempt to add a 0 factoid input to a transaction
         transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction(transaction_name)
-        self.factom_cli_create.add_factoid_input_to_transaction(transaction_name, self.first_address, '0')
+        self.factom_cli_create.add_factoid_input_to_transaction(transaction_name, self.first_address, 0)
         self.assertIn("Insufficient Fee", self.factom_cli_create.sign_transaction(transaction_name),
                         "0 input to transaction was allowed")
         self.assertIn("Cannot send unsigned transaction", self.factom_cli_create.send_transaction(transaction_name), "Unsigned transaction sent")
@@ -36,8 +36,8 @@ class FactomCliTransactionLimits(unittest.TestCase):
     def test_add_minus_input_to_transaction(self):
         transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction(transaction_name)
-        self.factom_cli_create.add_factoid_input_to_transaction(transaction_name, self.first_address, '-1')
-        self.factom_cli_create.add_factoid_output_to_transaction(transaction_name, self.first_address, '-1')
+        self.factom_cli_create.add_factoid_input_to_transaction(transaction_name, self.first_address, -1)
+        self.factom_cli_create.add_factoid_output_to_transaction(transaction_name, self.first_address, -1)
         self.assertIn("Insufficient Fee", self.factom_cli_create.sign_transaction(transaction_name),
                         "Negative input to transaction was allowed")
         self.assertIn("Cannot send unsigned transaction", self.factom_cli_create.send_transaction(transaction_name), "Unsigned transaction sent")
@@ -56,8 +56,8 @@ class FactomCliTransactionLimits(unittest.TestCase):
         transaction_fee = float(self.ecrate) * 9
         transaction_name = create_random_string(5)
         self.factom_cli_create.create_new_transaction(transaction_name)
-        self.factom_cli_create.add_factoid_input_to_transaction(transaction_name, self.first_address, str(balance_plus_one))
-        self.factom_cli_create.add_factoid_output_to_transaction(transaction_name, self.first_address, str(balance_plus_one - transaction_fee))
+        self.factom_cli_create.add_factoid_input_to_transaction(transaction_name, self.first_address, balance_plus_one)
+        self.factom_cli_create.add_factoid_output_to_transaction(transaction_name, self.first_address, balance_plus_one - transaction_fee)
         self.assertIn("balance is too low", self.factom_cli_create.sign_transaction(transaction_name),
                       "Insufficient balance not detected")
         self.assertIn("Cannot send unsigned transaction", self.factom_cli_create.send_transaction(transaction_name), "Attempt to send unsigned transaction not detected")
@@ -87,11 +87,11 @@ class FactomCliTransactionLimits(unittest.TestCase):
     def add_input_to_master_transaction(self, transaction_name, sub_transaction_name):
         temp_address = self.factom_cli_create.create_new_factoid_address()
         self.factom_cli_create.create_new_transaction(sub_transaction_name)
-        self.factom_cli_create.add_factoid_input_to_transaction(sub_transaction_name, self.first_address, '1')
-        self.factom_cli_create.add_factoid_output_to_transaction(sub_transaction_name, temp_address, '1')
+        self.factom_cli_create.add_factoid_input_to_transaction(sub_transaction_name, self.first_address, 1)
+        self.factom_cli_create.add_factoid_output_to_transaction(sub_transaction_name, temp_address, 1)
         self.factom_cli_create.subtract_fee_from_transaction_output(sub_transaction_name, temp_address)
         self.factom_cli_create.sign_transaction(sub_transaction_name)
         self.factom_cli_create.send_transaction(sub_transaction_name)
         self.factom_cli_create.add_factoid_input_to_transaction(transaction_name, temp_address,
-                                                                str(format(float(self.ecrate) * 2, 'f')))
+                                                                format(float(self.ecrate) * 2, 'f'))
 
