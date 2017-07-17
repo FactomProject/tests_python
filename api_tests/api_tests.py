@@ -33,9 +33,9 @@ class FactomChainTests(unittest.TestCase):
         datadumplist = datadump.split('/')
         temp = datadumplist[4]
         controlpanel_minute = int(re.search('[0-9]', temp).group())
-        logging.getLogger('api_command').info(temp)
         result = self.factom_api.get_current_minute()
         cli_minute = result['minute']
-        logging.getLogger('api_command').info(cli_minute)
         diff =  cli_minute - controlpanel_minute
-        self.assertEqual(diff > 2,"minutes are not matching")
+        self.assertFalse(diff > 2,"minutes are not matching")
+
+
