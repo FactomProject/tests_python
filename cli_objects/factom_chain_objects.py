@@ -1,5 +1,3 @@
-import re
-
 from collections import defaultdict
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
 from base_object import FactomBaseObject
@@ -177,10 +175,13 @@ class FactomChainObjects(FactomBaseObject):
 
     def get_pending_transactions(self, **kwargs):
         flags = ''
-        if kwargs:
+        if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
+        address_id = ''
+        if 'address' in kwargs:
+            address_id = kwargs['address']
         text = send_command_to_cli_and_receive_text(
-            ''.join((self._factom_cli_command, self._factom_pending_transactions, flags)))
+            ''.join((self._factom_cli_command, self._factom_pending_transactions, flags, ' ', address_id)))
         return text
 
     def get_chainhead(self, **kwargs):
