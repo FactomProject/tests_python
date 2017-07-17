@@ -1,6 +1,5 @@
 import unittest
 import json
-import re
 from nose.plugins.attrib import attr
 
 from cli_objects.factom_cli_objects import FactomCliMainObjects

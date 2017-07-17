@@ -3,7 +3,6 @@ import json
 
 from helpers.helpers import read_data_from_json
 
-
 class FactomApiObjects():
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
@@ -105,7 +104,7 @@ class FactomApiObjects():
         blocks = json.loads(self.send_get_request_with_params_dict('receipt', {'hash': hash}))
         return blocks['result']['Receipt']
 
-    def get_entry_blcok(self, key_mr):
+    def get_entry_block(self, key_mr):
         '''
         Get entry block by key_mr
         :param key_mr: str - keymr
@@ -171,7 +170,7 @@ class FactomApiObjects():
         :param ec_address: str - ec address
         :return: int - balance
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address})[0])
         return blocks['result']['balance']
 
     def get_factoid_balance_by_factoid_address(self, factoid_address):
@@ -216,7 +215,12 @@ class FactomApiObjects():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message})[0])
-        return blocks['result']
+        if 'error' in blocks:
+            success = False
+            return success, blocks['error']
+        else:
+            success = True
+            return success, blocks['result']
 
     def reveal_chain_by_entry(self, entry):
         '''
@@ -244,6 +248,11 @@ class FactomApiObjects():
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('reveal-entry', {'entry': entry}))
         return blocks['result']
+
+    def get_status(self, hash_or_tx_id, chain_id):
+        # chainid for factoid transaction is always 000...f, abbreviated to just f
+        blocks = json.loads(self.send_get_request_with_params_dict('ack', {'hash': hash_or_tx_id, 'chainid': chain_id})[0])
+        return blocks["result"]
 
     def send_raw_message(self, message):
         '''

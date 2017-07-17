@@ -1,6 +1,5 @@
 import unittest
 import os, binascii
-import json
 from flaky import flaky
 
 from cli_objects.factom_cli_objects import FactomCliMainObjects
@@ -50,13 +49,14 @@ class FactomCliTransactionTest(unittest.TestCase):
         # create chain
         ONE_K_MINUS_8 = 1016
         '''entry cost = 1 ec per 1024 bytes
-        There are 4 bytes overhead and we are using 2 external ids of 2 bytes each
-        1024 - 4(overhead) - 4(2x2 external ids) = 1016'''
+        overhead = total length of external ids + 2 bytes per external id
+        There are 2 external ids of 2 bytes each
+        1024 - 4(2 external ids x 2 bytes length) - 4(2 bytes x 2 external ids) = 1016'''
 
         MAX_ENTRY_SIZE_MINUS_7 = 10233
         '''largest allowable entry is 10K = 10240 bytes
         smallest too large entry = 10241 bytes
-        10241 - 4(overhead) - 4(2x2 external ids) = 10233'''
+        10241 - 4(2 external ids x 2 bytes length) - 4(2 bytes x 2 external id) = 10233'''
 
         chain_name_1 = create_random_string(5)
         chain_name_2 = create_random_string(5)

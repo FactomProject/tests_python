@@ -63,7 +63,7 @@ class FactomWalletApiObjects():
         blocks = json.loads(self.send_get_request_with_method('generate-factoid-address'))
         return blocks['result']['public']
 
-    def import_addres_by_secret(self, secret_address):
+    def import_address_by_secret(self, secret_address):
         '''
         Imports addres by secret addres and returns public
         :param secret_address: str
@@ -123,17 +123,17 @@ class FactomWalletApiObjects():
         blocks = json.loads(self.send_post_request_with_params_dict('delete-transaction', {'tx-name': transaction_name}))
         return blocks["result"]
 
-    def add_factoid_input_to_transaction(self, transaction_name, address, amount):
+    def add_input_to_transaction(self, transaction_name, address, amount):
         blocks = json.loads(self.send_post_request_with_params_dict('add-input', {'tx-name': transaction_name,
                                                                                  'address':address,'amount': amount}))
         return blocks#["result"]
 
-    def add_factoid_output_to_transaction(self, transaction_name, address, amount):
+    def add_output_to_transaction(self, transaction_name, address, amount):
         blocks = json.loads(self.send_post_request_with_params_dict('add-output', {'tx-name': transaction_name,
                                                                                  'address': address, 'amount': amount}))
         return blocks["result"]
 
-    def add_entry_credits_output_to_transaction(self, transaction_name, address, amount):
+    def add_entry_credit_output_to_transaction(self, transaction_name, address, amount):
         blocks = json.loads(self.send_post_request_with_params_dict('add-ec-output', {'tx-name': transaction_name,
                                                                                  'address': address, 'amount': amount}))
         return blocks["result"]
@@ -143,7 +143,7 @@ class FactomWalletApiObjects():
                                                                                  'address': address}))
         return blocks["result"]
 
-    def substract_fee_in_transaction(self, transaction_name, address):
+    def subtract_fee_from_transaction(self, transaction_name, address):
         blocks = json.loads(self.send_post_request_with_params_dict('sub-fee', {'tx-name': transaction_name,
                                                                                'address': address}))
         return blocks
@@ -151,6 +151,11 @@ class FactomWalletApiObjects():
     def sign_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('sign-transaction', {'tx-name': transaction_name}))
         return blocks
+
+    def compose_chain(self, external_ids, content, ecpub):
+        blocks = json.loads(self.send_post_request_with_params_dict('compose-chain',
+                 {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ecpub}))
+        return blocks['result']['commit']['params']['message'], blocks['result']['reveal']['params']['entry']
 
     def compose_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-transaction',

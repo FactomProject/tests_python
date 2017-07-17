@@ -1,6 +1,6 @@
 from helpers.factom_cli_methods import send_command_to_cli_and_receive_text
 from base_object import FactomBaseObject
-from helpers.helpers import create_random_string, read_data_from_json
+from helpers.helpers import read_data_from_json
 
 class FactomHeightObjects(FactomBaseObject):
     _factom_get_head = ' get head '
