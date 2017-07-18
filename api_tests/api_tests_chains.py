@@ -1,8 +1,8 @@
 import unittest
 import os, binascii
 
-from api_objects.factomd_api_objects import FactomApiObjects
-from api_objects.factom_wallet_api_objects import FactomWalletApiObjects
+from api_objects.api_objects_factomd import APIObjectsFactomd
+from api_objects.api_objects_wallet import APIObjectsWallet
 from helpers.helpers import read_data_from_json
 from helpers.general_test_methods import wait_for_ack, wait_for_entry_in_block, fund_entry_credit_address
 from nose.plugins.attrib import attr
@@ -11,8 +11,8 @@ from nose.plugins.attrib import attr
 class APIEntriesTests(unittest.TestCase):
 
     def setUp(self):
-        self.factom_api = FactomApiObjects()
-        self.wallet_api_objects = FactomWalletApiObjects()
+        self.factom_api = APIObjectsFactomd()
+        self.wallet_api_objects = APIObjectsWallet()
         self.data = read_data_from_json('shared_test_data.json')
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
 

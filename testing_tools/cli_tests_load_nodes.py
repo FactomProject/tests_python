@@ -4,24 +4,22 @@ import time
 import io
 
 from nose.plugins.attrib import attr
-
-from cli_objects.factom_cli_objects import FactomCliMainObjects
-from cli_objects.factom_chain_objects import FactomChainObjects
-
+from cli_objects.cli_objects_create import CLIObjectsCreate
+from cli_objects.cli_objects_chain import CLIObjectsChain
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import fund_entry_credit_address
 from random import randint
 
 @attr(load_tool=True)
-class FactomLoadNodes(unittest.TestCase):
+class CLITestsLoadNodes(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.factom_cli_create = FactomCliMainObjects()
-        self.factom_chain_object = FactomChainObjects()
-        self.first_address = self.factom_cli_create.import_address_from_factoid(
+        self.cli_create = CLIObjectsCreate()
+        self.chain_objects = CLIObjectsChain()
+        self.first_address = self.cli_create.import_address_from_factoid(
             self.data['factoid_wallet_address'])
-        self.ecrate = self.factom_cli_create.get_entry_credit_rate()
+        self.ecrate = self.cli_create.get_entry_credit_rate()
         self.entry_credit_address1000000 = fund_entry_credit_address(1000000)
 
     def test_make_chain_and_check_balance(self):
@@ -33,7 +31,7 @@ class FactomLoadNodes(unittest.TestCase):
         CONTINUOUS = True
 
         print 'sleep time', float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK'])
-        self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000000)
+        self.cli_create.check_wallet_address_balance(self.entry_credit_address1000000)
         chain_flags_list = ['-f', '-C']
         for i in xrange(20):
 
@@ -53,5 +51,4 @@ class FactomLoadNodes(unittest.TestCase):
                     self.factom_chain_object.add_entry_to_chain_by_string(self.entry_credit_address1000000, data, external_id_list=names_list, flag_list=chain_flags_list)
                     if not CONTINUOUS: time.sleep(float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK']) * 0.2)
                     self.assertFalse('0' == self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000000), 'out of entry credits')
-
 

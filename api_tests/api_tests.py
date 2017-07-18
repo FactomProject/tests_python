@@ -1,18 +1,18 @@
-from api_objects.factomd_api_objects import FactomApiObjects
+from api_objects.api_objects_factomd import APIObjectsFactomd
 import unittest
 
 from nose.plugins.attrib import attr
 import re
 
-from helpers.factom_cli_methods import get_data_dump_from_nonansible_server
+from helpers.cli_methods import get_data_dump_from_nonansible_server
 from helpers.helpers import read_data_from_json
 import logging
 
 @attr(api=True)
-class FactomChainTests(unittest.TestCase):
+class APITests(unittest.TestCase):
 
     def setUp(self):
-        self.factom_api = FactomApiObjects()
+        self.factom_api = APIObjectsFactomd()
         data = read_data_from_json('addresses.json')
         self.factomd_address = data['factomd_controlpanel']
 
@@ -20,6 +20,7 @@ class FactomChainTests(unittest.TestCase):
         keymr = self.factom_api.get_directory_block_head()
         self.assertTrue('000000000000000000000000000000000000000000000000000000000000000a' ==
                         self.factom_api.get_directory_block_by_keymr(keymr)['chainid'])
+
     def test_get_heights(self):
         self.assertTrue('entryheight' in self.factom_api.get_heights())
 

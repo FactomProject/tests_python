@@ -4,7 +4,7 @@ import json
 from helpers.helpers import read_data_from_json
 
 
-class FactomWalletApiObjects():
+class APIObjectsWallet():
 
     data = read_data_from_json('addresses.json')
     wallet_address = data['wallet_address']
@@ -29,6 +29,7 @@ class FactomWalletApiObjects():
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
         return r.text
+
 
     def check_address_by_public_address(self, address):
         '''
