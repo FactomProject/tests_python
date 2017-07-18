@@ -5,20 +5,20 @@ import time
 
 from nose.plugins.attrib import attr
 
-from api_objects.factomd_api_objects import FactomApiObjects
-from api_objects.factom_wallet_api_objects import FactomWalletApiObjects
+from api_objects.api_objects_wallet import APIObjectsWallet
+from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import read_data_from_json
 
 @attr(fast=True)
-class FactomWalletApiTest(unittest.TestCase):
+class ApiTestsWallet(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.factomd_api_objects = FactomApiObjects()
-        self.wallet_api_objects = FactomWalletApiObjects()
+        self.wallet_api_objects = APIObjectsWallet()
+        self.api_objects = APIObjectsFactomd()
         self.first_address = self.wallet_api_objects.import_address_by_secret(self.data['factoid_wallet_address'])
         self.second_address = self.wallet_api_objects.generate_factoid_address()
-        self.ecrate = self.factomd_api_objects.get_entry_credits_rate()
+        self.ecrate = self.api_objects.get_entry_credits_rate()
         self.entry_creds_wallet2 = self.wallet_api_objects.import_address_by_secret(self.data['ec_wallet_address'])
         self.entry_creds_wallet2 = self.wallet_api_objects.generate_ec_address()
 
@@ -31,12 +31,12 @@ class FactomWalletApiTest(unittest.TestCase):
         self.wallet_api_objects.subtract_fee_from_transaction(transaction_name, self.second_address)
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
-        result = self.factomd_api_objects.submit_factoid_by_transaction(transaction)
+        result = self.api_objects.submit_factoid_by_transaction(transaction)
         self.assertIn("Successfully submitted", result['message'], 'Factoid transaction not successful')
 
         # chain id for factoid transaction is always 000...f, abbreviated to just f
         for x in range(0, 300):
-            status = self.factomd_api_objects.get_status(result['txid'], 'f')['status']
+            status = self.api_objects.get_status(result['txid'], 'f')['status']
             if (status == 'TransactionACK'):
                 break
             time.sleep(1)
@@ -51,7 +51,7 @@ class FactomWalletApiTest(unittest.TestCase):
         self.wallet_api_objects.add_output_to_transaction(transaction_name, self.second_address, 1)
         self.wallet_api_objects.subtract_fee_from_transaction(transaction_name, self.second_address)
 
-        self.assertTrue('Error totaling Outputs: Amount is out of range' in
+        self.assertTrue('Error totalling Outputs: Amount is out of range' in
                         self.wallet_api_objects.sign_transaction(transaction_name)['error']['data'])
 
     def test_list_transactions_api_call(self):
@@ -67,10 +67,9 @@ class FactomWalletApiTest(unittest.TestCase):
         self.wallet_api_objects.subtract_fee_from_transaction(transaction_name, self.second_address)
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
-        txid = self.factomd_api_objects.submit_factoid_by_transaction(transaction)['txid']
+        txid = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
         time.sleep(10)
-        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)['transactions'][0]['inputs'][0]['amount']
-                        == 100000000, 'Transaction is not listed')
+        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)['transactions'][0]['inputs'][0]['amount'] == 100000000, 'Transaction is not listed')
 
     def test_list_current_working_transactions_in_wallet(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
@@ -96,5 +95,5 @@ class FactomWalletApiTest(unittest.TestCase):
         self.wallet_api_objects.subtract_fee_from_transaction(transaction_name, self.second_address)
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
-        self.assertTrue("Successfully submitted" in self.factomd_api_objects.submit_factoid_by_transaction(transaction)['message'])
+        self.assertTrue("Successfully submitted" in self.api_objects.submit_factoid_by_transaction(transaction)['message'])
 
