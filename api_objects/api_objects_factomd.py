@@ -250,7 +250,12 @@ class APIObjectsFactomd():
         return blocks['result']
 
     def get_status(self, hash_or_tx_id, chain_id):
-        # chainid for factoid transaction is always 000...f, abbreviated to just f
+        '''
+        This api call is used to find the status of a transaction, whether it be a factoid, reveal entry, or commit entry.
+        chainid for factoid transaction is always 000...f, abbreviated to just f
+        :return:
+        Status types
+        '''
         blocks = json.loads(self.send_get_request_with_params_dict('ack', {'hash': hash_or_tx_id, 'chainid': chain_id})[0])
         return blocks["result"]
 
