@@ -15,12 +15,8 @@ class CLITestsChainhead(unittest.TestCase):
     factomd_address_ansible = data['factomd_address']
 
     def setUp(self):
-        self.chain_objects = CLIObjectsChain()
-        self.multiple_nodes = CLIObjectsMultipleNodes()
-        self.cli_create = CLIObjectsCreate()
         self.factomd_api = APIObjectsFactomd()
         self.walletd_api = APIObjectsWallet()
-        self.chainlist = {}
 
     @attr(production=True)
     def test_production_chains(self):
@@ -41,10 +37,9 @@ class CLITestsChainhead(unittest.TestCase):
                 totalentryblocks = len(dblock['dbentries'])
                 for x in range(3, totalentryblocks):
                     chainid = dblock['dbentries'][x]['chainid']
-                    if chainid not in self.chainlist:
-                        keyMR = dblock['dbentries'][x]['keymr']
-                        chainhead = self.factomd_api.get_chain_head_by_chain_id(chainid)
-                        self.assertEqual(keyMR, chainhead, 'Problematic KeyMR: ' + keyMR + " problematic chainhead: "
-                                         + chainhead)
-                        self.chainlist[chainid] = keyMR
+                    keyMR = dblock['dbentries'][x]['keymr']
+                    chainhead = self.factomd_api.get_chain_head_by_chain_id(chainid)
+                    self.assertEqual(keyMR, chainhead, 'Problematic KeyMR: ' + keyMR + " problematic chainhead: "
+                                     + chainhead)
+
 
