@@ -1,5 +1,7 @@
 import unittest
 import json
+import binascii
+import hashlib
 from nose.plugins.attrib import attr
 
 from cli_objects.cli_objects_chain import CLIObjectsChain
@@ -62,6 +64,34 @@ class CLITestsRegression(unittest.TestCase):
         fblock=json.loads(self.chain_objects.get_factoid_block_by_height(block_height))
         fhash=fblock['fblock']['keymr']
         self.assertEquals(fblock['rawdata'], self.chain_objects.get_raw(fhash), 'Incorrect raw data fetched for Factoid Block at height ' + str(block_height))
+
+    def test_raw_transaction(self):
+        FACTOID_AMOUNT = 1
+        transaction_name = create_random_string(5)
+        self.cli_create.create_new_transaction(transaction_name)
+        self.cli_create.add_input_to_transaction(transaction_name, self.first_address, str(FACTOID_AMOUNT))
+        self.cli_create.add_output_to_transaction(transaction_name,
+                                                  self.second_address, str(FACTOID_AMOUNT))
+        self.cli_create.add_fee_to_transaction_input(transaction_name, self.first_address)
+        self.cli_create.sign_transaction(transaction_name)
+        text = self.cli_create.send_transaction(transaction_name)
+        chain_dict = self.chain_objects.parse_simple_data(text)
+        tx_id = chain_dict['TxID']
+
+        wait_for_ack(tx_id)
+
+        raw = self.chain_objects.get_raw(tx_id)
+
+        # exclude signatures (164 length for 1 input, 1 output, 0 ecoutputs)
+        raw_trimmed = raw[:164]
+
+        # convert to ascii
+        ascii_raw_trimmed = binascii.unhexlify(raw_trimmed)
+
+        # hash
+        raw_tx_id = hashlib.sha256(ascii_raw_trimmed).hexdigest()
+
+        self.assertEqual(raw_tx_id, tx_id, 'Raw data string is not correct')
 
     def test_allocate_funds_to_factoid_wallet_address_quiet_output(self):
         AMOUNT_SENT = 1
