@@ -20,14 +20,14 @@ class ApiTestsTransactions(unittest.TestCase):
         self.second_address = self.wallet_api_objects.generate_factoid_address()
         self.ecrate = self.api_objects.get_entry_credits_rate()
 
-    def test_multiple_factoid_address_transactions_without_status(self):
+    def test_multiple_factoid_address_transactions(self):
         '''
-        This testcase will submit 4 transactions per second and has no validation checks.
+        This testcase will submit 4 transactions per second and checks for transaction status after one block time.
         :return: nothing. because the testcase only loads.
         '''
         blocktime = self.data['BLOCKTIME']
         txidlist = []
-        for x in range(1,1000):
+        for x in range(1,6000):
             for temp in range(1,blocktime):
                 for y in range(1,5):
                     transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
