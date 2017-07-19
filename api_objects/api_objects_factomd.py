@@ -39,7 +39,7 @@ class APIObjectsFactomd():
         :return: list of dicts with entries
         """
         blocks = json.loads(self.send_get_request_with_params_dict('directory-block', {'keymr': keymr})[0])
-        return blocks["result"]["entryblocklist"][0]
+        return blocks["result"]
 
     def get_heights(self):
         '''
@@ -110,7 +110,7 @@ class APIObjectsFactomd():
         :param key_mr: str - keymr
         :return: header, entrylist
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry-block', {'KeyMR': key_mr}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry-block', {'KeyMR': key_mr})[0])
         return blocks['result']
 
     def get_entry_by_hash(self, hash):
@@ -161,8 +161,9 @@ class APIObjectsFactomd():
         :param chain_id: str chain id
         :return:
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('chain-head', {'ChainID': chain_id}))
-        return blocks['result']['ChainHead']
+        blocks = json.loads(self.send_get_request_with_params_dict('chain-head', {'ChainID': chain_id})[0])
+        print blocks
+        return blocks['result']['chainhead']
 
     def get_entry_credits_balance_by_ec_address(self, ec_address):
         '''
