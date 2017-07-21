@@ -9,7 +9,7 @@ from api_objects.api_objects_factomd import APIObjectsFactomd
 from api_objects.api_objects_wallet import APIObjectsWallet
 from helpers.helpers import read_data_from_json
 
-class CLITestsChainhead(unittest.TestCase):
+class APITestsChainhead(unittest.TestCase):
     data = read_data_from_json('addresses.json')
     factomd_address_prod = data['factomd_address_prod3']
     factomd_address_ansible = data['factomd_address']
@@ -17,6 +17,7 @@ class CLITestsChainhead(unittest.TestCase):
     def setUp(self):
         self.factomd_api = APIObjectsFactomd()
         self.walletd_api = APIObjectsWallet()
+        self.chainlist = {}
 
     @attr(production=True)
     def test_production_chains(self):
@@ -37,9 +38,11 @@ class CLITestsChainhead(unittest.TestCase):
                 totalentryblocks = len(dblock['dbentries'])
                 for x in range(3, totalentryblocks):
                     chainid = dblock['dbentries'][x]['chainid']
-                    keyMR = dblock['dbentries'][x]['keymr']
-                    chainhead = self.factomd_api.get_chain_head_by_chain_id(chainid)
-                    self.assertEqual(keyMR, chainhead, 'Problematic KeyMR: ' + keyMR + " problematic chainhead: "
+                    if chainid not in self.chainlist:
+                        keyMR = dblock['dbentries'][x]['keymr']
+                        chainhead = self.factomd_api.get_chain_head_by_chain_id(chainid)
+                        self.assertEqual(keyMR, chainhead, 'Problematic KeyMR: ' + keyMR + " problematic chainhead: "
                                      + chainhead)
+                        self.chainlist[chainid] = keyMR
 
 
