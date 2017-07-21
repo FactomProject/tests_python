@@ -7,7 +7,7 @@ from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import read_data_from_json
 
 @attr(last=True)
-class CLITestsBalances(unittest.TestCase):
+class APITestsBalances(unittest.TestCase):
 
     def setUp(self):
         self.api_wallet_objects = APIObjectsWallet()
