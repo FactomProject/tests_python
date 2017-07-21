@@ -41,14 +41,14 @@ class CLITestsLoadNodes(unittest.TestCase):
                 name_2 = create_random_string(5)
                 names_list = ['-n', name_1, '-n', name_2]
                 data = create_random_string(randint(100, 5000))
-                chain_id = self.factom_chain_object.make_chain_from_string(self.entry_credit_address1000000, data, external_id_list=names_list, flag_list=chain_flags_list)
+                chain_id = self.chain_objects.make_chain_from_string(self.entry_credit_address1000000, data, external_id_list=names_list, flag_list=chain_flags_list)
 
                 for i in range(120):
                     name_1 = create_random_string(5)
                     name_2 = create_random_string(5)
                     names_list = ['-c', chain_id, '-e', name_1, '-e', name_2]
                     data = create_random_string(randint(100, 5000))
-                    self.factom_chain_object.add_entry_to_chain_by_string(self.entry_credit_address1000000, data, external_id_list=names_list, flag_list=chain_flags_list)
+                    self.chain_objects.add_entry_to_chain_by_string(self.entry_credit_address1000000, data, external_id_list=names_list, flag_list=chain_flags_list)
                     if not CONTINUOUS: time.sleep(float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK']) * 0.2)
-                    self.assertFalse('0' == self.factom_cli_create.check_wallet_address_balance(self.entry_credit_address1000000), 'out of entry credits')
+                    self.assertFalse('0' == self.cli_create.check_wallet_address_balance(self.entry_credit_address1000000), 'out of entry credits')
 
