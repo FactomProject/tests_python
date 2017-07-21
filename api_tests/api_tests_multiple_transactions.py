@@ -40,13 +40,6 @@ class ApiTestsTransactions(unittest.TestCase):
                     txidlist.append(self.api_objects.submit_factoid_by_transaction(transaction)['txid'])
                 time.sleep(1)
             time.sleep(blocktime)
-            self._check_status(txidlist)
-
-
-    def _check_status(self,txidlist):
-        for txid in txidlist:
-            status = self.api_objects.get_status(txid,'f')['status']
-            self.assertEquals(status, 'DBlockConfirmed', 'Transaction = %s is still not confirmed' % txid)
-
-
-
+            for txid in txidlist:
+                status = self.api_objects.get_status(txid,'f')['status']
+                self.assertEquals(status, 'DBlockConfirmed', 'Transaction = %s is still not confirmed' % txid)
