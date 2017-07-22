@@ -278,14 +278,13 @@ class APIObjectsFactomd():
         :return: fblock dict
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('factoid-block', {'KeyMR': keymr})[0])
-        print blocks
         return blocks['result']['fblock']
 
     def get_entrycredit_block_by_keymr(self, keymr):
         '''
         Get factoid block by keymr
         :param keymr: keymr
-        :return: fblock dict
+        :return: ecblock dict
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('entrycredit-block', {'KeyMR': keymr})[0])
         return blocks['result']['ecblock']
@@ -295,8 +294,7 @@ class APIObjectsFactomd():
         '''
         Get factoid block by keymr
         :param keymr: keymr
-        :return: fblock dict
+        :return: ablock dict
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('admin-block', {'KeyMR': keymr})[0])
-
         return blocks['result']['ablock']

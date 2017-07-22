@@ -127,6 +127,6 @@ class APITestsHeights(unittest.TestCase):
                                 "mismatch in call to admin block keymr at height %d" % (x))
 
                 self.api.change_factomd_address(factomd_address_custom)
-                ablock_keymr_result_1 = self.api.get_factoid_block_by_keymr(ablock_keymr)
+                ablock_keymr_result_1 = self.api.get_admin_block_by_keymr(ablock_keymr)
                 self.assertTrue(ablock_keymr_result == ablock_keymr_result_1,
                                 "mismatch in admin block keymr at height %d" % (x))
