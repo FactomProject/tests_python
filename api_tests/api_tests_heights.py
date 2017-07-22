@@ -73,3 +73,60 @@ class APITestsHeights(unittest.TestCase):
         listtxs = self.api_wallet.list_all_transactions_in_factoid_blockchain()
         wallet_height = (self.api_wallet.get_wallet_height()["height"])
         self.assertTrue(directory_block_height == wallet_height, "mismatch in wallet height")
+
+
+    def test_check_factoid_block_keymr(self):
+        blocks = self.api.get_heights()
+        directory_block_height = blocks['directoryblockheight']
+        for factomd_address_custom in self.factomd_address_custom_list:
+            for x in range(0, int(directory_block_height)):
+                self.api.change_factomd_address(self.factomd_address)
+                dblock_height = self.api.get_directory_block_by_height(x)
+                fblock_keymr = dblock_height['dbentries'][2]['keymr']
+                fblock_keymr_result = self.api.get_factoid_block_by_keymr(fblock_keymr)
+                factoid_block_height = self.api.get_factoid_block_by_height(x)
+                self.assertTrue(factoid_block_height == fblock_keymr_result,
+                                "mismatch in call to factoid block keymr at height %d" % (x))
+
+                self.api.change_factomd_address(factomd_address_custom)
+                fblock_keymr_result_1 = self.api.get_factoid_block_by_keymr(fblock_keymr)
+                self.assertTrue(fblock_keymr_result == fblock_keymr_result_1,
+                                "mismatch in factoid block keymr at height %d" % (x))
+
+
+    def test_check_entrycredit_block_keymr(self):
+        blocks = self.api.get_heights()
+        directory_block_height = blocks['directoryblockheight']
+        for factomd_address_custom in self.factomd_address_custom_list:
+            for x in range(0, int(directory_block_height)):
+                self.api.change_factomd_address(self.factomd_address)
+                dblock_height = self.api.get_directory_block_by_height(x)
+                ecblock_keymr = dblock_height['dbentries'][1]['keymr']
+                ecblock_keymr_result = self.api.get_entrycredit_block_by_keymr(ecblock_keymr)
+                factoid_block_height = self.api.get_entry_credit_block_by_height(x)
+                self.assertTrue(factoid_block_height == ecblock_keymr_result,
+                                "mismatch in call to entrycredit block keymr at height %d" % (x))
+
+                self.api.change_factomd_address(factomd_address_custom)
+                ecblock_keymr_result_1 = self.api.get_entrycredit_block_by_keymr(ecblock_keymr)
+                self.assertTrue(ecblock_keymr_result == ecblock_keymr_result_1,
+                                "mismatch in entrycredit block keymr at height %d" % (x))
+
+
+    def test_check_admin_block_keymr(self):
+        blocks = self.api.get_heights()
+        directory_block_height = blocks['directoryblockheight']
+        for factomd_address_custom in self.factomd_address_custom_list:
+            for x in range(0, int(directory_block_height)):
+                self.api.change_factomd_address(self.factomd_address)
+                dblock_height = self.api.get_directory_block_by_height(x)
+                ablock_keymr = dblock_height['dbentries'][0]['keymr']
+                ablock_keymr_result = self.api.get_admin_block_by_keymr(ablock_keymr)
+                admin_block_height = self.api.get_admin_block_by_height(x)
+                self.assertTrue(admin_block_height == ablock_keymr_result,
+                                "mismatch in call to admin block keymr at height %d" % (x))
+
+                self.api.change_factomd_address(factomd_address_custom)
+                ablock_keymr_result_1 = self.api.get_factoid_block_by_keymr(ablock_keymr)
+                self.assertTrue(ablock_keymr_result == ablock_keymr_result_1,
+                                "mismatch in admin block keymr at height %d" % (x))
