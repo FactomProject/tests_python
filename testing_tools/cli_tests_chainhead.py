@@ -53,6 +53,7 @@ class CLITestsChainhead(unittest.TestCase):
                         keyMR = dblock['dblock']['dbentries'][x]['keymr']
                         chainhead = self.chain_objects.get_chainhead(chain_id=chainid)
                         EBlock = self.chain_objects.parse_block_data(chainhead)['EBlock']
+                        print 'EBlock', EBlock
                         self.assertEqual(EBlock, keyMR, 'for chain ' +
 chainid + ' chainhead ' + EBlock + ' does not match chain keyMR ' + keyMR + ' in entry block')
 
