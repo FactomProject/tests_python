@@ -23,17 +23,13 @@ def wait_for_entry_in_block(**kwargs):
     chain_identifier = ''
     if 'external_id_list' in kwargs:
         chain_identifier = ' '.join(kwargs['external_id_list'])
-
-    # TODO replace Invalid Hash with correct error message once it is corrected in code
-
     for x in range(0, BLOCK_WAIT_TIME):
-        if 'Invalid Hash' not in chain_objects.get_chainhead(external_id_list=[chain_identifier]): break
+        if 'Chain not yet included in a Directory Block' not in chain_objects.get_chainhead(external_id_list=[chain_identifier]): break
         time.sleep(1)
 
 def fund_entry_credit_address(amount):
     # all entry credit addresses are funded from first_address
     entry_credit_address = cli_create.create_entry_credit_address()
-
     text = cli_create.buy_entry_credits(first_address, entry_credit_address, str(amount))
     chain_dict = chain_objects.parse_simple_data(text)
     tx_id = chain_dict['TxID']
