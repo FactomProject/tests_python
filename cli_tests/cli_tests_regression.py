@@ -1,7 +1,4 @@
-import unittest
-import json
-import binascii
-import hashlib
+import unittest, json, binascii, hashlib
 from nose.plugins.attrib import attr
 
 from cli_objects.cli_objects_chain import CLIObjectsChain
@@ -85,11 +82,11 @@ class CLITestsRegression(unittest.TestCase):
         # exclude signatures (164 length for 1 input, 1 output, 0 ecoutputs)
         raw_trimmed = raw[:164]
 
-        # convert to ascii
-        ascii_raw_trimmed = binascii.unhexlify(raw_trimmed)
+        # convert to binary
+        serialized_raw_trimmed = binascii.unhexlify(raw_trimmed)
 
         # hash
-        raw_tx_id = hashlib.sha256(ascii_raw_trimmed).hexdigest()
+        raw_tx_id = hashlib.sha256(serialized_raw_trimmed).hexdigest()
 
         self.assertEqual(raw_tx_id, tx_id, 'Raw data string is not correct')
 
