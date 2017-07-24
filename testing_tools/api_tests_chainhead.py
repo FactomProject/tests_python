@@ -2,9 +2,6 @@ import unittest
 
 from nose.plugins.attrib import attr
 
-from cli_objects.cli_objects_create import CLIObjectsCreate
-from cli_objects.cli_objects_multiple_nodes import CLIObjectsMultipleNodes
-from cli_objects.cli_objects_chain import CLIObjectsChain
 from api_objects.api_objects_factomd import APIObjectsFactomd
 from api_objects.api_objects_wallet import APIObjectsWallet
 from helpers.helpers import read_data_from_json

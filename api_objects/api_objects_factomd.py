@@ -162,7 +162,6 @@ class APIObjectsFactomd():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('chain-head', {'ChainID': chain_id})[0])
-        print blocks
         return blocks['result']['chainhead']
 
     def get_entry_credits_balance_by_ec_address(self, ec_address):

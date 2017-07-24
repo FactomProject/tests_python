@@ -8,6 +8,7 @@ from nose.plugins.attrib import attr
 from api_objects.api_objects_wallet import APIObjectsWallet
 from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import read_data_from_json
+from helpers.general_test_methods import wait_for_ack
 
 @attr(fast=True)
 class ApiTestsWallet(unittest.TestCase):
@@ -68,7 +69,7 @@ class ApiTestsWallet(unittest.TestCase):
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         txid = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
-        time.sleep(10)
+        wait_for_ack(txid)
         self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)['transactions'][0]['inputs'][0]['amount'] == 100000000, 'Transaction is not listed')
 
     def test_list_current_working_transactions_in_wallet(self):
