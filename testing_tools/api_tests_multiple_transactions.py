@@ -12,6 +12,7 @@ from helpers.helpers import read_data_from_json
 @attr(stress_test=True)
 class ApiTestsTransactions(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
+    # Create a metric to track time spent and requests made.
 
     def setUp(self):
         self.wallet_api_objects = APIObjectsWallet()
