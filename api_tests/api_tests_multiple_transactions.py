@@ -23,8 +23,10 @@ class ApiTestsTransactions(unittest.TestCase):
 
     def test_multiple_factoid_address_transactions(self):
         '''
-        This testcase will submit 4 transactions per second and checks for transaction status after one block time.
+        This testcase will submit 4 factoid transactions per second and checks for transaction status after one block time.
         :return: nothing. because the testcase only loads.
+        special note  : this test case uses sleep to control the # of transaction input. waiting for acknowledgement causes ports to run out
+            and test case fails
         '''
         blocktime = self.data['BLOCKTIME']
         txidlist = []
@@ -48,8 +50,10 @@ class ApiTestsTransactions(unittest.TestCase):
 
     def test_multiple_entrycredit_address_transactions(self):
         '''
-        This testcase will submit 4 transactions per second and checks for transaction status after one block time.
-        :return: nothing. because the testcase only loads.
+        This testcase will submit 4 entry credit transactions per second and checks for transaction status after one block time.
+        return: nothing.  because the testcase only loads.
+        special note  : this test case uses sleep to control the # of transaction input. waiting for acknowledgement causes ports to run out
+            and test case fails
         '''
         blocktime = self.data['BLOCKTIME']
         txidlist = []
