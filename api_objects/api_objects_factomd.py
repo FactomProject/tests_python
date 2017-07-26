@@ -270,3 +270,4 @@ class APIObjectsFactomd():
         '''
         blocks = json.loads(self.send_get_request_with_method('current-minute'))
         return blocks['result']
+

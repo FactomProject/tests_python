@@ -85,7 +85,7 @@ class CLITestsEntries(unittest.TestCase):
             tx_id = self.chain_object.parse_simple_data(text)['CommitTxID']
             wait_for_ack(tx_id)
             balance_last = self.cli_create.check_wallet_address_balance(self.entry_credit_address1000)
-            self.assertEqual(int(balance_1st), int(balance_last) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
+            self.assertEqual(balance_1st, balance_last + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
 
             # write smallest entry for fee amount
             i += 1
@@ -101,7 +101,7 @@ class CLITestsEntries(unittest.TestCase):
             tx_id = self.chain_object.parse_simple_data(text)['CommitTxID']
             wait_for_ack(tx_id)
             balance_1st = self.cli_create.check_wallet_address_balance(self.entry_credit_address1000)
-            self.assertEqual(int(balance_last), int(balance_1st) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
+            self.assertEqual(balance_last, balance_1st + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
 
             i += 1023
             with open('output_file', 'a') as fout:
