@@ -1,6 +1,7 @@
 import unittest
 
 from nose.plugins.attrib import attr
+from flaky import flaky
 
 from cli_objects.cli_objects_chain import CLIObjectsChain
 from cli_objects.cli_objects_create import CLIObjectsCreate
@@ -11,6 +12,7 @@ import time
 import logging
 
 @attr(last=True)
+@flaky
 class CLITestsHeight(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
