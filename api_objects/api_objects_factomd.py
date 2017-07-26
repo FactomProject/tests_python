@@ -39,7 +39,7 @@ class APIObjectsFactomd():
         :return: list of dicts with entries
         """
         blocks = json.loads(self.send_get_request_with_params_dict('directory-block', {'keymr': keymr})[0])
-        return blocks["result"]["entryblocklist"][0]
+        return blocks["result"]
 
     def get_heights(self):
         '''
@@ -110,7 +110,7 @@ class APIObjectsFactomd():
         :param key_mr: str - keymr
         :return: header, entrylist
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry-block', {'KeyMR': key_mr}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry-block', {'KeyMR': key_mr})[0])
         return blocks['result']
 
     def get_entry_by_hash(self, hash):
@@ -161,8 +161,8 @@ class APIObjectsFactomd():
         :param chain_id: str chain id
         :return:
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('chain-head', {'ChainID': chain_id}))
-        return blocks['result']['ChainHead']
+        blocks = json.loads(self.send_get_request_with_params_dict('chain-head', {'ChainID': chain_id})[0])
+        return blocks['result']['chainhead']
 
     def get_entry_credits_balance_by_ec_address(self, ec_address):
         '''
@@ -250,7 +250,12 @@ class APIObjectsFactomd():
         return blocks['result']
 
     def get_status(self, hash_or_tx_id, chain_id):
-        # chainid for factoid transaction is always 000...f, abbreviated to just f
+        '''
+        This api call is used to find the status of a transaction, whether it be a factoid, reveal entry, or commit entry.
+        chainid for factoid transaction is always 000...f, abbreviated to just f
+        :return:
+        Status types
+        '''
         blocks = json.loads(self.send_get_request_with_params_dict('ack', {'hash': hash_or_tx_id, 'chainid': chain_id})[0])
         return blocks["result"]
 
@@ -271,3 +276,30 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_method('current-minute'))
         return blocks['result']
 
+    def get_factoid_block_by_keymr(self, keymr):
+        '''
+        Get factoid block by keymr
+        :param keymr: keymr
+        :return: fblock dict
+        '''
+        blocks = json.loads(self.send_get_request_with_params_dict('factoid-block', {'KeyMR': keymr})[0])
+        return blocks['result']['fblock']
+
+    def get_entrycredit_block_by_keymr(self, keymr):
+        '''
+        Get factoid block by keymr
+        :param keymr: keymr
+        :return: ecblock dict
+        '''
+        blocks = json.loads(self.send_get_request_with_params_dict('entrycredit-block', {'KeyMR': keymr})[0])
+        return blocks['result']['ecblock']
+
+
+    def get_admin_block_by_keymr(self, keymr):
+        '''
+        Get factoid block by keymr
+        :param keymr: keymr
+        :return: ablock dict
+        '''
+        blocks = json.loads(self.send_get_request_with_params_dict('admin-block', {'KeyMR': keymr})[0])
+        return blocks['result']['ablock']
