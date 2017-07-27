@@ -50,12 +50,10 @@ class CLITestsRegression(unittest.TestCase):
         ahash=ablock['ablock']['backreferencehash']
         self.assertEquals(ablock['rawdata'], self.chain_objects.get_raw(ahash), 'Incorrect raw data fetched for Admin Block at height ' + str(block_height))
 
-        # TODO Once factomd get ecbheight code is corrected, insert correct hash field and activate this test
-
         # entry credit block raw data
-        # ecblock=json.loads(self.factom_chain_object.get_entrycredit_block_by_height(block_height))
-        # echash=ecblock['ecblock']['header']['????hash']
-        # self.assertEquals(ecblock['rawdata'], self.factom_chain_object.get_raw(echash), 'Incorrect raw data fetched for Entry Credit Block at height ' + str(block_height))
+        ecblock=json.loads(self.chain_objects.get_entrycredit_block_by_height(block_height))
+        echash=ecblock['ecblock']['fullhash']
+        self.assertEquals(ecblock['rawdata'], self.chain_objects.get_raw(echash), 'Incorrect raw data fetched for Entry Credit Block at height ' + str(block_height))
 
         # factoid block raw data
         fblock=json.loads(self.chain_objects.get_factoid_block_by_height(block_height))
