@@ -75,7 +75,7 @@ class CLITestsChains(unittest.TestCase):
         self.assertTrue("Entry not found" not in self.chain_objects.get_entry_by_hash(entry_hash),
                         "Chain not revealed")
         balance_after = self.cli_create.check_wallet_address_balance(self.entry_credit_address100)
-        self.assertEqual(balance_before, balance_after + 12, 'Incorrect charge for chain creation')
+        self.assertEqual(int(balance_before), int(balance_after) + 12, 'Incorrect charge for chain creation')
 
     def test_make_chain_with_hex_external_id_return_chain_id(self):
         ''' This test is only reliable for the 1st run on a given database.

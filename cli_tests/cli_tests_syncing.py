@@ -23,15 +23,15 @@ class CLITestsSyncing(unittest.TestCase):
     def test_sync_stopped_node(self):
 
         # stop node
-        send_command_to_cli_and_receive_text(self._faulting_command + self.data_fault['audit'])
+        send_command_to_cli_and_receive_text(self._faulting_command + self.data_fault['audit1'])
         time.sleep(self.data_shared['BLOCKTIME'])
-        self.assertIn(self.data_fault['audit_1_hash'] + ' offline', get_data_dump_from_server(self.data_fault['default_server_address']), 'Audit server ' + self.data_fault['audit_1_hash'] + ' not faulted')
+        self.assertIn(self.data_fault['audit1_hash'] + ' offline', get_data_dump_from_server(self.data_fault['default_server_address']), 'Audit server ' + self.data_fault['audit1_hash'] + ' not faulted')
 
         # keep node stopped for a bit
         for i in xrange(self.data_sync['BLOCKS_TO_FALL_BEHIND']): time.sleep(self.data_shared['BLOCKTIME'])
 
         # restart node
-        send_command_to_cli_and_receive_text(self._restart_command + self.data_fault['audit'])
+        send_command_to_cli_and_receive_text(self._restart_command + self.data_fault['audit1'])
 
         while "connection refused" in self.chain_objects.get_heights(): pass
 
