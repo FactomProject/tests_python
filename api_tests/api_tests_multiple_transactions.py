@@ -42,7 +42,7 @@ class ApiTestsTransactions(unittest.TestCase):
                     transaction = self.wallet_api_objects.compose_transaction(transaction_name)
                     txidlist.append(self.api_objects.submit_factoid_by_transaction(transaction)['txid'])
                 time.sleep(1)
-            time.sleep(blocktime)
+            time.sleep(blocktime * 2)
             for txid in txidlist:
                 status = self.api_objects.get_status(txid,'f')['status']
                 self.assertEquals(status, 'DBlockConfirmed', 'Transaction = %s is still not confirmed' % txid)
@@ -69,7 +69,7 @@ class ApiTestsTransactions(unittest.TestCase):
                     transaction = self.wallet_api_objects.compose_transaction(transaction_name)
                     txidlist.append(self.api_objects.submit_factoid_by_transaction(transaction)['txid'])
                 time.sleep(1)
-            time.sleep(blocktime)
+            time.sleep(blocktime * 2)
             for txid in txidlist:
                 status = self.api_objects.get_status(txid, 'f')['status']
                 self.assertEquals(status, 'DBlockConfirmed', 'Transaction = %s is still not confirmed' % txid)
