@@ -71,7 +71,7 @@ class APIObjectsWallet():
         :return: str, public addresss
         '''
         blocks = json.loads(self.send_post_request_with_params_dict('import-addresses', {'addresses': [{'secret': secret_address}]}))
-        return blocks["result"]['addresses'][0]['public']
+        return blocks['result']['addresses'][0]['public']
 
     def import_mnemonic(self, words):
         '''

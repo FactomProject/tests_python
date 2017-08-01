@@ -20,7 +20,7 @@ class CLITestsLoadNodes(unittest.TestCase):
         self.first_address = self.cli_create.import_address_from_factoid(
             self.data['factoid_wallet_address'])
         self.ecrate = self.cli_create.get_entry_credit_rate()
-        self.entry_credit_address1000000 = fund_entry_credit_address(1000000)
+        self.entry_credit_address1000000 = fund_entry_credit_address(self, 1000000)
 
     def test_make_chain_and_check_balance(self):
 
