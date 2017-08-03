@@ -16,8 +16,8 @@ class FactomAPIEntryBlockTests(unittest.TestCase):
     testcases to verify entry hashes are same in entry credit block and entry block
     '''
     data = read_data_from_json('addresses.json')
-    factomd_address = data['factomd_address']
-    factomd_address_prod = data['factomd_address_prod1']
+    factomd_address = data['factomd_address_prod3']
+    factomd_address_prod = data['factomd_address_prod3']
     factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
     entrylist_eblock = []
     entrylist_ecblock = []
@@ -29,11 +29,11 @@ class FactomAPIEntryBlockTests(unittest.TestCase):
     def test_ansible_entries(self):
         logging.getLogger('api_command').info("Execution Started")
         print "Execution Started"
-        self.entrylist_eblock = self._fetch_entries_from_entryblock(self.factomd_address_prod)
-        self.entrylist_ecblock = self._fetch_entries_from_ecblock(self.factomd_address_prod)
+        self.entrylist_eblock = self._fetch_entries_from_entryblock(self.factomd_address)
+        #self.entrylist_ecblock = self._fetch_entries_from_ecblock(self.factomd_address)
         #list.sort(self.entrylist_eblock)
         #list.sort(self.entrylist_ecblock)
-        #self.compare_lists(self.entrylist_eblock,self.entrylist_ecblock)
+        self.compare_lists(self.entrylist_eblock,self.entrylist_ecblock)
         #print "end of first comparison"
         #self.compare_lists(self.entrylist_eblock, self.entrylist_ecblock)
         #print "end of second comparison"
@@ -44,16 +44,24 @@ class FactomAPIEntryBlockTests(unittest.TestCase):
         self.entrylist_ecblock = self._fetch_entries_from_ecblock(self.factomd_address_prod)
 
     def _fetch_entries_from_entryblock(self, factomd_address):
-        self.factom_api.change_factomd_address(factomd_address)
+        #self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
         #for i in range(7500, height['entryblockheight']):
-        for i in range(0,300):
+        for i in range(100064,100065):
 
             dblock_keymr = self.factom_api.get_directory_block_by_height(i)
+            print "dblock_keymr"
+            print dblock_keymr
+            print dblock_keymr['keymr']
+            print "dblock_keymr['keymr']"
             dblock =self.factom_api.get_directory_block_by_keymr(dblock_keymr['keymr'])
+            print "dblock"
+            print dblock
             if len(dblock) > 3:
                 for x in range(3 , len(dblock)):
                     entry_block=self.factom_api.get_entry_block(dblock[x]['keymr'])
+                    print "entry_block"
+                    print entry_block
                     len_entrylist=len(entry_block['entrylist'])
                     for y in range(0, len_entrylist):
                         self.entrylist_eblock.append(entry_block['entrylist'][y]['entryhash'])
@@ -65,10 +73,10 @@ class FactomAPIEntryBlockTests(unittest.TestCase):
         return self.entrylist_eblock
 
     def _fetch_entries_from_ecblock(self,factomd_address):
-        self.factom_api.change_factomd_address(factomd_address)
+        #self.factom_api.change_factomd_address(factomd_address)
         height = self.factom_api.get_heights()
         #for i in range(7500, height['directoryblockheight']):
-        for i in range(0,300):
+        for i in range(100064,100065):
 
             ecblock = self.factom_api.get_entry_credit_block_by_height(i)
             len_entries = len(ecblock['body']['entries'])

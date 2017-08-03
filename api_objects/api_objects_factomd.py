@@ -3,8 +3,7 @@ import json
 
 from helpers.helpers import read_data_from_json
 
-
-class FactomApiObjects():
+class APIObjectsFactomd():
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
 
@@ -40,6 +39,8 @@ class FactomApiObjects():
         :return: list of dicts with entries
         """
         blocks = json.loads(self.send_get_request_with_params_dict('directory-block', {'keymr': keymr})[0])
+        print "it didn't come here"
+        print blocks["result"]
         return blocks["result"]["entryblocklist"]
 
     def get_heights(self):
@@ -141,14 +142,19 @@ class FactomApiObjects():
         blocks = json.loads(self.send_get_request_with_params_dict('transaction', {'hash': hash()}))
         return blocks['result']['factoidtransaction']
 
-    def get_pending_transactions_by_address(self, address):
+    def get_pending_transactions(self, *address):
         '''
-        Gets pending transaction by wallet address
-        :param address: wallet adress
+        Gets pending transaction
+        :param address: wallet address
         :return: list with transaction ids and statuses
         '''
 
-        blocks = json.loads(self.send_get_request_with_params_dict('pending-transactions', {'address': address}))
+        if address:
+            blocks = json.loads(
+                self.send_get_request_with_params_dict('pending-transactions', {'address': address[0]})[0])
+        else:
+            blocks = json.loads(self.send_get_request_with_method('pending-transactions'))
+
         return blocks['result']
 
     def get_chain_head_by_chain_id(self, chain_id):
@@ -157,8 +163,8 @@ class FactomApiObjects():
         :param chain_id: str chain id
         :return:
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('chain-head', {'ChainID': chain_id}))
-        return blocks['result']['ChainHead']
+        blocks = json.loads(self.send_get_request_with_params_dict('chain-head', {'ChainID': chain_id})[0])
+        return blocks['result']['chainhead']
 
     def get_entry_credits_balance_by_ec_address(self, ec_address):
         '''
@@ -166,7 +172,7 @@ class FactomApiObjects():
         :param ec_address: str - ec address
         :return: int - balance
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address})[0])
         return blocks['result']['balance']
 
     def get_factoid_balance_by_factoid_address(self, factoid_address):
@@ -211,7 +217,12 @@ class FactomApiObjects():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message})[0])
-        return blocks['result']
+        if 'error' in blocks:
+            success = False
+            return success, blocks['error']
+        else:
+            success = True
+            return success, blocks['result']
 
     def reveal_chain_by_entry(self, entry):
         '''
@@ -240,6 +251,16 @@ class FactomApiObjects():
         blocks = json.loads(self.send_get_request_with_params_dict('reveal-entry', {'entry': entry}))
         return blocks['result']
 
+    def get_status(self, hash_or_tx_id, chain_id):
+        '''
+        This api call is used to find the status of a transaction, whether it be a factoid, reveal entry, or commit entry.
+        chainid for factoid transaction is always 000...f, abbreviated to just f
+        :return:
+        Status types
+        '''
+        blocks = json.loads(self.send_get_request_with_params_dict('ack', {'hash': hash_or_tx_id, 'chainid': chain_id})[0])
+        return blocks["result"]
+
     def send_raw_message(self, message):
         '''
         Send raw message
@@ -249,3 +270,38 @@ class FactomApiObjects():
         blocks = json.loads(self.send_get_request_with_params_dict('send-raw-message', {'message': message}))
         return blocks['result']
 
+    def get_current_minute(self):
+        '''
+        Get current minute of the directory block
+        :return: current minute currentblocktime
+        '''
+        blocks = json.loads(self.send_get_request_with_method('current-minute'))
+        return blocks['result']
+
+    def get_factoid_block_by_keymr(self, keymr):
+        '''
+        Get factoid block by keymr
+        :param keymr: keymr
+        :return: fblock dict
+        '''
+        blocks = json.loads(self.send_get_request_with_params_dict('factoid-block', {'KeyMR': keymr})[0])
+        return blocks['result']['fblock']
+
+    def get_entrycredit_block_by_keymr(self, keymr):
+        '''
+        Get factoid block by keymr
+        :param keymr: keymr
+        :return: ecblock dict
+        '''
+        blocks = json.loads(self.send_get_request_with_params_dict('entrycredit-block', {'KeyMR': keymr})[0])
+        return blocks['result']['ecblock']
+
+
+    def get_admin_block_by_keymr(self, keymr):
+        '''
+        Get factoid block by keymr
+        :param keymr: keymr
+        :return: ablock dict
+        '''
+        blocks = json.loads(self.send_get_request_with_params_dict('admin-block', {'KeyMR': keymr})[0])
+        return blocks['result']['ablock']
