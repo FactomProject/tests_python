@@ -228,46 +228,42 @@ class CLITestsEntries(unittest.TestCase):
             self.path = fout.name
         name_1 = self.data['3rd_over_2nd_external_id1']
         name_2 = self.data['3rd_over_2nd_external_id2']
-        names_list = names_list + ['-e', name_1, '-e', name_2]
+        entry_names_list = names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-q']
-        self.chain_objects.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list, flag_list=factom_flags_list)
+        self.chain_objects.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=entry_names_list, flag_list=factom_flags_list)
         self.assertNotIn("Entry not found", self.chain_objects.get_entry_by_hash(self.data['3rd_over_2nd_entry_hash']))
 
+        # check get allentries by external id and returning entry hash
+        factom_flags_list = ['-E']
+        self.assertIn(self.data['3rd_over_2nd_entry_hash'], self.chain_objects.get_allentries(external_id_list=names_list, flag_list=factom_flags_list), "Entry not found")
+
     def test_make_entry_return_chain_id(self):
-        ''' This test is only reliable on the 1st run on a given database.
-          Because of the -C flag, no transaction id is available, so the only way to locate the created entry is by
-          using a fixed entry in a fixed chain id which yields a known entry hash. However once this entry is created
-          in a database, it will still be there even if subsequent runs fail.'''
 
         # make chain
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
-        name_1 = self.data['2nd_external_id1']
-        name_2 = self.data['2nd_external_id2']
-        chain_names_list = ['-n', name_1, '-n', name_2]
-        self.chain_objects.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=chain_names_list)
+        chain_name_1 = create_random_string(5)
+        chain_name_2 = create_random_string(5)
+        chain_names_list = ['-n', chain_name_1, '-n', chain_name_2]
+        factom_flags_list = ['-C']
+        chain_id = self.chain_objects.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=chain_names_list, flag_list=factom_flags_list)
 
         # make entry
         with open('output_file', 'a') as fout:
             fout.write('1')
             self.path = fout.name
-        name_1 = self.data['4th_over_2nd_external_id1']
-        name_2 = self.data['4th_over_2nd_external_id2']
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
         names_list = chain_names_list + ['-e', name_1, '-e', name_2]
-        factom_flags_list = ['-C']
-        chain_id = self.chain_objects.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list, flag_list=factom_flags_list)
+        entry_chain_id = self.chain_objects.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list, flag_list=factom_flags_list)
 
         # wait for entry to arrive in block
         wait_for_entry_in_block(external_id_list=chain_names_list)
 
-        self.assertIn(self.data['4th_over_2nd_entry_hash'], self.chain_objects.get_allentries(chain_id=chain_id), "Entry not found")
+        self.assertEqual(entry_chain_id, chain_id, 'Chain Id of Entry does not match Chain ID of chain')
+        self.assertIn(entry_chain_id, self.chain_objects.get_allentries(chain_id=chain_id), "Entry not found")
 
         # look for chainhead by chain id
-        self.assertIn('ChainID: ' + self.data['2nd_chain_id'], self.chain_objects.get_chainhead(chain_id=chain_id), 'Chainhead not found')
-
-        # check get allentries by external id and returning entry hash
-        factom_flags_list = ['-E']
-        self.assertIn(self.data['4th_over_2nd_entry_hash'], self.chain_objects.get_allentries(external_id_list=chain_names_list, flag_list=factom_flags_list), "Entry not found")
-
+        self.assertIn('ChainID: ' + entry_chain_id, self.chain_objects.get_chainhead(chain_id=chain_id), 'Chainhead not found')
 
     def test_compose_entry(self):
         # make chain
