@@ -39,9 +39,8 @@ class APIObjectsFactomd():
         :return: list of dicts with entries
         """
         blocks = json.loads(self.send_get_request_with_params_dict('directory-block', {'keymr': keymr})[0])
-        print "it didn't come here"
-        print blocks["result"]
-        return blocks["result"]["entryblocklist"]
+        #return blocks["result"]["entryblocklist"]
+        return blocks["result"]
 
     def get_heights(self):
         '''

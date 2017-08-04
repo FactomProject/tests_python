@@ -18,6 +18,8 @@ class APITests(unittest.TestCase):
 
     def test_directory_blocks(self):
         keymr = self.factom_api.get_directory_block_head()
+        result = self.factom_api.get_directory_block_by_keymr(keymr)["entryblocklist"][0]['chainid']
+        print result
         self.assertTrue('000000000000000000000000000000000000000000000000000000000000000a' ==
                         self.factom_api.get_directory_block_by_keymr(keymr)["entryblocklist"][0]['chainid'])
 
