@@ -9,7 +9,7 @@ chain_objects = CLIObjectsChain()
 data = read_data_from_json('shared_test_data.json')
 
 # all entry credit addresses are funded from first_address
-first_address = cli_create.import_address_from_factoid(data['factoid_wallet_address'])
+first_address = cli_create.import_address(data['factoid_wallet_address'])
 
 ACK_WAIT_TIME = 20
 BLOCK_WAIT_TIME = 50
