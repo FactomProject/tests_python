@@ -11,8 +11,8 @@ from helpers.cli_methods import send_command_to_cli_and_receive_text, get_data_d
 @attr(slow=True)
 class CLITestsFaulting(unittest.TestCase):
     data = read_data_from_json('faulting.json')
-    _stop_command = 'docker stop factom-factomd-'
-    _restart_command = 'docker start factom-factomd-'
+    _stop_command = 'sudo docker stop factom-factomd-'
+    _restart_command = 'sudo docker start factom-factomd-'
 
     # NOTE if these tests are interrupted before they finish, the network server configuration may be altered
 
