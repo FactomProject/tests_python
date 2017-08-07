@@ -13,12 +13,12 @@ class CLITestsRegression(unittest.TestCase):
     def setUp(self):
         self.chain_objects = CLIObjectsChain()
         self.cli_create = CLIObjectsCreate()
-        self.first_address = self.cli_create.import_address_from_factoid(self.data['factoid_wallet_address'])
+        self.first_address = self.cli_create.import_address(self.data['factoid_wallet_address'])
         self.second_address = self.cli_create.create_new_factoid_address()
         words = '"'+self.data['words']+'"'
         self.third_address = self.cli_create.import_words_from_koinify_into_wallet(words)
         self.ecrate = self.cli_create.get_entry_credit_rate()
-        self.entry_credit_address = self.cli_create.import_address_from_factoid(
+        self.entry_credit_address = self.cli_create.import_address(
             self.data['ec_wallet_address'])
 
     def test_raw_blocks(self):

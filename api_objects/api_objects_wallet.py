@@ -54,7 +54,7 @@ class APIObjectsWallet():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_method('generate-ec-address'))
-        return blocks['result']
+        return blocks['result']['public']
 
     def generate_factoid_address(self):
         '''

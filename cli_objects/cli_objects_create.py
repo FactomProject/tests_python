@@ -27,7 +27,7 @@ class CLIObjectsCreate(CLIObjectsBase):
     _acknowledge = "status "
     _backup_wallet = "backupwallet"
 
-    def import_address_from_factoid(self, address_to_import_from):
+    def import_address(self, address_to_import_from):
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._importaddress,
                                                              address_to_import_from)))
 
