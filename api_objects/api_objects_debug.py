@@ -8,11 +8,8 @@ class ApiObjectsDebug():
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
 
-    def change_factomd_address(self, value):
-         self.factomd_address = value
-
     def send_get_request_with_params_dict(self, method, params_dict):
-        url = 'http://'+self.factomd_address+'/debug'
+        url = 'http://' + self.factomd_address + '/debug'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
@@ -25,6 +22,8 @@ class ApiObjectsDebug():
         r = requests.get(url, data=json.dumps(data), headers=headers)
         return r.text
 
+    def change_factomd_address(self, value):
+        self.factomd_address = value
 
     def get_federated_servers(self):
         '''

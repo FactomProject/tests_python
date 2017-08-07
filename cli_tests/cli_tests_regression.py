@@ -53,7 +53,7 @@ class CLITestsRegression(unittest.TestCase):
         # TODO Once factomd get ecbheight code is corrected, insert correct hash field and activate this test
 
         # entry credit block raw data
-        # ecblock=json.loads(self.factom_chain_object.get_entrycredit_block_by_height(block_height))
+        ecblock=json.loads(self.chain_objects.get_entrycredit_block_by_height(block_height))
         # echash=ecblock['ecblock']['header']['????hash']
         # self.assertEquals(ecblock['rawdata'], self.factom_chain_object.get_raw(echash), 'Incorrect raw data fetched for Entry Credit Block at height ' + str(block_height))
 
@@ -121,7 +121,7 @@ class CLITestsRegression(unittest.TestCase):
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
 
-        self.assertNotEqual(self.cli_create.check_wallet_address_balance(self.second_address), 0, 'Factoids were not send to address: ' + self.second_address)
+        self.assertNotEqual(self.cli_create.check_wallet_address_balance(self.second_address), '0', 'Factoids were not send to address: ' + self.second_address)
 
     def test_if_you_can_compose_wrong_transaction(self):
         self.assertIn("Transaction name was not found", self.cli_create.compose_transaction('not_existing_trans'), 'Non-existent transaction was found in wallet')
@@ -253,14 +253,14 @@ class CLITestsRegression(unittest.TestCase):
         factom_flags_list = ['-N']
         self.assertIn(transaction_name, self.cli_create.list_local_transactions(flag_list=factom_flags_list), 'Transaction was not created locally in wallet')
 
-        balance_before = int(self.cli_create.check_wallet_address_balance(self.entry_credit_address))
+        balance_before = self.cli_create.check_wallet_address_balance(self.entry_credit_address)
         text = self.cli_create.send_transaction(transaction_name)
         chain_dict = self.chain_objects.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
-        balance_after = int(self.cli_create.check_wallet_address_balance(self.entry_credit_address))
+        balance_after = self.cli_create.check_wallet_address_balance(self.entry_credit_address)
         balance_expected = int(round(int(balance_before) + ENTRY_CREDIT_AMOUNT / float(self.ecrate)))
-        self.assertEqual(balance_after, balance_expected, 'Wrong output of transaction')
+        self.assertEqual(int(balance_after), int(balance_expected), 'Wrong output of transaction')
 
     def test_force_buy_entry_credits(self):
         ENTRY_CREDIT_AMOUNT = 150
