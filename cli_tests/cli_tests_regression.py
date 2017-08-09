@@ -110,16 +110,17 @@ class CLITestsRegression(unittest.TestCase):
 
         # send transaction
         text = self.cli_create.send_transaction(transaction_name)
+        transaction_dict = self.chain_objects.parse_transaction_data(text)
 
         # check for pending transaction
-        self.chain_objects.get_pending_transactions()
-        # TODO When get_pending_transactions code is repaired, insert assert code here that verifies its proper functioning
+        self.assertIn(transaction_dict['TxID'], self.chain_objects.get_pending_transactions(), 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
 
         chain_dict = self.chain_objects.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
 
-        self.assertNotEqual(self.cli_create.check_wallet_address_balance(self.second_address), 0, 'Factoids were not send to address: ' + self.second_address)
+        # transaction arrived?
+        self.assertNotEqual(self.cli_create.check_wallet_address_balance(self.second_address), '0', 'Factoids were not send to address: ' + self.second_address)
 
     def test_if_you_can_compose_wrong_transaction(self):
         self.assertIn("Transaction name was not found", self.cli_create.compose_transaction('not_existing_trans'), 'Non-existent transaction was found in wallet')
@@ -194,13 +195,12 @@ class CLITestsRegression(unittest.TestCase):
 
         self.cli_create.sign_transaction(transaction_name)
         self.assertIn(transaction_name, self.cli_create.list_local_transactions(), 'Transaction was created')
-        self.cli_create.send_transaction(transaction_name)
+        text = self.cli_create.send_transaction(transaction_name)
+        transaction_dict = self.chain_objects.parse_transaction_data(text)
 
         # check for pending transaction return transaction id
         factom_flags_list = ['-T']
-        self.chain_objects.get_pending_transactions(flag_list=factom_flags_list)
-
-        # TODO When get_pending_transactions code is repaired, insert code here that verifies its proper functioning
+        self.assertIn(transaction_dict['TxID'], self.chain_objects.get_pending_transactions(flag_list=factom_flags_list), 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
 
         balance_after = self.cli_create.check_wallet_address_balance(self.first_address)
         self.assertTrue(abs(float(balance_after) - (float(balance_before) - float(self.ecrate) * 8)) <= 0.0000001, 'Balance is not subtracted correctly')
