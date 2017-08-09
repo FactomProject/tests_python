@@ -28,8 +28,7 @@ def wait_for_entry_in_block(**kwargs):
 
 def fund_entry_credit_address(self, amount):
     # all entry credit addresses are funded from first_address
-    first_address = cli_create.import_address(data['factoid_wallet_address'])
-    unittest.TestCase.assertGreaterEqual(self, cli_create.check_wallet_address_balance(first_address), amount, 'Not enough factoids available to fund address')
+    first_address = cli_create.import_addresses(data['factoid_wallet_address'])[0]
     entry_credit_address = cli_create.create_entry_credit_address()
     text = cli_create.buy_entry_credits(first_address, entry_credit_address, str(amount))
     chain_dict = chain_objects.parse_simple_data(text)

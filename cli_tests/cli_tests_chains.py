@@ -21,9 +21,10 @@ class CLITestsChains(unittest.TestCase):
         self.chain_objects = CLIObjectsChain()
         self.api_objects = APIObjectsFactomd()
         self.ecrate = self.cli_create.get_entry_credit_rate()
-        self.first_address = self.cli_create.import_address(self.data['factoid_wallet_address'])
-        self.entry_credit_address = self.cli_create.import_address(
-            self.data['ec_wallet_address'])
+        imported_addresses = self.cli_create.import_addresses(self.data['factoid_wallet_address'],
+                                                              self.data['ec_wallet_address'])
+        self.first_address = imported_addresses[0]
+        self.entry_credit_address = imported_addresses[1]
 
     def test_make_chain_with_wrong_address(self):
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])

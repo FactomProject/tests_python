@@ -27,9 +27,14 @@ class CLIObjectsCreate(CLIObjectsBase):
     _acknowledge = "status "
     _backup_wallet = "backupwallet"
 
-    def import_address(self, address_to_import_from):
-        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._importaddress,
-                                                             address_to_import_from)))
+    def import_addresses(self, *addresses):
+        address_string = addresses[0]
+        for address in addresses[1:]:
+            address_string = address_string + ' ' + address
+        result = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._importaddress,
+                                                                      address_string)))
+        result = result.split('\n')
+        return result
 
     def create_new_factoid_address(self):
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._newfctaddress)))

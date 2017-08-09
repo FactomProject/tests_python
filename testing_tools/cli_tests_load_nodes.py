@@ -14,8 +14,7 @@ class CLITestsLoadNodes(unittest.TestCase):
     def setUp(self):
         self.cli_create = CLIObjectsCreate()
         self.chain_objects = CLIObjectsChain()
-        self.first_address = self.cli_create.import_address(
-            self.data['factoid_wallet_address'])
+        self.first_address = self.cli_create.import_addresses(self.data['factoid_wallet_address'])[0]
         self.ecrate = self.cli_create.get_entry_credit_rate()
         self.entry_credit_address1000000 = fund_entry_credit_address(self, 1000000)
 
