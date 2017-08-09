@@ -1,7 +1,4 @@
-import unittest
-import os
-import time
-import io
+import unittest, time
 
 from nose.plugins.attrib import attr
 from cli_objects.cli_objects_create import CLIObjectsCreate

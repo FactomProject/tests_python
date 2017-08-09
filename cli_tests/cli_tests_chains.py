@@ -1,6 +1,4 @@
-import unittest
-import os, binascii
-
+import unittest, os, binascii, hashlib
 from nose.plugins.attrib import attr
 from flaky import flaky
 
@@ -77,14 +75,33 @@ class CLITestsChains(unittest.TestCase):
         balance_after = self.cli_create.check_wallet_address_balance(self.entry_credit_address100)
         self.assertEqual(int(balance_before), int(balance_after) + 12, 'Incorrect charge for chain creation')
 
+    def test_raw_commit(self):
+        self.entry_credit_address100 = fund_entry_credit_address(100)
+        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list = ['-n', name_1, '-n', name_2]
+        chain_flag_list = ['-T']
+        tx_id = self.chain_objects.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list, flag_list=chain_flag_list)
+        raw = self.chain_objects.get_raw(tx_id)
+
+        # exclude public key and signature (last 32 + 64 bytes = 192 characters)
+        raw_trimmed = raw[:-192]
+
+        # convert to binary
+        serialized_raw = binascii.unhexlify(raw_trimmed)
+
+        # hash via SHA256
+        hashed256_raw = hashlib.sha256(serialized_raw).hexdigest()
+
+        self.assertEqual(hashed256_raw, tx_id, 'Raw data string is not correct')
+
     def test_make_chain_with_hex_external_id_return_chain_id(self):
         ''' This test is only reliable for the 1st run on a given database.
          Because of the -C flag, no transaction id is available, so the only way to locate the created chain is by
          using a fixed external id which yields a known entry hash. However once this chain is created in a database,
          it will still be there even if subsequent runs fail.'''
-
-        self.entry_credit_address100 = fund_entry_credit_address(self, 100)
-        # path = '/home/factom/PyCharm/tests_python/test_data/testfile'
+        self.entry_credit_address100 = fund_entry_credit_address(100)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = self.data['1st_hex_external_id1']
         name_2 = self.data['1st_hex_external_id2']
