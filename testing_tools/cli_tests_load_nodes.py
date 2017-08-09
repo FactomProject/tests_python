@@ -1,7 +1,4 @@
-import unittest
-import os
-import time
-import io
+import unittest, time
 
 from nose.plugins.attrib import attr
 from cli_objects.cli_objects_create import CLIObjectsCreate
@@ -19,7 +16,7 @@ class CLITestsLoadNodes(unittest.TestCase):
         self.chain_objects = CLIObjectsChain()
         self.first_address = self.cli_create.import_addresses(self.data['factoid_wallet_address'])[0]
         self.ecrate = self.cli_create.get_entry_credit_rate()
-        self.entry_credit_address1000000 = fund_entry_credit_address(1000000)
+        self.entry_credit_address1000000 = fund_entry_credit_address(self, 1000000)
 
     def test_make_chain_and_check_balance(self):
 
