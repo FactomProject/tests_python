@@ -13,13 +13,13 @@ class CLITestsRegression(unittest.TestCase):
     def setUp(self):
         self.chain_objects = CLIObjectsChain()
         self.cli_create = CLIObjectsCreate()
-        self.first_address = self.cli_create.import_address(self.data['factoid_wallet_address'])
+        imported_addresses = self.cli_create.import_addresses(self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
+        self.first_address = imported_addresses[0]
+        self.entry_credit_address = imported_addresses[1]
         self.second_address = self.cli_create.create_new_factoid_address()
         words = '"'+self.data['words']+'"'
         self.third_address = self.cli_create.import_words_from_koinify_into_wallet(words)
         self.ecrate = self.cli_create.get_entry_credit_rate()
-        self.entry_credit_address = self.cli_create.import_address(
-            self.data['ec_wallet_address'])
 
     def test_raw_blocks(self):
 
@@ -50,12 +50,10 @@ class CLITestsRegression(unittest.TestCase):
         ahash=ablock['ablock']['backreferencehash']
         self.assertEquals(ablock['rawdata'], self.chain_objects.get_raw(ahash), 'Incorrect raw data fetched for Admin Block at height ' + str(block_height))
 
-        # TODO Once factomd get ecbheight code is corrected, insert correct hash field and activate this test
-
         # entry credit block raw data
         ecblock=json.loads(self.chain_objects.get_entrycredit_block_by_height(block_height))
-        # echash=ecblock['ecblock']['header']['????hash']
-        # self.assertEquals(ecblock['rawdata'], self.factom_chain_object.get_raw(echash), 'Incorrect raw data fetched for Entry Credit Block at height ' + str(block_height))
+        echash=ecblock['ecblock']['fullhash']
+        self.assertEquals(ecblock['rawdata'], self.chain_objects.get_raw(echash), 'Incorrect raw data fetched for Entry Credit Block at height ' + str(block_height))
 
         # factoid block raw data
         fblock=json.loads(self.chain_objects.get_factoid_block_by_height(block_height))
@@ -112,15 +110,16 @@ class CLITestsRegression(unittest.TestCase):
 
         # send transaction
         text = self.cli_create.send_transaction(transaction_name)
+        transaction_dict = self.chain_objects.parse_transaction_data(text)
 
         # check for pending transaction
-        self.chain_objects.get_pending_transactions()
-        # TODO When get_pending_transactions code is repaired, insert assert code here that verifies its proper functioning
+        self.assertIn(transaction_dict['TxID'], self.chain_objects.get_pending_transactions(), 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
 
         chain_dict = self.chain_objects.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
 
+        # transaction arrived?
         self.assertNotEqual(self.cli_create.check_wallet_address_balance(self.second_address), '0', 'Factoids were not send to address: ' + self.second_address)
 
     def test_if_you_can_compose_wrong_transaction(self):
@@ -196,13 +195,12 @@ class CLITestsRegression(unittest.TestCase):
 
         self.cli_create.sign_transaction(transaction_name)
         self.assertIn(transaction_name, self.cli_create.list_local_transactions(), 'Transaction was created')
-        self.cli_create.send_transaction(transaction_name)
+        text = self.cli_create.send_transaction(transaction_name)
+        transaction_dict = self.chain_objects.parse_transaction_data(text)
 
         # check for pending transaction return transaction id
         factom_flags_list = ['-T']
-        self.chain_objects.get_pending_transactions(flag_list=factom_flags_list)
-
-        # TODO When get_pending_transactions code is repaired, insert code here that verifies its proper functioning
+        self.assertIn(transaction_dict['TxID'], self.chain_objects.get_pending_transactions(flag_list=factom_flags_list), 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
 
         balance_after = self.cli_create.check_wallet_address_balance(self.first_address)
         self.assertTrue(abs(float(balance_after) - (float(balance_before) - float(self.ecrate) * 8)) <= 0.0000001, 'Balance is not subtracted correctly')

@@ -86,8 +86,7 @@ class CLIObjectsChain(CLIObjectsBase):
         chain_identifier = ''
         if 'external_id_list' in kwargs:
             chain_identifier = ' '.join(kwargs['external_id_list'])
-        args = shlex.split(''.join((self._cli_command, self._add_chain, ' ',
-                                                             flags, ' ', chain_identifier, ' ', ecaddress)))
+        args = shlex.split(''.join((self._cli_command, self._add_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
         p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
         p.stdin.write(data)
         p.stdin.close()
