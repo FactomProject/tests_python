@@ -14,7 +14,7 @@ class APIEntriesTests(unittest.TestCase):
         self.factom_api = APIObjectsFactomd()
         self.wallet_api_objects = APIObjectsWallet()
         self.data = read_data_from_json('shared_test_data.json')
-        self.entry_credit_address1000 = fund_entry_credit_address(self, 1000)
+        self.entry_credit_address1000 = fund_entry_credit_address(1000)
 
     def test_commit_chain(self):
         # commit chain

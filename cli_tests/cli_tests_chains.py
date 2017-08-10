@@ -37,14 +37,14 @@ class CLITestsChains(unittest.TestCase):
         self.assertTrue("is not an Entry Credit Public Address" in self.chain_objects.make_chain_from_binary_file(self.first_address, path, external_id_list=names_list))
 
     def test_make_correct_chain_with_not_enough_ec(self):
-        self.entry_credit_address0 = fund_entry_credit_address(self, 0)
+        self.entry_credit_address0 = fund_entry_credit_address(0)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         names_list = ['-n', create_random_string(5), '-n', create_random_string(5)]
         self.assertTrue(
             'Not enough Entry Credits' in self.chain_objects.make_chain_from_binary_file(self.entry_credit_address0, path, external_id_list=names_list))
 
     def test_make_chain_that_already_exists(self):
-        self.entry_credit_address100 = fund_entry_credit_address(self, 100)
+        self.entry_credit_address100 = fund_entry_credit_address(100)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -63,7 +63,7 @@ class CLITestsChains(unittest.TestCase):
         self.assertTrue('already exist' in self.chain_objects.compose_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list), "Duplicate chain not detected")
 
     def test_make_chain_and_check_balance(self):
-        self.entry_credit_address100 = fund_entry_credit_address(self, 100)
+        self.entry_credit_address100 = fund_entry_credit_address(100)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -119,7 +119,7 @@ class CLITestsChains(unittest.TestCase):
         self.assertTrue(chain_id == self.data['1st_hex_chain_id'], 'Chain not found')
 
     def test_force_make_chain(self):
-        self.entry_credit_address100 = fund_entry_credit_address(self, 100)
+        self.entry_credit_address100 = fund_entry_credit_address(100)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -136,7 +136,7 @@ class CLITestsChains(unittest.TestCase):
          it will still be there even if subsequent runs fail.'''
 
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
-        self.entry_credit_address100 = fund_entry_credit_address(self, 100)
+        self.entry_credit_address100 = fund_entry_credit_address(100)
         name_1 = self.data['1st_external_id1']
         name_2 = self.data['1st_external_id2']
         names_list = ['-n', name_1, '-n', name_2]
@@ -146,7 +146,7 @@ class CLITestsChains(unittest.TestCase):
                                                     '1st_entry_hash']))
 
     def test_compose_chain(self):
-        self.entry_credit_address100 = fund_entry_credit_address(self, 100)
+        self.entry_credit_address100 = fund_entry_credit_address(100)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -158,7 +158,7 @@ class CLITestsChains(unittest.TestCase):
         self.assertTrue("commit-chain" and "reveal-chain" in text)
 
     def test_compose_chain_with_hex_external_id(self):
-        self.entry_credit_address100 = fund_entry_credit_address(self, 100)
+        self.entry_credit_address100 = fund_entry_credit_address(100)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = binascii.b2a_hex(os.urandom(2))
         name_2 = binascii.b2a_hex(os.urandom(2))
@@ -170,7 +170,7 @@ class CLITestsChains(unittest.TestCase):
         self.assertTrue("commit-chain" and "reveal-chain" in text)
 
     def test_compose_chain_with_zero_ec(self):
-        self.entry_credit_address0 = fund_entry_credit_address(self, 0)
+        self.entry_credit_address0 = fund_entry_credit_address(0)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -182,7 +182,7 @@ class CLITestsChains(unittest.TestCase):
         self.assertTrue("curl" in self.chain_objects.compose_chain_from_binary_file(self.entry_credit_address0, path, external_id_list=names_list, flag_list=factom_flags_list), "Zero Entry Credit balance compose chain not forced")
 
     def test_compose_chain_with_not_enough_ec(self):
-        self.entry_credit_address10 = fund_entry_credit_address(self, 10)
+        self.entry_credit_address10 = fund_entry_credit_address(10)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
