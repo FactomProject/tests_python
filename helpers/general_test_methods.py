@@ -26,7 +26,7 @@ def wait_for_entry_in_block(**kwargs):
             break
         time.sleep(1)
 
-def fund_entry_credit_address(self, amount):
+def fund_entry_credit_address(amount):
     # all entry credit addresses are funded from first_address
     first_address = cli_create.import_addresses(data['factoid_wallet_address'])[0]
     entry_credit_address = cli_create.create_entry_credit_address()

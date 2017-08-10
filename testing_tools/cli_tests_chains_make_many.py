@@ -27,7 +27,7 @@ class CLITestsChainsMakeMany(unittest.TestCase):
         self.api_objects = APIObjectsFactomd()
 
     def test_make_chain_and_check_balance(self):
-        self.entry_credit_address = fund_entry_credit_address(self, NUMBER_OF_RUNS * 12)
+        self.entry_credit_address = fund_entry_credit_address(NUMBER_OF_RUNS * 12)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         for i in range(NUMBER_OF_RUNS):
             print 'Chain', i + 1
