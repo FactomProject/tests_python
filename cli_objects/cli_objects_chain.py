@@ -209,20 +209,24 @@ class CLIObjectsChain(CLIObjectsBase):
         dict = self.parse_transaction_data(text)
         return dict['DirectoryBlockHeight']
 
-    def get_factoid_block_by_height(self, height):
-        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_fbheight, str(height))))
+    def get_factoid_block_by_height(self, height, suppress_raw=''):
+        if suppress_raw: suppress_raw = ' -r'
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_fbheight, str(height), suppress_raw)))
         return text
 
-    def get_admin_block_by_height(self, height):
-        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_abheight, str(height))))
+    def get_admin_block_by_height(self, height, suppress_raw=''):
+        if suppress_raw: suppress_raw = ' -r'
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_abheight, str(height), suppress_raw)))
         return text
 
-    def get_directory_block_by_height(self, height):
-        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_dbheight, str(height))))
+    def get_directory_block_by_height(self, height, suppress_raw=''):
+        if suppress_raw: suppress_raw = ' -r'
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_dbheight, str(height), suppress_raw)))
         return text
 
-    def get_entrycredit_block_by_height(self, height):
-        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_ecbheight, str(height))))
+    def get_entrycredit_block_by_height(self, height, suppress_raw=''):
+        if suppress_raw: suppress_raw = ' -r'
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_ecbheight, str(height), suppress_raw)))
         return text
 
     def get_directory_block(self, keymr):
