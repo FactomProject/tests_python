@@ -36,6 +36,11 @@ class CLITestsHeight(unittest.TestCase):
                 admin_block_height_1 = self.chain_objects.get_admin_block_by_height(x)
                 self.assertTrue(admin_block_height == admin_block_height_1, "mismatch in admin block at height %d" % (x))
 
+    def test_admin_block_height_suppress_raw_data(self):
+        directory_block_height = self.chain_objects.get_directory_block_height_from_head()
+        admin_block_height = self.chain_objects.get_admin_block_by_height(directory_block_height, '-r')
+        self.assertNotIn('raw', admin_block_height, 'Raw data is not suppressed')
+
     def test_check_directory_block_height(self):
         directory_block_head = self.chain_objects.get_directory_block_height_from_head()
         for factomd_address_custom in self.factomd_address_custom_list:
@@ -46,6 +51,11 @@ class CLITestsHeight(unittest.TestCase):
                 directory_block_height_1 = self.chain_objects.get_directory_block_by_height(x)
                 self.assertTrue(directory_block_height == directory_block_height_1,
                                 "mismatch in directory block at height %d" % (x))
+
+    def test_directory_block_height_suppress_raw_data(self):
+        directory_block_height = self.chain_objects.get_directory_block_height_from_head()
+        direct_block_height = self.chain_objects.get_directory_block_by_height(directory_block_height, '-r')
+        self.assertNotIn('raw', direct_block_height, 'Raw data is not suppressed')
 
     def test_check_entrycredit_block_height(self):
         directory_block_height = self.chain_objects.get_directory_block_height_from_head()
@@ -58,6 +68,11 @@ class CLITestsHeight(unittest.TestCase):
                 self.assertTrue(entrycredit_block_height == entrycredit_block_height_1,
                                 "mismatch in entrycredit block at height %d" % (x))
 
+    def test_entrycredit_block_hdirectoryeight_suppress_raw_data(self):
+        directory_block_height = self.chain_objects.get_directory_block_height_from_head()
+        entrycredit_block_height = self.chain_objects.get_entrycredit_block_by_height(directory_block_height, '-r')
+        self.assertNotIn('raw', entrycredit_block_height, 'Raw data is not suppressed')
+
     def test_check_factoid_block_height(self):
         directory_block_height = self.chain_objects.get_directory_block_height_from_head()
         for factomd_address_custom in self.factomd_address_custom_list:
@@ -68,6 +83,11 @@ class CLITestsHeight(unittest.TestCase):
                 factoid_block_height_1 = self.chain_objects.get_factoid_block_by_height(x)
                 self.assertTrue(factoid_block_height == factoid_block_height_1,
                                 "mismatch in factoid block at height %d" % (x))
+
+    def test_factoid_block_height_suppress_raw_data(self):
+        directory_block_height = self.chain_objects.get_directory_block_height_from_head()
+        factoid_block_height = self.chain_objects.get_factoid_block_by_height(directory_block_height, '-r')
+        self.assertNotIn('raw', factoid_block_height, 'Raw data is not suppressed')
 
     def test_wallet_height(self):
         time.sleep(40)
