@@ -17,7 +17,7 @@ class CLITestsEntries(unittest.TestCase):
 
     def setUp(self):
         self.cli_create = CLIObjectsCreate()
-        self.chain_objects = CLIObjectsChain()
+        self.cli_chain = CLIObjectsChain()
         self.first_address = self.cli_create.import_addresses(self.data['factoid_wallet_address'])[0]
         self.ecrate = self.cli_create.get_entry_credit_rate()
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
@@ -32,7 +32,7 @@ class CLITestsEntries(unittest.TestCase):
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
-        self.chain_objects.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=names_list)
+        self.cli_chain.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=names_list)
 
         # make entry
         with open('output_file', 'a') as fout:
@@ -42,8 +42,8 @@ class CLITestsEntries(unittest.TestCase):
         name_2 = create_random_string(5)
         names_list = names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-E']
-        entry_hash = self.chain_objects.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list, flag_list=factom_flags_list)
-        self.assertNotIn("Entry not found", self.chain_objects.get_entry_by_hash(entry_hash),
+        entry_hash = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list, flag_list=factom_flags_list)
+        self.assertNotIn("Entry not found", self.cli_chain.get_entry_by_hash(entry_hash),
                         "Entry not revealed")
 
     def test_raw_entry(self):
@@ -53,8 +53,8 @@ class CLITestsEntries(unittest.TestCase):
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
         factom_flags_list = ['-E']
-        entry_hash = self.chain_objects.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=names_list, flag_list=factom_flags_list)
-        raw = self.chain_objects.get_raw(entry_hash)
+        entry_hash = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=names_list, flag_list=factom_flags_list)
+        raw = self.cli_create.get_raw(entry_hash)
 
         # convert to binary
         serialized_raw = binascii.unhexlify(raw)
@@ -92,8 +92,8 @@ class CLITestsEntries(unittest.TestCase):
         with open('output_file', 'wb') as fout:
             fout.write(os.urandom(i))
             self.path = fout.name
-        text = self.chain_objects.make_chain_from_binary_file(self.entry_credit_address1000, self.path, external_id_list=chain_names_list)
-        chain_dict = self.chain_objects.parse_simple_data(text)
+        text = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address1000, self.path, external_id_list=chain_names_list)
+        chain_dict = self.cli_chain.parse_simple_data(text)
         chain_id = chain_dict['ChainID']
         tx_id = chain_dict['CommitTxID']
         wait_for_ack(tx_id)
@@ -105,9 +105,9 @@ class CLITestsEntries(unittest.TestCase):
             name_1 = create_random_string(2)
             name_2 = create_random_string(2)
             names_list = chain_names_list + ['-e', name_1, '-e', name_2]
-            text = self.chain_objects.add_entry_to_chain(self.entry_credit_address1000,
-                                                         self.path, external_id_list=names_list)
-            tx_id = self.chain_objects.parse_simple_data(text)['CommitTxID']
+            text = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000,
+                                                     self.path, external_id_list=names_list)
+            tx_id = self.cli_chain.parse_simple_data(text)['CommitTxID']
             wait_for_ack(tx_id)
             balance_last = self.cli_create.check_wallet_address_balance(self.entry_credit_address1000)
             self.assertEqual(int(balance_1st), int(balance_last) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
@@ -121,9 +121,9 @@ class CLITestsEntries(unittest.TestCase):
             name_1 = binascii.b2a_hex(os.urandom(2))
             name_2 = binascii.b2a_hex(os.urandom(2))
             names_list = ['-c', chain_id, '-x', name_1, '-x', name_2]
-            text = self.chain_objects.add_entry_to_chain(self.entry_credit_address1000,
-                                                         self.path, external_id_list=names_list)
-            tx_id = self.chain_objects.parse_simple_data(text)['CommitTxID']
+            text = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000,
+                                                     self.path, external_id_list=names_list)
+            tx_id = self.cli_chain.parse_simple_data(text)['CommitTxID']
             wait_for_ack(tx_id)
             balance_1st = self.cli_create.check_wallet_address_balance(self.entry_credit_address1000)
             self.assertEqual(int(balance_last), int(balance_1st) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
@@ -137,19 +137,19 @@ class CLITestsEntries(unittest.TestCase):
         name_2 = create_random_string(2)
         names_list = ['-c', chain_id, '-e', name_1, '-e', name_2]
 
-        self.assertIn("Entry cannot be larger than 10KB", self.chain_objects.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list))
+        self.assertIn("Entry cannot be larger than 10KB", self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list))
 
         # check for pending entries
-        self.assertIn(chain_id, self.chain_objects.get_pending_entries(), 'Entry not shown as pending')
+        self.assertIn(chain_id, self.cli_chain.get_pending_entries(), 'Entry not shown as pending')
 
         # validate get firstentry command
         wait_for_entry_in_block(external_id_list=chain_names_list)
-        self.assertIn("ExtID: " + firstentry_ext_id, self.chain_objects.get_firstentry(external_id_list=chain_names_list), 'Chain not found')
+        self.assertIn("ExtID: " + firstentry_ext_id, self.cli_chain.get_firstentry(external_id_list=chain_names_list), 'Chain not found')
 
         # validate get firstentry_return_entry_hash
         factom_flags_list = ['-E']
-        entry_hash = self.chain_objects.get_firstentry(flag_list=factom_flags_list, chain_id=chain_id)
-        self.assertTrue(entry_hash and "Entry [0]" in self.chain_objects.get_allentries(chain_id=chain_id),
+        entry_hash = self.cli_chain.get_firstentry(flag_list=factom_flags_list, chain_id=chain_id)
+        self.assertTrue(entry_hash and "Entry [0]" in self.cli_chain.get_allentries(chain_id=chain_id),
                         'Entry not found')
 
     def test_force_make_entry_with_hex_external_chain_id(self):
@@ -158,9 +158,9 @@ class CLITestsEntries(unittest.TestCase):
         name_1 = binascii.b2a_hex(os.urandom(2))
         name_2 = binascii.b2a_hex(os.urandom(2))
         chain_names_list = ['-h', name_1, '-h', name_2]
-        text = self.chain_objects.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=chain_names_list)
-        chain_id = self.chain_objects.parse_simple_data(text)['ChainID']
-        entry_hash = self.chain_objects.parse_simple_data(text)['Entryhash']
+        text = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=chain_names_list)
+        chain_id = self.cli_chain.parse_simple_data(text)['ChainID']
+        entry_hash = self.cli_chain.parse_simple_data(text)['Entryhash']
 
         # make entry
         with open('output_file', 'a') as fout:
@@ -170,16 +170,16 @@ class CLITestsEntries(unittest.TestCase):
         name_2 = create_random_string(5)
         names_list = chain_names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-f', '-T']
-        tx_id = self.chain_objects.add_entry_to_chain(self.entry_credit_address1000,
-                                                      self.path, external_id_list=names_list, flag_list=factom_flags_list)
+        tx_id = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000,
+                                                  self.path, external_id_list=names_list, flag_list=factom_flags_list)
 
         # check for pending entries return entry hash
         factom_flags_list = ['-E']
-        entry_hash_list = self.chain_objects.get_pending_entries(flag_list=factom_flags_list)
+        entry_hash_list = self.cli_chain.get_pending_entries(flag_list=factom_flags_list)
         for entry_hash in entry_hash_list.split('\n'):
-            text = self.chain_objects.get_entry_by_hash(entry_hash)
+            text = self.cli_chain.get_entry_by_hash(entry_hash)
 
-            entry_chain_id = self.chain_objects.parse_entry_data(text)['ChainID']
+            entry_chain_id = self.cli_chain.parse_entry_data(text)['ChainID']
             if entry_chain_id == chain_id:
                found = True
                break
@@ -191,23 +191,23 @@ class CLITestsEntries(unittest.TestCase):
 
         # compose entry by external chain id
         self.assertTrue(
-            "message" and "entry" in self.chain_objects.compose_entry_from_binary_file(self.entry_credit_address1000, self.path, external_id_list=names_list))
+            "message" and "entry" in self.cli_chain.compose_entry_from_binary_file(self.entry_credit_address1000, self.path, external_id_list=names_list))
         # wait for entry to arrive in block
         wait_for_entry_in_block(external_id_list=chain_names_list)
 
         # look for chainhead by hex external id
-        text = self.chain_objects.get_chainhead(external_id_list=chain_names_list)
+        text = self.cli_chain.get_chainhead(external_id_list=chain_names_list)
         self.assertIn('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000', text, 'Chainhead not found')
 
         # look for chainhead by hex external id return KeyMR
-        keyMR = self.chain_objects.parse_block_data(text)['EBlock']
+        keyMR = self.cli_chain.parse_block_data(text)['EBlock']
         # keyMR = self.factom_chain_object.parse_entryblock_data(text)['fixed']['EBlock']
         factom_flags_list = ['-K']
-        self.assertEqual(keyMR, self.chain_objects.get_chainhead(external_id_list=chain_names_list, flag_list=factom_flags_list), 'Key merkle root does not match')
+        self.assertEqual(keyMR, self.cli_chain.get_chainhead(external_id_list=chain_names_list, flag_list=factom_flags_list), 'Key merkle root does not match')
 
         # check get allentries by hex external id
         factom_flags_list = [' -E']
-        self.assertIn(entry_hash, self.chain_objects.get_allentries(flag_list=factom_flags_list, external_id_list=chain_names_list), 'Chain not found')
+        self.assertIn(entry_hash, self.cli_chain.get_allentries(flag_list=factom_flags_list, external_id_list=chain_names_list), 'Chain not found')
 
     def test_quiet_make_entry(self):
         ''' This test is only reliable on the 1st run on a given database.
@@ -220,7 +220,7 @@ class CLITestsEntries(unittest.TestCase):
         name_1 = self.data['2nd_external_id1']
         name_2 = self.data['2nd_external_id2']
         chain_names_list = ['-n', name_1, '-n', name_2]
-        self.chain_objects.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=chain_names_list)
+        self.cli_chain.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=chain_names_list)
 
         # make entry
         with open('output_file', 'a') as fout:
@@ -230,16 +230,16 @@ class CLITestsEntries(unittest.TestCase):
         name_2 = self.data['3rd_over_2nd_external_id2']
         entry_names_list = chain_names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-q']
-        self.chain_objects.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=entry_names_list, flag_list=factom_flags_list)
+        self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=entry_names_list, flag_list=factom_flags_list)
 
         # wait for entry to arrive in block
         wait_for_entry_in_block(external_id_list=chain_names_list)
 
-        self.assertNotIn("Entry not found", self.chain_objects.get_entry_by_hash(self.data['3rd_over_2nd_entry_hash']))
+        self.assertNotIn("Entry not found", self.cli_chain.get_entry_by_hash(self.data['3rd_over_2nd_entry_hash']))
 
         # check get allentries by external id and returning entry hash
         factom_flags_list = ['-E']
-        self.assertIn(self.data['3rd_over_2nd_entry_hash'], self.chain_objects.get_allentries(external_id_list=chain_names_list, flag_list=factom_flags_list), "Entry not found")
+        self.assertIn(self.data['3rd_over_2nd_entry_hash'], self.cli_chain.get_allentries(external_id_list=chain_names_list, flag_list=factom_flags_list), "Entry not found")
 
     def test_make_entry_return_chain_id(self):
 
@@ -249,7 +249,7 @@ class CLITestsEntries(unittest.TestCase):
         chain_name_2 = create_random_string(5)
         chain_names_list = ['-n', chain_name_1, '-n', chain_name_2]
         factom_flags_list = ['-C']
-        chain_id = self.chain_objects.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=chain_names_list, flag_list=factom_flags_list)
+        chain_id = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address1000, path, external_id_list=chain_names_list, flag_list=factom_flags_list)
 
         # make entry
         with open('output_file', 'a') as fout:
@@ -258,16 +258,16 @@ class CLITestsEntries(unittest.TestCase):
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         entry_names_list = chain_names_list + ['-e', name_1, '-e', name_2]
-        entry_chain_id = self.chain_objects.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=entry_names_list, flag_list=factom_flags_list)
+        entry_chain_id = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=entry_names_list, flag_list=factom_flags_list)
 
         # wait for entry to arrive in block
         wait_for_entry_in_block(external_id_list=chain_names_list)
 
         self.assertEqual(entry_chain_id, chain_id, 'Chain Id of Entry does not match Chain ID of chain')
-        self.assertIn(entry_chain_id, self.chain_objects.get_allentries(chain_id=chain_id), "Entry not found")
+        self.assertIn(entry_chain_id, self.cli_chain.get_allentries(chain_id=chain_id), "Entry not found")
 
         # look for chainhead by chain id
-        self.assertIn('ChainID: ' + entry_chain_id, self.chain_objects.get_chainhead(chain_id=chain_id), 'Chainhead not found')
+        self.assertIn('ChainID: ' + entry_chain_id, self.cli_chain.get_chainhead(chain_id=chain_id), 'Chainhead not found')
 
     def test_compose_entry(self):
         # make chain
@@ -277,9 +277,9 @@ class CLITestsEntries(unittest.TestCase):
         with open('output_file', 'wb') as fout:
             fout.write(os.urandom(10))
             self.path = fout.name
-        text = self.chain_objects.make_chain_from_binary_file(self.entry_credit_address1000, self.path,
-                                                              external_id_list=chain_names_list)
-        chain_dict = self.chain_objects.parse_simple_data(text)
+        text = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address1000, self.path,
+                                                          external_id_list=chain_names_list)
+        chain_dict = self.cli_chain.parse_simple_data(text)
         chain_id = chain_dict['ChainID']
 
         # compose entry by chain id
@@ -289,7 +289,7 @@ class CLITestsEntries(unittest.TestCase):
         with open('output_file', 'wb') as fout:
             fout.write(os.urandom(10))
             self.path = fout.name
-        self.assertTrue("message" and "entry" in self.chain_objects.compose_entry_from_binary_file(
+        self.assertTrue("message" and "entry" in self.cli_chain.compose_entry_from_binary_file(
             self.entry_credit_address1000, self.path, external_id_list=entry_names_list))
 
         # compose entry by external id
@@ -299,7 +299,7 @@ class CLITestsEntries(unittest.TestCase):
         with open('output_file', 'wb') as fout:
             fout.write(os.urandom(10))
             self.path = fout.name
-        self.assertTrue("message" and "entry" in self.chain_objects.compose_entry_from_binary_file(self.entry_credit_address1000, self.path, external_id_list=entry_names_list))
+        self.assertTrue("message" and "entry" in self.cli_chain.compose_entry_from_binary_file(self.entry_credit_address1000, self.path, external_id_list=entry_names_list))
 
         # force compose entry by hex external id
         name_1 = binascii.b2a_hex(os.urandom(2))
@@ -309,4 +309,4 @@ class CLITestsEntries(unittest.TestCase):
         with open('output_file', 'wb') as fout:
             fout.write(os.urandom(10))
             self.path = fout.name
-        self.assertTrue("message" and "entry" in self.chain_objects.compose_entry_from_binary_file(self.entry_credit_address1000, self.path, external_id_list=entry_names_list, flag_list=factom_flags_list))
+        self.assertTrue("message" and "entry" in self.cli_chain.compose_entry_from_binary_file(self.entry_credit_address1000, self.path, external_id_list=entry_names_list, flag_list=factom_flags_list))

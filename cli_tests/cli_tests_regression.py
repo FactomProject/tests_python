@@ -11,7 +11,7 @@ class CLITestsRegression(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.chain_objects = CLIObjectsChain()
+        self.cli_chain = CLIObjectsChain()
         self.cli_create = CLIObjectsCreate()
         imported_addresses = self.cli_create.import_addresses(self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
         self.first_address = imported_addresses[0]
@@ -25,9 +25,9 @@ class CLITestsRegression(unittest.TestCase):
 
         # find a directory block with entries
         block_height = 0
-        head_height = int(self.chain_objects.get_directory_block_height_from_head())
+        head_height = int(self.cli_chain.get_directory_block_height_from_head())
         for x in range(0, head_height):
-            dblock = json.loads(self.chain_objects.get_directory_block_by_height(x))
+            dblock = json.loads(self.cli_chain.get_directory_block_by_height(x))
             entries = len(dblock['dblock']['dbentries'])
             if entries > 3:
                 block_height = x
@@ -36,29 +36,29 @@ class CLITestsRegression(unittest.TestCase):
 
         # directory block raw data
         dhash=dblock['dblock']['dbhash']
-        self.assertEquals(dblock['rawdata'], self.chain_objects.get_raw(dhash), 'Incorrect raw data fetched for Directory Block at height ' + str(block_height))
+        self.assertEquals(dblock['rawdata'], self.cli_create.get_raw(dhash), 'Incorrect raw data fetched for Directory Block at height ' + str(block_height))
 
         # entry block raw data
         # ENTRY = 3 skips over administrative entries
         ENTRY = 3
         keyMR = dblock['dblock']['dbentries'][ENTRY]['keymr']
-        eblock = self.chain_objects.get_entry_block(keyMR)
-        self.assertIn(self.chain_objects.parse_block_data(eblock)['EBEntry'][0]['EntryHash'], self.chain_objects.get_raw(keyMR), 'Incorrect raw data fetched for Entry Block at height ' + str(block_height))
+        eblock = self.cli_chain.get_entry_block(keyMR)
+        self.assertIn(self.cli_chain.parse_block_data(eblock)['EBEntry'][0]['EntryHash'], self.cli_create.get_raw(keyMR), 'Incorrect raw data fetched for Entry Block at height ' + str(block_height))
 
         # admin block raw data
-        ablock=json.loads(self.chain_objects.get_admin_block_by_height(block_height))
+        ablock=json.loads(self.cli_chain.get_admin_block_by_height(block_height))
         ahash=ablock['ablock']['backreferencehash']
-        self.assertEquals(ablock['rawdata'], self.chain_objects.get_raw(ahash), 'Incorrect raw data fetched for Admin Block at height ' + str(block_height))
+        self.assertEquals(ablock['rawdata'], self.cli_create.get_raw(ahash), 'Incorrect raw data fetched for Admin Block at height ' + str(block_height))
 
         # entry credit block raw data
-        ecblock=json.loads(self.chain_objects.get_entrycredit_block_by_height(block_height))
+        ecblock=json.loads(self.cli_chain.get_entrycredit_block_by_height(block_height))
         echash=ecblock['ecblock']['fullhash']
-        self.assertEquals(ecblock['rawdata'], self.chain_objects.get_raw(echash), 'Incorrect raw data fetched for Entry Credit Block at height ' + str(block_height))
+        self.assertEquals(ecblock['rawdata'], self.cli_create.get_raw(echash), 'Incorrect raw data fetched for Entry Credit Block at height ' + str(block_height))
 
         # factoid block raw data
-        fblock=json.loads(self.chain_objects.get_factoid_block_by_height(block_height))
+        fblock=json.loads(self.cli_chain.get_factoid_block_by_height(block_height))
         fhash=fblock['fblock']['keymr']
-        self.assertEquals(fblock['rawdata'], self.chain_objects.get_raw(fhash), 'Incorrect raw data fetched for Factoid Block at height ' + str(block_height))
+        self.assertEquals(fblock['rawdata'], self.cli_create.get_raw(fhash), 'Incorrect raw data fetched for Factoid Block at height ' + str(block_height))
 
     def test_raw_transaction(self):
         FACTOID_AMOUNT = 1
@@ -70,12 +70,12 @@ class CLITestsRegression(unittest.TestCase):
         self.cli_create.add_fee_to_transaction_input(transaction_name, self.first_address)
         self.cli_create.sign_transaction(transaction_name)
         text = self.cli_create.send_transaction(transaction_name)
-        chain_dict = self.chain_objects.parse_simple_data(text)
+        chain_dict = self.cli_chain.parse_simple_data(text)
         tx_id = chain_dict['TxID']
 
         wait_for_ack(tx_id)
 
-        raw = self.chain_objects.get_raw(tx_id)
+        raw = self.cli_create.get_raw(tx_id)
 
         # exclude signatures (164 length for 1 input, 1 output, 0 ecoutputs)
         raw_trimmed = raw[:164]
@@ -101,7 +101,7 @@ class CLITestsRegression(unittest.TestCase):
 
         # check that output was added
         text = self.cli_create.subtract_fee_from_transaction_output(transaction_name, self.second_address)
-        transaction_dict = self.chain_objects.parse_transaction_data(text)
+        transaction_dict = self.cli_chain.parse_transaction_data(text)
         self.assertEqual(str(AMOUNT_SENT - float(self.ecrate) * 12), transaction_dict['TotalOutputs'], "Quiet output not accepted")
         self.cli_create.sign_transaction(transaction_name)
 
@@ -110,12 +110,12 @@ class CLITestsRegression(unittest.TestCase):
 
         # send transaction
         text = self.cli_create.send_transaction(transaction_name)
-        transaction_dict = self.chain_objects.parse_transaction_data(text)
+        transaction_dict = self.cli_chain.parse_transaction_data(text)
 
         # check for pending transaction
-        self.assertIn(transaction_dict['TxID'], self.chain_objects.get_pending_transactions(), 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
+        self.assertIn(transaction_dict['TxID'], self.cli_chain.get_pending_transactions(), 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
 
-        chain_dict = self.chain_objects.parse_simple_data(text)
+        chain_dict = self.cli_chain.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
 
@@ -171,7 +171,7 @@ class CLITestsRegression(unittest.TestCase):
         # check that input was added
         text = self.cli_create.add_output_to_transaction(transaction_name, self.first_address,
                                                                                '1')
-        dict = self.chain_objects.parse_transaction_data(text)
+        dict = self.cli_chain.parse_transaction_data(text)
         self.assertEqual('1', dict['TotalInputs'], "Quiet input not accepted")
 
         self.cli_create.subtract_fee_from_transaction_output(transaction_name, self.first_address)
@@ -196,11 +196,11 @@ class CLITestsRegression(unittest.TestCase):
         self.cli_create.sign_transaction(transaction_name)
         self.assertIn(transaction_name, self.cli_create.list_local_transactions(), 'Transaction was created')
         text = self.cli_create.send_transaction(transaction_name)
-        transaction_dict = self.chain_objects.parse_transaction_data(text)
+        transaction_dict = self.cli_chain.parse_transaction_data(text)
 
         # check for pending transaction return transaction id
         factom_flags_list = ['-T']
-        self.assertIn(transaction_dict['TxID'], self.chain_objects.get_pending_transactions(flag_list=factom_flags_list), 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
+        self.assertIn(transaction_dict['TxID'], self.cli_chain.get_pending_transactions(flag_list=factom_flags_list), 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
 
         balance_after = self.cli_create.check_wallet_address_balance(self.first_address)
         self.assertTrue(abs(float(balance_after) - (float(balance_before) - float(self.ecrate) * 8)) <= 0.0000001, 'Balance is not subtracted correctly')
@@ -222,7 +222,7 @@ class CLITestsRegression(unittest.TestCase):
         self.cli_create.sign_transaction(transaction_name)
         self.assertIn(transaction_name, self.cli_create.list_local_transactions(), 'Transaction was created')
         text = self.cli_create.send_transaction(transaction_name)
-        chain_dict = self.chain_objects.parse_simple_data(text)
+        chain_dict = self.cli_chain.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
         balance_after = self.cli_create.check_wallet_address_balance(self.entry_credit_address)
@@ -253,7 +253,7 @@ class CLITestsRegression(unittest.TestCase):
 
         balance_before = int(self.cli_create.check_wallet_address_balance(self.entry_credit_address))
         text = self.cli_create.send_transaction(transaction_name)
-        chain_dict = self.chain_objects.parse_simple_data(text)
+        chain_dict = self.cli_chain.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
         balance_after = int(self.cli_create.check_wallet_address_balance(self.entry_credit_address))
@@ -265,7 +265,7 @@ class CLITestsRegression(unittest.TestCase):
         balance_before = self.cli_create.check_wallet_address_balance(self.entry_credit_address)
         factom_flags_list = ['-f']
         text = self.cli_create.buy_entry_credits(self.first_address, self.entry_credit_address, str(ENTRY_CREDIT_AMOUNT), flag_list=factom_flags_list)
-        chain_dict = self.chain_objects.parse_simple_data(text)
+        chain_dict = self.cli_chain.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
         balance_after = self.cli_create.check_wallet_address_balance(self.entry_credit_address)
@@ -297,7 +297,7 @@ class CLITestsRegression(unittest.TestCase):
         FACTOID_AMOUNT = 1
         balance_before = self.cli_create.check_wallet_address_balance(self.second_address)
         text = self.cli_create.send_factoids(self.first_address, self.second_address, str(FACTOID_AMOUNT))
-        chain_dict = self.chain_objects.parse_simple_data(text)
+        chain_dict = self.cli_chain.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
         balance_after = self.cli_create.check_wallet_address_balance(self.second_address)
@@ -308,7 +308,7 @@ class CLITestsRegression(unittest.TestCase):
         second_address = self.cli_create.create_new_factoid_address()
         third_address = self.cli_create.create_new_factoid_address()
         text = self.cli_create.send_factoids(self.first_address, second_address, '100')
-        chain_dict = self.chain_objects.parse_simple_data(text)
+        chain_dict = self.cli_chain.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
 
