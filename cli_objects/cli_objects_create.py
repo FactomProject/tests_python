@@ -21,11 +21,13 @@ class CLIObjectsCreate(CLIObjectsBase):
     _sign_transaction = 'signtx '
     _send_transaction = "sendtx "
     _compose_transaction = 'composetx '
-    _list_transactions = "listtxs id"
+    _list_transactions = ' listtxs '
+    _list_transaction = "listtxs id"
     _list_local_transactions = "listtxs tmp"
     _remove_transaction = "rmtx "
     _acknowledge = "status "
     _backup_wallet = "backupwallet"
+    _get_raw = 'get raw '
 
     def import_addresses(self, *addresses):
         address_string = addresses[0]
@@ -102,8 +104,12 @@ class CLIObjectsCreate(CLIObjectsBase):
     def export_addresses(self):
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._export_addresses)))
 
+    def get_all_transactions(self):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._list_transactions)))
+        return text
+
     def list_transaction(self, tx_id):
-        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._list_transactions, ' ',
+        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._list_transaction, ' ',
                                                              tx_id)))
 
     def list_local_transactions(self, **kwargs):
@@ -134,6 +140,10 @@ class CLIObjectsCreate(CLIObjectsBase):
     def backup_wallet(self):
         text = send_command_to_cli_and_receive_text(''.join((self._cli_command,
                                                              self._backup_wallet)))
+        return text
+
+    def get_raw(self, hash):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_raw, hash)))
         return text
 
 

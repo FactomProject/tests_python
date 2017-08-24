@@ -20,7 +20,7 @@ class CLITestsLoadNodes(unittest.TestCase):
 
     def test_make_chain_and_check_balance(self):
 
-        '''BLOCKTIME and ENTRIES_PER_BLOCK are variables in shared_test_dat.json
+        '''BLOCKTIME and ENTRIES_PER_BLOCK are variables in shared_test_data.json
         increasing ENTRIES_PER_BLOCK decreases sleep time between entries.
         set CONTINUOUS for no sleeping at all.'''
 

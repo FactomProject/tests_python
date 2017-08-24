@@ -15,6 +15,7 @@ class CLIObjectsChain(CLIObjectsBase):
     _pending_transactions = 'get pendingtransactions '
     _get_chainhead = ' get chainhead '
     _get_head = 'get head '
+    _get_walletheight = ' get walletheight '
     _get_heights = 'get heights'
     _get_fbheight = 'get fbheight '
     _get_abheight = 'get abheight '
@@ -24,7 +25,7 @@ class CLIObjectsChain(CLIObjectsBase):
     _get_entryblock = 'get eblock '
     _get_entry_by_hash = 'get entry '
     _get_raw = 'get raw '
-    _backup_wallet = 'backupwallet'
+    # _backup_wallet = 'backupwallet'
 
     def parse_simple_data(self, text):
         return dict(item.split(": ") for item in text.split('\n'))
@@ -200,6 +201,10 @@ class CLIObjectsChain(CLIObjectsBase):
         text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_head, flags)))
         return text
 
+    def get_wallet_height(self):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_walletheight)))
+        return text.split('\n')[0].split(' ')[1]
+
     def get_heights(self):
         text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_heights)))
         return text
@@ -240,8 +245,4 @@ class CLIObjectsChain(CLIObjectsBase):
 
     def get_entry_by_hash(self, entryhash):
         text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_entry_by_hash, entryhash)))
-        return text
-
-    def get_raw(self, hash):
-        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_raw, hash)))
         return text
