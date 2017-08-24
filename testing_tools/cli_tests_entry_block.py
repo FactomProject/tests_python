@@ -4,7 +4,6 @@ from nose.plugins.attrib import attr
 
 from cli_objects.cli_objects_chain import CLIObjectsChain
 from cli_objects.cli_objects_create import CLIObjectsCreate
-from cli_objects.cli_objects_multiple_nodes import CLIObjectsMultipleNodes
 from helpers.helpers import read_data_from_json
 import json
 import re
@@ -21,7 +20,6 @@ class CLITestsEntryBlock(unittest.TestCase):
     def setUp(self):
         self.chain_objects = CLIObjectsChain()
         self.cli_create = CLIObjectsCreate()
-        self.multiple_nodes = CLIObjectsMultipleNodes()
 
     @attr(production_tool=True)
     def test_production_entries(self):
@@ -34,7 +32,6 @@ class CLITestsEntryBlock(unittest.TestCase):
 
     def _missing_entries(self, factomd_address):
         self.cli_create.change_factomd_address(factomd_address)
-        self.multiple_nodes.change_factomd_address(factomd_address)
         self.chain_objects.change_factomd_address(factomd_address)
         directory_block_head = self.chain_objects.get_directory_block_height_from_head()
 

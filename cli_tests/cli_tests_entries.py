@@ -137,6 +137,8 @@ class CLITestsEntries(unittest.TestCase):
         name_2 = create_random_string(2)
         names_list = ['-c', chain_id, '-e', name_1, '-e', name_2]
 
+        # self.assertIn("Entry cannot be larger than 10KB", self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list))
+
         self.assertIn("Entry cannot be larger than 10KB", self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=names_list))
 
         # check for pending entries
@@ -171,7 +173,7 @@ class CLITestsEntries(unittest.TestCase):
         names_list = chain_names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-f', '-T']
         tx_id = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000,
-                                                  self.path, external_id_list=names_list, flag_list=factom_flags_list)
+                         self.path, external_id_list=names_list, flag_list=factom_flags_list)
 
         # check for pending entries return entry hash
         factom_flags_list = ['-E']

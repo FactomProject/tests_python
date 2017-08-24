@@ -1,3 +1,5 @@
+import string, random
+
 from api_objects.api_objects_factomd import APIObjectsFactomd
 import unittest
 
@@ -38,5 +40,6 @@ class APITests(unittest.TestCase):
         cli_minute = result['minute']
         diff =  cli_minute - controlpanel_minute
         self.assertFalse(diff > 2,"minutes are not matching")
+
 
 

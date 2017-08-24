@@ -143,8 +143,8 @@ class APIObjectsFactomd():
     def get_pending_transactions(self, *address):
         '''
         Gets pending transaction
-        :param address: wallet address
-        :return: list with transaction ids and statuses
+        :param address: optional wallet address
+        :return: Transaction IDs, Statuses, Inputs, Outputs, ECOutputs, Fees
         '''
 
         if address:
