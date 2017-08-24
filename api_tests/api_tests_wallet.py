@@ -97,7 +97,6 @@ class ApiTestsWallet(unittest.TestCase):
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         tx_id = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
-        print 'tx_id', tx_id
         self.assertIn("Successfully submitted", self.api_objects.submit_factoid_by_transaction(transaction)['message'], "Transaction failed")
         for x in range(0, self.data['BLOCKTIME']):
             pending = self.api_objects.get_pending_transactions(self.first_address)
