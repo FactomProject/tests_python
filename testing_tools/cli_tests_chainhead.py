@@ -3,7 +3,6 @@ import unittest
 from nose.plugins.attrib import attr
 
 from cli_objects.cli_objects_create import CLIObjectsCreate
-from cli_objects.cli_objects_multiple_nodes import CLIObjectsMultipleNodes
 from cli_objects.cli_objects_chain import CLIObjectsChain
 from helpers.helpers import read_data_from_json
 import json
@@ -16,7 +15,6 @@ class CLITestsChainhead(unittest.TestCase):
 
     def setUp(self):
         self.chain_objects = CLIObjectsChain()
-        self.multiple_nodes = CLIObjectsMultipleNodes()
         self.cli_create = CLIObjectsCreate()
         self.chainlist = {}
 
@@ -30,7 +28,6 @@ class CLITestsChainhead(unittest.TestCase):
 
     def verify_chains(self, factomd_address):
         self.cli_create.change_factomd_address(factomd_address)
-        self.multiple_nodes.change_factomd_address(factomd_address)
         self.chain_objects.change_factomd_address(factomd_address)
 
         # start at most recent directory block

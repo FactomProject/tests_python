@@ -30,7 +30,6 @@ class APIObjectsWallet():
         r = requests.get(url, data=json.dumps(data), headers=headers)
         return r.text
 
-
     def check_address_by_public_address(self, address):
         '''
         Import address by public address
@@ -66,7 +65,7 @@ class APIObjectsWallet():
 
     def import_address_by_secret(self, secret_address):
         '''
-        Imports addres by secret addres and returns public
+        Imports address by secret address and returns public
         :param secret_address: str
         :return: str, public addresss
         '''
