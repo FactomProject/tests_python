@@ -52,8 +52,7 @@ class CLIObjectsCreate(CLIObjectsBase):
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._balance, address)))
 
     def check_wallet_address_balance_remote(self, address):
-        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._balance, '-r ',
-                                                             address)))
+        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._balance, '-r ', address)))
 
     def get_entry_credit_rate(self):
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._ecrate)))

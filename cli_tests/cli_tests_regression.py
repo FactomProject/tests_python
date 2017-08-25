@@ -251,14 +251,14 @@ class CLITestsRegression(unittest.TestCase):
         factom_flags_list = ['-N']
         self.assertIn(transaction_name, self.cli_create.list_local_transactions(flag_list=factom_flags_list), 'Transaction was not created locally in wallet')
 
-        balance_before = int(self.cli_create.check_wallet_address_balance(self.entry_credit_address))
+        balance_before = self.cli_create.check_wallet_address_balance(self.entry_credit_address)
         text = self.cli_create.send_transaction(transaction_name)
         chain_dict = self.cli_chain.parse_simple_data(text)
         tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
-        balance_after = int(self.cli_create.check_wallet_address_balance(self.entry_credit_address))
+        balance_after = self.cli_create.check_wallet_address_balance(self.entry_credit_address)
         balance_expected = int(round(int(balance_before) + ENTRY_CREDIT_AMOUNT / float(self.ecrate)))
-        self.assertEqual(balance_after, balance_expected, 'Wrong output of transaction')
+        self.assertEqual(int(balance_after), int(balance_expected), 'Wrong output of transaction')
 
     def test_force_buy_entry_credits(self):
         ENTRY_CREDIT_AMOUNT = 150
