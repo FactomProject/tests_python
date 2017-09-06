@@ -8,7 +8,7 @@ class CLIObjectsBase():
     factomd_address = data['factomd_address']
     factomd_address_2 = data['factomd_address_2']
 
-    _gopath = os.environ['GOPATH']
+    #_gopath = os.environ['GOPATH']
     _cli_command = 'docker run --rm --dns=172.17.0.1 --dns-search=weave.local.  --net factom_net ff_cli -w ' \
                                     '' + wallet_address +' -s ' + factomd_address +' '
 
