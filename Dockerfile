@@ -1,9 +1,7 @@
 FROM python:2.7
 
-RUN apt-get update -y && apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common \
-     && curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
-     && add-apt-repository    "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
-     && apt-get update -y && apt-get install -y  docker-ce
+# Copy the binary to /my/docker/directory/factom-cli
+docker run --rm --entrypoint='' -v /go/bin/:/factom-cli ff_cli /bin/cp /go/bin/factom-cli /destination
 
 RUN mkdir -p /srv
 WORKDIR /srv
