@@ -9,11 +9,11 @@ class CLIObjectsBase():
     factomd_address_2 = data['factomd_address_2']
 
     #_gopath = os.environ['GOPATH']
-    _cli_command = 'docker run --rm --dns=172.17.0.1 --dns-search=weave.local.  --net factom_net ff_cli -w ' \
+    _cli_command = '/factom-cli -w ' \
                                     '' + wallet_address +' -s ' + factomd_address +' '
 
     def change_factomd_address(self, value):
-        self._cli_command = 'docker run --rm --dns=172.17.0.1 --dns-search=weave.local.  --net factom_net ff_cli -w ' \
+        self._cli_command = '/factom-cli -w ' \
                                                   '' + self.wallet_address + ' -s ' + value + ' '
 
 
