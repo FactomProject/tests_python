@@ -69,7 +69,7 @@ class APITestsBalances(unittest.TestCase):
         #check if total balance is more than what we gave away in round one ie. 8.7 million
         #divide to fetch factoids and then convert to millions
         factoids =  self.total_balance/100000000000000
-        self.asserFalse(factoids > 8.8, "CRITICAL: Factoids has increased in the blockchain")
+        self.assertFalse(factoids > 8.8, "CRITICAL: Factoids has increased in the blockchain")
 
     def check_if_unique(self,addresslist,uniq_address):
         for address in addresslist:
