@@ -13,7 +13,6 @@ class APITestsTimestamps(unittest.TestCase):
     '''
     data = read_data_from_json('addresses.json')
     factomd_address = data['localhost']
-    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
 
     def setUp(self):
         self.api = APIObjectsFactomd()
