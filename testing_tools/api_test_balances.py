@@ -71,7 +71,7 @@ class APITestsBalances(unittest.TestCase):
         factoids =  self.total_balance/100000000000000
         self.assertFalse(factoids > 8.8, "CRITICAL: Factoids has increased in the blockchain")
 
-    def check_if_unique(self,addresslist,uniq_address):
+    def check_if_exists(self,addresslist,uniq_address):
         for address in addresslist:
             if address == uniq_address:
                 return True
