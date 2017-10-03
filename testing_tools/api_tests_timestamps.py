@@ -4,7 +4,7 @@ from nose.plugins.attrib import attr
 from api_objects.api_objects_factomd import APIObjectsFactomd
 from api_objects.api_objects_wallet import APIObjectsWallet
 from helpers.helpers import read_data_from_json
-
+import time
 
 @attr(production_tool=True)
 class APITestsTimestamps(unittest.TestCase):
@@ -57,4 +57,34 @@ class APITestsTimestamps(unittest.TestCase):
                 for j in range(3,len(dbentries)):
                     entryblock_keymr = dbentries[j]['keymr']
                     for k in range(0,len(self.api.get_entry_block(entryblock_keymr)['entrylist'])):
-                        self.assertFalse(self.api.get_entry_block(entryblock_keymr)['entrylist'][k]['timestamp'] > dblock_time + 600, "Entry Blocks are 10 mins more than the Directory Blockat height %s" % i)
+                        self.assertFalse(self.api.get_entry_block(entryblock_keymr)['entrylist'][k]['timestamp'] > dblock_time + 600, "Entry Blocks are 10 mins more than the Directory Block at height %s" % i)
+
+    def test_admin_block(self):
+        self.api.change_factomd_address(self.factomd_address)
+        height = self.api.get_heights()
+        for i in range(height['directoryblockheight'], 70420, -1):
+            if len(self.api.get_admin_block_by_height(i)['abentries']) > 5:
+                cur_block = self.api.get_directory_block_by_height(i)['header']['timestamp'] * 60
+                prev_block = self.api.get_directory_block_by_height(i-1)['header']['timestamp'] * 60
+                next_block = self.api.get_directory_block_by_height(i+1)['header']['timestamp'] * 60
+                conv_curr_time = time.ctime(cur_block)
+                conv_prev_time = time.ctime(prev_block)
+                conv_next_time = time.ctime(next_block)
+                print "faulting occured at height = %d" %i
+                if (prev_block != cur_block - 600):
+                    print "block - %d at timestamp = %s and previous block - %d at timestamp = %s" %(i,conv_curr_time,i-1,conv_prev_time)
+                #if (next_block != cur_block + 600):
+                    #print "block - %d at timestamp = %s and next block - %d at timestamp = %s" % (i,conv_curr_time, i+1,conv_next_time)
+
+
+    def test_directory_block_timestamps(self):
+        self.api.change_factomd_address(self.factomd_address)
+        height = self.api.get_heights()
+        for i in range(height['directoryblockheight'], 70419, -1):
+            cur_block = self.api.get_directory_block_by_height(i)['header']['timestamp'] * 60
+            prev_block = self.api.get_directory_block_by_height(i - 1)['header']['timestamp'] * 60
+            conv_curr_time = time.ctime(cur_block)
+            conv_prev_time = time.ctime(prev_block)
+            print i
+            if (prev_block != cur_block - 600):
+                print "block - %d at timestamp = %s and block - %d at timestamp = %s, difference(mins) = %s" % (i,conv_curr_time,i-1, conv_prev_time,((cur_block-prev_block)/60))
