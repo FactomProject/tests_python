@@ -18,13 +18,13 @@ class APITestsTimestamps(unittest.TestCase):
         self.api = APIObjectsFactomd()
         self.api_wallet = APIObjectsWallet()
 
-    #testcase to verify the timestamps of entries in entry credit block are in the defined range
-    #steps: get the height
-    #get the directory block timestamp and convert to unix time
-    #get the timestamp of the entries in entry credit block
-    #compare the above time stamps
-    #Entry credit block timestamp are allowed to be within 2 hrs range of directory block timestamp
     def test_entrycredit_block_timestamp(self):
+        # testcase to verify the timestamps of entries in entry credit block are in the defined range
+        # steps: get the height
+        # get the directory block timestamp and convert to unix time
+        # get the timestamp of the entries in entry credit block
+        # compare the above time stamps
+        # Entry credit block timestamp are allowed to be within 2 hrs range of directory block timestamp
         self.api.change_factomd_address(self.factomd_address)
         height = self.api.get_heights()
         for i in range(height['directoryblockheight'],0,-1):
@@ -40,14 +40,14 @@ class APITestsTimestamps(unittest.TestCase):
 
 
 
-    #testcase to verify the entries in entry block are within 10 mins of the directory block time
-    #steps: get the height
-    #get the directory block timestamp and convert to unix time
-    #get the keymr of the entry block from the directory block
-    #get the entryblock using the keymr as input
-    #get the timestamp of the entries in entry block and convert to unix time
-    #compare the above two time stamps. it should be no more than 10 mins of directory block timestamp
     def test_entry_block_time(self):
+        # testcase to verify the entries in entry block are within 10 mins of the directory block time
+        # steps: get the height
+        # get the directory block timestamp and convert to unix time
+        # get the keymr of the entry block from the directory block
+        # get the entryblock using the keymr as input
+        # get the timestamp of the entries in entry block and convert to unix time
+        # compare the above two time stamps. it should be no more than 10 mins of directory block timestamp
         self.api.change_factomd_address(self.factomd_address)
         height = self.api.get_heights()
         for i in range(height['directoryblockheight'],0, -1):
