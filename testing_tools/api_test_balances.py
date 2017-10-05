@@ -54,7 +54,7 @@ class APITestsBalances(unittest.TestCase):
                 count_inputs = len(listtxs['transactions'][i]['inputs'])
                 for j in range(0,count_inputs):
                     input_address = listtxs['transactions'][i]['inputs'][j]['address']
-                    if (self.check_if_unique(self.address_list,input_address) != True):
+                    if (self.check_if_exists(self.address_list,input_address) != True):
                         self.add_balance(input_address)
                         self.assertFalse(self.balance < 0,"negative balance found. Address %s, balance %s" % (input_address, self.balance))
 
@@ -62,7 +62,7 @@ class APITestsBalances(unittest.TestCase):
                 count_outputs = len(listtxs['transactions'][i]['outputs'])
                 for j in range(0,count_outputs):
                     output_address = listtxs['transactions'][i]['outputs'][j]['address']
-                    if (self.check_if_unique(self.address_list, output_address) != True):
+                    if (self.check_if_exists(self.address_list, output_address) != True):
                         self.add_balance(output_address)
                         self.assertFalse(self.balance < 0,"negative balance found. Address %s, balance %s" % (output_address, self.balance))
 
