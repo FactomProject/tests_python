@@ -7,7 +7,7 @@ from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import read_data_from_json
 
 
-@attr(last=True)
+
 class APITestsBalances(unittest.TestCase):
 
     def setUp(self):
@@ -17,6 +17,7 @@ class APITestsBalances(unittest.TestCase):
         self.balance = 0
         self.total_balance = 0
 
+    @attr(last=True)
     def test_all_addresses_balances_by_api(self):
         addresses = read_data_from_json('addresses.json')
         factomd_server_list = [addresses['factomd_address'], addresses['factomd_address_0'], addresses['factomd_address_1'],
