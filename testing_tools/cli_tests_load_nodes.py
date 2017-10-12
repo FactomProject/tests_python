@@ -19,32 +19,30 @@ class CLITestsLoadNodes(unittest.TestCase):
         self.entry_credit_address1000000 = fund_entry_credit_address(1000000)
 
     def test_make_chain_and_check_balance(self):
-
-        '''BLOCKTIME and ENTRIES_PER_BLOCK are variables in shared_test_data.json
+        '''
+        BLOCKTIME and ENTRIES_PER_BLOCK are variables in shared_test_data.json
         increasing ENTRIES_PER_BLOCK decreases sleep time between entries.
-        set CONTINUOUS for no sleeping at all.'''
-
+        set CONTINUOUS for no sleeping at all.
+        '''
         CONTINUOUS = True
-
+        # print statement is necessary to see the calculated sleep time
         print 'sleep time', float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK'])
         self.cli_create.check_wallet_address_balance(self.entry_credit_address1000000)
         chain_flags_list = ['-f', '-C']
         for i in xrange(20):
-
             for i in range(80):
-
                 name_1 = create_random_string(5)
                 name_2 = create_random_string(5)
                 names_list = ['-n', name_1, '-n', name_2]
-                data = create_random_string(randint(100, 5000))
-                chain_id = self.chain_objects.make_chain_from_string(self.entry_credit_address1000000, data, external_id_list=names_list, flag_list=chain_flags_list)
+                content = create_random_string(randint(100, 5000))
+                chain_id = self.chain_objects.make_chain(self.entry_credit_address1000000, content, external_id_list=names_list, flag_list=chain_flags_list)
 
                 for i in range(120):
                     name_1 = create_random_string(5)
                     name_2 = create_random_string(5)
                     names_list = ['-c', chain_id, '-e', name_1, '-e', name_2]
-                    data = create_random_string(randint(100, 5000))
-                    self.chain_objects.add_entry_to_chain_by_string(self.entry_credit_address1000000, data, external_id_list=names_list, flag_list=chain_flags_list)
+                    content = create_random_string(randint(100, 5000))
+                    self.chain_objects.add_entry_to_chain(self.entry_credit_address1000000, content, external_id_list=names_list, flag_list=chain_flags_list)
                     if not CONTINUOUS: time.sleep(float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK']) * 0.2)
                     self.assertFalse('0' == self.cli_create.check_wallet_address_balance(self.entry_credit_address1000000), 'out of entry credits')
 

@@ -1,5 +1,3 @@
-import string, random
-
 from api_objects.api_objects_factomd import APIObjectsFactomd
 import unittest
 
@@ -8,7 +6,6 @@ import re
 
 from helpers.cli_methods import get_data_dump_from_nonansible_server
 from helpers.helpers import read_data_from_json
-import logging
 
 @attr(api=True)
 class APITests(unittest.TestCase):

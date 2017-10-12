@@ -17,10 +17,10 @@ class CLITestsBalances(unittest.TestCase):
         self.api_objects = APIObjectsFactomd()
 
     def test_all_addresses_balances(self):
-        """
+        '''
         tests all addresses in wallet and all balances on servers
         :return:
-        """
+        '''
         addresses = read_data_from_json('addresses.json')
         list = [addresses['factomd_address'], addresses['factomd_address_0'], addresses['factomd_address_1'],
                 addresses['factomd_address_2'], addresses['factomd_address_3'], addresses['factomd_address_4'],

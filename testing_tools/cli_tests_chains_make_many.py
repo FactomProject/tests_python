@@ -1,5 +1,4 @@
 import unittest
-import os
 
 from nose.plugins.attrib import attr
 
@@ -28,10 +27,11 @@ class CLITestsChainsMakeMany(unittest.TestCase):
 
     def test_make_chain_and_check_balance(self):
         self.entry_credit_address = fund_entry_credit_address(NUMBER_OF_RUNS * 12)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        content = create_random_string(1024)
         for i in range(NUMBER_OF_RUNS):
+            # this print statement is necessary to monitor the test progress
             print 'Chain', i + 1
             name_1 = create_random_string(5)
             name_2 = create_random_string(5)
             names_list = ['-n', name_1, '-n', name_2]
-            self.assertFalse("looking for beginning of value" in self.chain_objects.make_chain_from_binary_file(self.entry_credit_address, path, external_id_list=names_list), "Chain creation failed on chain " + str(i) + " with external ids " + str(names_list))
+            self.assertFalse("looking for beginning of value" in self.chain_objects.make_chain(self.entry_credit_address, content, external_id_list=names_list), "Chain creation failed on chain " + str(i) + " with external ids " + str(names_list))

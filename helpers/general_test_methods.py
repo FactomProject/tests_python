@@ -1,4 +1,4 @@
-import unittest, time
+import time
 
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from cli_objects.cli_objects_chain import CLIObjectsChain
