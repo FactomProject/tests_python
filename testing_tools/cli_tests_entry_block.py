@@ -14,7 +14,7 @@ class CLITestsEntryBlock(unittest.TestCase):
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
     '''
     data = read_data_from_json('addresses.json')
-    factomd_address_prod = data['factomd_address_prod2']
+    factomd_address_prod = data['localhost']
     factomd_address_ansible = data['factomd_address']
 
     def setUp(self):
