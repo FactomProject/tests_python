@@ -1,4 +1,4 @@
-import unittest, os, binascii, hashlib
+import unittest, os, binascii, hashlib, time
 from nose.plugins.attrib import attr
 from flaky import flaky
 
@@ -75,6 +75,28 @@ class CLITestsChains(unittest.TestCase):
                         "Chain not revealed")
         balance_after = self.cli_create.check_wallet_address_balance(self.entry_credit_address100)
         self.assertEqual(int(balance_before), int(balance_after) + 12, 'Incorrect charge for chain creation')
+
+    def test_make_chain_and_check_chainhead(self):
+        self.entry_credit_address100 = fund_entry_credit_address(100)
+        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list = ['-n', name_1, '-n', name_2]
+        chain_flag_list = ['-f', '-C']
+        chainid = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list, flag_list=chain_flag_list)
+        found = False
+        for x in range(0, self.TIME_TO_WAIT):
+            if 'Chain not yet included in a Directory Block' in self.cli_chain.get_allentries(chain_id=chainid):
+                found = True
+                break
+            time.sleep(1)
+        self.assertTrue(found, 'Chainhead is missing')
+        for x in range(0, self.data['BLOCKTIME']):
+            if 'Chain not yet included in a Directory Block' not in self.cli_chain.get_allentries(chain_id=chainid):
+                found = True
+                break
+            time.sleep(1)
+        self.assertTrue(found, 'Chainhead not included in a Directory Block after 1 block')
 
     def test_raw_commit(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
