@@ -26,17 +26,22 @@ class CLITestsHeight(unittest.TestCase):
 
     def test_check_admin_block_height(self):
         directory_block_height = self.cli_chain.get_directory_block_height_from_head()
+        print 'directory_block_height', directory_block_height
         for factomd_address_custom in self.factomd_address_custom_list:
             for x in range(0, int(directory_block_height)):
                 self.cli_chain.change_factomd_address(self.factomd_address)
                 admin_block_height = self.cli_chain.get_admin_block_by_height(x)
+                print 'admin_block_height', admin_block_height
                 self.cli_chain.change_factomd_address(factomd_address_custom)
                 admin_block_height_1 = self.cli_chain.get_admin_block_by_height(x)
+                print 'admin_block_height1', admin_block_height_1
                 self.assertTrue(admin_block_height == admin_block_height_1, "mismatch in admin block at height %d" % (x))
 
     def test_admin_block_height_suppress_raw_data(self):
         directory_block_height = self.cli_chain.get_directory_block_height_from_head()
+        print 'directory_block_height', directory_block_height
         admin_block_height = self.cli_chain.get_admin_block_by_height(directory_block_height, '-r')
+        print 'admin_block_height', admin_block_height
         self.assertNotIn('raw', admin_block_height, 'Raw data is not suppressed')
 
     def test_check_directory_block_height(self):

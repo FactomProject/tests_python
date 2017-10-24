@@ -11,14 +11,18 @@ class APIObjectsFactomd():
         url = 'http://'+self.factomd_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
+        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
+        print r.text
         return r.text, r.status_code
 
     def send_get_request_with_method(self, method):
         url = 'http://' + self.factomd_address + '/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
+        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
+        print r.text
         return r.text
 
     def change_factomd_address(self,change_factomd_address):
@@ -164,7 +168,7 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_params_dict('chain-head', {'ChainID': chain_id})[0])
         return blocks['result']['chainhead']
 
-    def get_entry_credits_balance_by_ec_address(self, ec_address):
+    def get_entry_credits_balance(self, ec_address):
         '''
         Gets entry credit balance by ec address
         :param ec_address: str - ec address
@@ -173,7 +177,7 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address})[0])
         return blocks['result']['balance']
 
-    def get_factoid_balance_by_factoid_address(self, factoid_address):
+    def get_factoid_balance(self, factoid_address):
         '''
         Gets factoid balance by factoid address
         :param factoid_address: str address
@@ -208,7 +212,7 @@ class APIObjectsFactomd():
                                                                                              transaction})[0])
         return blocks['result']
 
-    def commit_chain_by_message(self, message):
+    def commit_chain(self, message):
         '''
         Commit chain by message
         :param message: str, message
@@ -217,19 +221,24 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message})[0])
         if 'error' in blocks:
             success = False
-            return success, blocks['error']
+            return blocks['error'], success
         else:
             success = True
-            return success, blocks['result']
+            return blocks['result'], success
 
-    def reveal_chain_by_entry(self, entry):
+    def reveal_chain(self, entry):
         '''
         Reveal chain by entry
         :param entry: str, entry
         :return:
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('reveal-chain', {'entry': entry}))
-        return blocks['result']
+        blocks = json.loads(self.send_get_request_with_params_dict('reveal-chain', {'entry': entry})[0])
+        if 'error' in blocks:
+            success = False
+            return blocks['error'], success
+        else:
+            success = True
+            return blocks['result'], success
 
     def commit_entry(self, entry):
         '''

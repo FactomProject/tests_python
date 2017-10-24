@@ -2,7 +2,6 @@ import requests, json, ast
 
 from helpers.helpers import read_data_from_json
 
-
 class APIObjectsWallet():
 
     data = read_data_from_json('addresses.json')
@@ -12,21 +11,28 @@ class APIObjectsWallet():
         url = 'http://'+ self.wallet_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
+        print data
         r = requests.post(url, data=json.dumps(data), headers=headers)
+        print r.text
         return r.text
 
     def send_get_request_with_params_dict(self, method, params_dict):
         url = 'http://' + self.wallet_address + '/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
+        print data
+        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
+        print r.text
         return r.text
 
     def send_get_request_with_method(self, method):
         url = 'http://' + self.wallet_address + '/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
+        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
+        print r.text
         return r.text
 
     def check_address_by_public_address(self, address):
@@ -157,7 +163,36 @@ class APIObjectsWallet():
     def compose_chain(self, external_ids, content, ecpub):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-chain',
                  {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ecpub}))
-        return blocks['result']['commit']['params']['message'], blocks['result']['reveal']['params']['entry']
+        if 'error' in blocks:
+            return_data = blocks['error']
+            if 'data' in blocks['error']:
+                error_message = blocks['error']['data']
+            else:
+                error_message = blocks['error']['message']
+        else:
+            print 'result', blocks['result']
+            return_data = blocks['result']
+            error_message = ''
+        return return_data, error_message
+
+        # return blocks['result']['commit']['params']['message'], blocks['result']['reveal']['params']['entry']
+
+    def compose_entry(self, chainid, external_ids, content, ecpub):
+        blocks = json.loads(self.send_post_request_with_params_dict('compose-entry',
+                 {'entry': {'chainid': chainid, 'extids': external_ids, 'content': content}, 'ecpub': ecpub}))
+        if 'error' in blocks:
+            return_data = blocks['error']
+            if 'data' in blocks['error']:
+                error_message = blocks['error']['data']
+            else:
+                error_message = blocks['error']['message']
+        else:
+            print 'result', blocks['result']
+            return_data = blocks['result']
+            error_message = ''
+        return return_data, error_message
+
+        # return blocks['result']['commit']['params']['message'], blocks['result']['reveal']['params']['entry']
 
     def compose_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-transaction',
