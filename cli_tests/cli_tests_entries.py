@@ -13,17 +13,12 @@ from nose.plugins.attrib import attr
 @attr(fast=True)
 class CLITestsEntries(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
-    path = ''
 
     def setUp(self):
         self.cli_create = CLIObjectsCreate()
         self.cli_chain = CLIObjectsChain()
         self.ecrate = self.cli_create.get_entry_credit_rate()
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
-
-    def tearDown(self):
-        if self.path:
-            os.remove(self.path)
 
     def test_make_entry_return_entry_hash(self):
         # make chain
@@ -170,9 +165,11 @@ class CLITestsEntries(unittest.TestCase):
         # check for pending entries return entry hash
         factom_flags_list = ['-E']
         entry_hash_list = self.cli_chain.get_pending_entries(flag_list=factom_flags_list)
+        # entry_hash_list = '464d32f5962d60424caf5fb6e89e63db6e1807633743f4753ea295865531f62c'
+        found = False
         for entry_hash in entry_hash_list.split('\n'):
             text = self.cli_chain.get_entry_by_hash(entry_hash)
-
+            self.assertNotIn('Invalid', text,'Entry Hash is invalid')
             entry_chain_id = self.cli_chain.parse_entry_data(text)['ChainID']
             if entry_chain_id == chain_id:
                found = True
@@ -211,14 +208,14 @@ class CLITestsEntries(unittest.TestCase):
         '''
 
         # make chain
-        content = create_random_string(1024)
+        content = 'x'*1024
         name_1 = self.data['2nd_external_id1']
         name_2 = self.data['2nd_external_id2']
         chain_names_list = ['-n', name_1, '-n', name_2]
         self.cli_chain.make_chain(self.entry_credit_address1000, content, external_id_list=chain_names_list)
 
         # make entry
-        content = create_random_string(1024)
+        content = 'y'*1024
         name_1 = self.data['3rd_over_2nd_external_id1']
         name_2 = self.data['3rd_over_2nd_external_id2']
         entry_names_list = chain_names_list + ['-e', name_1, '-e', name_2]

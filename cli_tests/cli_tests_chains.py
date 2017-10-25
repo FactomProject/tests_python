@@ -78,12 +78,13 @@ class CLITestsChains(unittest.TestCase):
 
     def test_make_chain_and_check_chainhead(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
+        data = create_random_string(1024)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
         chain_flag_list = ['-f', '-C']
-        chainid = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list, flag_list=chain_flag_list)
+        chainid = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
         found = False
         for x in range(0, self.TIME_TO_WAIT):
             if 'Chain not yet included in a Directory Block' in self.cli_chain.get_allentries(chain_id=chainid):
@@ -158,7 +159,7 @@ class CLITestsChains(unittest.TestCase):
          using a fixed external id which yields a known entry hash. However once this chain is created in a database,
          it will still be there even if subsequent runs fail.
          '''
-        data = 'x'*1024
+        data = 'z'*1024
         self.entry_credit_address100 = fund_entry_credit_address(100)
         name_1 = self.data['1st_external_id1']
         name_2 = self.data['1st_external_id2']
