@@ -3,6 +3,7 @@ from helpers.cli_methods import send_command_to_cli_and_receive_text
 from cli_objects_base_ import CLIObjectsBase
 from subprocess import Popen, PIPE
 import shlex
+import logging
 
 class CLIObjectsChain(CLIObjectsBase):
     _add_chain = 'addchain'
@@ -80,6 +81,7 @@ class CLIObjectsChain(CLIObjectsBase):
 
         # open subprocess as a way to 'write' content into the command instead of it coming from a file
         args = shlex.split(''.join((self._cli_command, self._add_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
+        logging.getLogger('args').info(args)
         p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
         text = p.communicate(content)
         '''
@@ -91,6 +93,7 @@ class CLIObjectsChain(CLIObjectsBase):
         # strip final line feed
         text = text[:-1]
         p.stdin.close()
+        logging.getLogger('text').info(text)
         return text
 
     def compose_chain(self, ecaddress, content, **kwargs):
