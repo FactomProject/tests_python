@@ -81,7 +81,6 @@ class CLIObjectsChain(CLIObjectsBase):
 
         # open subprocess as a way to 'write' content into the command instead of it coming from a file
         args = shlex.split(''.join((self._cli_command, self._add_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
-        logging.getLogger('cli_command').info(args)
         p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
         text = p.communicate(content)
         '''
@@ -93,7 +92,6 @@ class CLIObjectsChain(CLIObjectsBase):
         # strip final line feed
         text = text[:-1]
         p.stdin.close()
-        logging.getLogger('cli_command').info(text)
         return text
 
     def compose_chain(self, ecaddress, content, **kwargs):
