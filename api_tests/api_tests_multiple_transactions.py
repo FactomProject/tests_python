@@ -28,7 +28,7 @@ class ApiTestsTransactions(unittest.TestCase):
         special note  : this test case uses sleep to control the # of transaction input. waiting for acknowledgement causes ports to run out
             and test case fails
         '''
-        blocktime = self.data['BLOCKTIME']
+        blocktime = self.data['blocktime']
         txidlist = []
         for x in range(1,6000):
             for temp in range(1,blocktime):
