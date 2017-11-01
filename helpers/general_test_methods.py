@@ -13,7 +13,7 @@ BLOCK_WAIT_TIME = 50
 
 def wait_for_ack(transaction_id):
     for x in range(0, BLOCK_WAIT_TIME):
-        if 'TransactionACK' in cli_create.request_transaction_acknowledgement(transaction_id):
+        if any(status in cli_create.request_transaction_acknowledgement(transaction_id) for status in ('TransactionACK', 'DBlockConfirmed')):
             break
         time.sleep(1)
 

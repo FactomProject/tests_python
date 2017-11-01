@@ -1,5 +1,4 @@
-import requests
-import json
+import requests, json, ast
 
 from helpers.helpers import read_data_from_json
 
@@ -63,14 +62,17 @@ class APIObjectsWallet():
         blocks = json.loads(self.send_get_request_with_method('generate-factoid-address'))
         return blocks['result']['public']
 
-    def import_address_by_secret(self, secret_address):
+    def import_addresses(self, *secret_addresses):
         '''
         Imports address by secret address and returns public
-        :param secret_address: str
-        :return: str, public addresss
+        :param *secret_address: list of 1 or more str
+        :return: list of corresponding public addresses str
         '''
-        blocks = json.loads(self.send_post_request_with_params_dict('import-addresses', {'addresses': [{'secret': secret_address}]}))
-        return blocks['result']['addresses'][0]['public']
+        result = json.loads(self.send_post_request_with_params_dict('import-addresses', ast.literal_eval(json.dumps({'addresses': [{'secret': address} for address in secret_addresses]}))))
+        public=[]
+        for i in range(len(secret_addresses)):
+            public.append(result['result']['addresses'][i]['public'])
+        return public
 
     def import_mnemonic(self, words):
         '''

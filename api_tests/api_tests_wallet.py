@@ -17,10 +17,12 @@ class ApiTestsWallet(unittest.TestCase):
     def setUp(self):
         self.wallet_api_objects = APIObjectsWallet()
         self.api_objects = APIObjectsFactomd()
-        self.first_address = self.wallet_api_objects.import_address_by_secret(self.data['factoid_wallet_address'])
+        public_keys = self.wallet_api_objects.import_addresses(
+            self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
+        self.first_address = public_keys[0]
+        self.entry_creds_wallet = public_keys[1]
         self.second_address = self.wallet_api_objects.generate_factoid_address()
         self.ecrate = self.api_objects.get_entry_credits_rate()
-        self.entry_creds_wallet = self.wallet_api_objects.import_address_by_secret(self.data['ec_wallet_address'])
         self.entry_creds_wallet2 = self.wallet_api_objects.generate_ec_address()
 
     def test_allocate_funds_to_factoid_wallet_address(self):
@@ -101,7 +103,7 @@ class ApiTestsWallet(unittest.TestCase):
         for x in range(0, self.data['BLOCKTIME']):
             pending = self.api_objects.get_pending_transactions(self.first_address)
             if 'TransactionACK' in str(pending):
-                if tx_id in pending[0]['TransactionID']: break
+                if tx_id in pending[0]['transactionid']: break
             time.sleep(1)
         self.assertLess(x, self.data['BLOCKTIME'], 'Transaction never pending')
 
