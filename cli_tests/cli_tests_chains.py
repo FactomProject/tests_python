@@ -91,7 +91,7 @@ class CLITestsChains(unittest.TestCase):
                 break
             time.sleep(1)
         self.assertTrue(found, 'Chainhead is missing')
-        for x in range(0, self.data['BLOCKTIME']):
+        for x in range(0, self.data['blocktime']):
             if 'Chain not yet included in a Directory Block' not in self.cli_chain.get_allentries(chain_id=chainid):
                 found = True
                 break
