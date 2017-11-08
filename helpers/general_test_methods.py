@@ -29,8 +29,10 @@ def wait_for_entry_in_block(**kwargs):
 def fund_entry_credit_address(amount):
     # all entry credit addresses are funded from first_address
     first_address = cli_create.import_addresses(data['factoid_wallet_address'])[0]
+    print 'factoids', cli_create.check_wallet_address_balance(first_address)
     entry_credit_address = cli_create.create_entry_credit_address()
     text = cli_create.buy_entry_credits(first_address, entry_credit_address, str(amount))
+    print 'entry credits', cli_create.check_wallet_address_balance(entry_credit_address)
     chain_dict = chain_objects.parse_simple_data(text)
     tx_id = chain_dict['TxID']
     wait_for_ack(tx_id)
