@@ -161,7 +161,6 @@ class CLITestsChains(unittest.TestCase):
          '''
         data = 'z'*1024
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        print 'entry credits', self.cli_create.check_wallet_address_balance(self.entry_credit_address100)
         name_1 = self.data['1st_external_id1']
         name_2 = self.data['1st_external_id2']
         names_list = ['-n', name_1, '-n', name_2]
