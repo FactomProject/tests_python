@@ -163,6 +163,7 @@ class APIObjectsWallet():
     def compose_chain(self, external_ids, content, ecpub):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-chain',
                  {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ecpub}))
+        print 'blocks', blocks
         if 'error' in blocks:
             return_data = blocks['error']
             if 'data' in blocks['error']:
@@ -173,6 +174,7 @@ class APIObjectsWallet():
             print 'result', blocks['result']
             return_data = blocks['result']
             error_message = ''
+        print 'error_message', error_message
         return return_data, error_message
 
         # return blocks['result']['commit']['params']['message'], blocks['result']['reveal']['params']['entry']
@@ -180,6 +182,7 @@ class APIObjectsWallet():
     def compose_entry(self, chainid, external_ids, content, ecpub):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-entry',
                  {'entry': {'chainid': chainid, 'extids': external_ids, 'content': content}, 'ecpub': ecpub}))
+        print 'blocks', blocks
         if 'error' in blocks:
             return_data = blocks['error']
             if 'data' in blocks['error']:

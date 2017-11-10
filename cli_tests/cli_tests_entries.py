@@ -3,11 +3,11 @@ import os, binascii, hashlib
 
 from flaky import flaky
 
+from nose.plugins.attrib import attr
+from helpers.helpers import create_random_string, read_data_from_json
+from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, fund_entry_credit_address
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from cli_objects.cli_objects_chain import CLIObjectsChain
-from helpers.helpers import create_random_string, read_data_from_json
-from helpers.general_test_methods import wait_for_ack, wait_for_entry_in_block, fund_entry_credit_address
-from nose.plugins.attrib import attr
 
 @flaky(max_runs=3, min_passes=1)
 @attr(fast=True)
@@ -144,7 +144,7 @@ class CLITestsEntries(unittest.TestCase):
         self.assertIn(chain_id, self.cli_chain.get_pending_entries(), 'Entry not shown as pending')
 
         # validate get firstentry command
-        wait_for_entry_in_block(external_id_list=chain_names_list)
+        wait_for_chain_in_block(external_id_list=chain_names_list)
         self.assertIn("ExtID: " + firstentry_ext_id, self.cli_chain.get_firstentry(external_id_list=chain_names_list), 'Chain not found')
 
         # validate get firstentry_return_entry_hash
@@ -194,7 +194,7 @@ class CLITestsEntries(unittest.TestCase):
         self.assertTrue(
             "message" and "entry" in self.cli_chain.compose_entry_from_binary_file(self.entry_credit_address1000, self.path, external_id_list=names_list))
         # wait for entry to arrive in block
-        wait_for_entry_in_block(external_id_list=chain_names_list)
+        wait_for_chain_in_block(external_id_list=chain_names_list)
 
         # look for chainhead by hex external id
         text = self.cli_chain.get_chainhead(external_id_list=chain_names_list)
@@ -234,7 +234,7 @@ class CLITestsEntries(unittest.TestCase):
         self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=entry_names_list, flag_list=factom_flags_list)
 
         # wait for entry to arrive in block
-        wait_for_entry_in_block(external_id_list=chain_names_list)
+        wait_for_chain_in_block(external_id_list=chain_names_list)
 
         self.assertNotIn("Entry not found", self.cli_chain.get_entry_by_hash(self.data['3rd_over_2nd_entry_hash']))
 
@@ -262,7 +262,7 @@ class CLITestsEntries(unittest.TestCase):
         entry_chain_id = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, self.path, external_id_list=entry_names_list, flag_list=factom_flags_list)
 
         # wait for entry to arrive in block
-        wait_for_entry_in_block(external_id_list=chain_names_list)
+        wait_for_chain_in_block(external_id_list=chain_names_list)
 
         self.assertEqual(entry_chain_id, chain_id, 'Chain Id of Entry does not match Chain ID of chain')
         self.assertIn(entry_chain_id, self.cli_chain.get_allentries(chain_id=chain_id), "Entry not found")

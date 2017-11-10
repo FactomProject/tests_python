@@ -1,5 +1,4 @@
-import requests
-import commands
+import requests, commands
 import logging
 
 def send_command_to_cli_and_receive_text(cli_command):
@@ -19,4 +18,10 @@ def get_data_dump_from_nonansible_server(server_address):
     data = {"item": "dataDump"}
     r = requests.get(server_address + '/factomd', params=data)
     return r.text
+
+
+
+
+
+
 

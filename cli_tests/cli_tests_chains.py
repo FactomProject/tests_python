@@ -7,7 +7,7 @@ from cli_objects.cli_objects_chain import CLIObjectsChain
 from api_objects.api_objects_factomd import APIObjectsFactomd
 
 from helpers.helpers import create_random_string, read_data_from_json
-from helpers.general_test_methods import wait_for_ack, wait_for_entry_in_block, fund_entry_credit_address
+from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, fund_entry_credit_address
 
 @flaky(max_runs=3, min_passes=1)
 @attr(fast=True)
@@ -53,7 +53,7 @@ class CLITestsChains(unittest.TestCase):
                                                    external_id_list=names_list)
 
         # look for chainhead by external id
-        wait_for_entry_in_block(external_id_list=names_list)
+        wait_for_chain_in_block(external_id_list=names_list)
         self.assertTrue('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000' in self.cli_chain.get_chainhead(external_id_list=names_list), 'Chainhead not found')
 
         # try to make duplicate chain
@@ -135,7 +135,7 @@ class CLITestsChains(unittest.TestCase):
                           '1st_hex_entry_hash']))
 
         # validate get firstentry by hex external id command
-        wait_for_entry_in_block(external_id_list=names_list)
+        wait_for_chain_in_block(external_id_list=names_list)
         text = self.cli_chain.get_firstentry(external_id_list=names_list)
         chain_id = self.cli_chain.parse_entry_data(text)['ChainID']
         self.assertTrue(chain_id == self.data['1st_hex_chain_id'], 'Chain not found')
