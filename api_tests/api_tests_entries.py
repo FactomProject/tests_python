@@ -69,7 +69,9 @@ class APIEntriesTests(unittest.TestCase):
                 # status = wait_for_chain_in_block(external_id_list=chain_names_list)
 
                 # entry arrived in block?
-                self.assertTrue('DBlockConfirmed' in str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Entry not arrived in block')
+                self.assertIn('DBlockConfirmed', str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Entry not arrived in block')
+
+
 
 
 
