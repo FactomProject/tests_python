@@ -10,13 +10,13 @@ class CLITestsWallet(unittest.TestCase):
 
     def setUp(self):
         self.cli_create = CLIObjectsCreate()
-
-    '''The remote address feature of factomd is not currently activated
+    '''
+    The remote address feature of factomd is not currently activated
     def test_wallet_address_balance_remote(self):
         text = self.cli_create.check_wallet_address_balance_remote('factom.michaeljbeam.me')
         self.assertTrue("fct" in text)
-        self.assertTrue("ec" in text)'''
-
+        self.assertTrue("ec" in text)
+    '''
     def test_backup_wallet(self):
         self.assertTrue(len(self.cli_create.backup_wallet().split(' ')) == 12, "12 words are not present in "
                                                                                       "wallet")

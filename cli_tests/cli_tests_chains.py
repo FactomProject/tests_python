@@ -27,50 +27,50 @@ class CLITestsChains(unittest.TestCase):
         self.entry_credit_address = imported_addresses[1]
 
     def test_make_chain_with_wrong_address(self):
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         names_list = ['-n', '1', '-n', '1']
-        self.assertTrue("is not an Entry Credit Public Address" in self.cli_chain.make_chain_from_binary_file('bogus', path, external_id_list=names_list))
+        self.assertTrue("is not an Entry Credit Public Address" in self.cli_chain.make_chain('bogus', data, external_id_list=names_list))
 
     def test_make_chain_with_factoids_not_ec(self):
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         names_list = ['-n', '1', '-n', '1']
-        self.assertTrue("is not an Entry Credit Public Address" in self.cli_chain.make_chain_from_binary_file(self.first_address, path, external_id_list=names_list))
+        self.assertTrue("is not an Entry Credit Public Address" in self.cli_chain.make_chain(self.first_address, data, external_id_list=names_list))
 
     def test_make_correct_chain_with_not_enough_ec(self):
         self.entry_credit_address0 = fund_entry_credit_address(0)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         names_list = ['-n', create_random_string(5), '-n', create_random_string(5)]
         self.assertTrue(
-            'Not enough Entry Credits' in self.cli_chain.make_chain_from_binary_file(self.entry_credit_address0, path, external_id_list=names_list))
+            'Not enough Entry Credits' in self.cli_chain.make_chain(self.entry_credit_address0, data, external_id_list=names_list))
 
     def test_make_chain_that_already_exists(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
-        self.cli_chain.make_chain_from_binary_file(self.entry_credit_address100, path,
-                                                   external_id_list=names_list)
+        self.cli_chain.make_chain(self.entry_credit_address100, data,
+                                  external_id_list=names_list)
 
         # look for chainhead by external id
         wait_for_chain_in_block(external_id_list=names_list)
         self.assertTrue('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000' in self.cli_chain.get_chainhead(external_id_list=names_list), 'Chainhead not found')
 
         # try to make duplicate chain
-        self.assertTrue('already exists' in self.cli_chain.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list), "Duplicate chain not detected")
+        self.assertTrue('already exists' in self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list), "Duplicate chain not detected")
 
         # try to compose duplicate chain
-        self.assertTrue('already exist' in self.cli_chain.compose_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list), "Duplicate chain not detected")
+        self.assertTrue('already exist' in self.cli_chain.compose_chain(self.entry_credit_address100, data, external_id_list=names_list), "Duplicate chain not detected")
 
     def test_make_chain_and_check_balance(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
         chain_flag_list = ['-E']
         balance_before = self.cli_create.check_wallet_address_balance(self.entry_credit_address100)
-        entry_hash = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list, flag_list=chain_flag_list)
+        entry_hash = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
         self.assertTrue("Entry not found" not in self.cli_chain.get_entry_by_hash(entry_hash),
                         "Chain not revealed")
         balance_after = self.cli_create.check_wallet_address_balance(self.entry_credit_address100)
@@ -78,12 +78,13 @@ class CLITestsChains(unittest.TestCase):
 
     def test_make_chain_and_check_chainhead(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
+        data = create_random_string(1024)
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
         chain_flag_list = ['-f', '-C']
-        chainid = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list, flag_list=chain_flag_list)
+        chainid = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
         found = False
         for x in range(0, self.TIME_TO_WAIT):
             if 'Chain not yet included in a Directory Block' in self.cli_chain.get_allentries(chain_id=chainid):
@@ -100,12 +101,12 @@ class CLITestsChains(unittest.TestCase):
 
     def test_raw_commit(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
         chain_flag_list = ['-T']
-        tx_id = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list, flag_list=chain_flag_list)
+        tx_id = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
         raw = self.cli_create.get_raw(tx_id)
 
         # exclude public key and signature (last 32 + 64 bytes = 192 characters)
@@ -123,14 +124,15 @@ class CLITestsChains(unittest.TestCase):
         ''' This test is only reliable for the 1st run on a given database.
          Because of the -C flag, no transaction id is available, so the only way to locate the created chain is by
          using a fixed external id which yields a known entry hash. However once this chain is created in a database,
-         it will still be there even if subsequent runs fail.'''
+         it will still be there even if subsequent runs fail.
+         '''
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         name_1 = self.data['1st_hex_external_id1']
         name_2 = self.data['1st_hex_external_id2']
         names_list = ['-h', name_1, '-h', name_2]
         chain_flag_list = ['-C']
-        self.cli_chain.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list, flag_list=chain_flag_list)
+        self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
         self.assertTrue("Entry not found" not in self.cli_chain.get_entry_by_hash(self.data[
                           '1st_hex_entry_hash']))
 
@@ -142,12 +144,12 @@ class CLITestsChains(unittest.TestCase):
 
     def test_force_make_chain(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
         factom_flags_list = ['-f', '-T']
-        tx_id = self.cli_chain.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list, flag_list=factom_flags_list)
+        tx_id = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=factom_flags_list)
         wait_for_ack(tx_id)
         self.assertTrue("TransactionACK" in self.cli_create.request_transaction_acknowledgement(tx_id), 'Forced chain not acknowledged')
 
@@ -155,25 +157,25 @@ class CLITestsChains(unittest.TestCase):
         ''' This test is only reliable on the 1st run on a given database.
          Because of the -q flag, no transaction id is available, so the only way to locate the created chain is by
          using a fixed external id which yields a known entry hash. However once this chain is created in a database,
-         it will still be there even if subsequent runs fail.'''
-
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+         it will still be there even if subsequent runs fail.
+         '''
+        data = 'z'*1024
         self.entry_credit_address100 = fund_entry_credit_address(100)
         name_1 = self.data['1st_external_id1']
         name_2 = self.data['1st_external_id2']
         names_list = ['-n', name_1, '-n', name_2]
         factom_flags_list = ['-q']
-        self.cli_chain.make_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list, flag_list=factom_flags_list)
-        self.assertTrue("Entry not found" not in self.cli_chain.get_entry_by_hash(self.data[
-                                                    '1st_entry_hash']))
+        self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=factom_flags_list)
+        wait_for_entry_in_block(external_id_list=names_list)
+        self.assertNotIn('Entry not found', self.cli_chain.get_entry_by_hash(self.data['1st_entry_hash']))
 
     def test_compose_chain(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
-        text = self.cli_chain.compose_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list)
+        text = self.cli_chain.compose_chain(self.entry_credit_address100, data, external_id_list=names_list)
         start = text.find('"message":"') + 11
         end = text.find('"},"method', start)
         self.api_factomd.commit_chain(text[start:end])
@@ -181,11 +183,11 @@ class CLITestsChains(unittest.TestCase):
 
     def test_compose_chain_with_hex_external_id(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         name_1 = binascii.b2a_hex(os.urandom(2))
         name_2 = binascii.b2a_hex(os.urandom(2))
         names_list = ['-h', name_1, '-h', name_2]
-        text = self.cli_chain.compose_chain_from_binary_file(self.entry_credit_address100, path, external_id_list=names_list)
+        text = self.cli_chain.compose_chain(self.entry_credit_address100, data, external_id_list=names_list)
         start = text.find('"message":"') + 11
         end = text.find('"},"method', start)
         self.api_factomd.commit_chain(text[start:end])
@@ -193,23 +195,23 @@ class CLITestsChains(unittest.TestCase):
 
     def test_compose_chain_with_zero_ec(self):
         self.entry_credit_address0 = fund_entry_credit_address(0)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
-        self.assertTrue("Not enough Entry Credits" in self.cli_chain.compose_chain_from_binary_file(self.entry_credit_address0, path, external_id_list=names_list), "Zero Entry Credit balance not detected")
+        self.assertTrue("Not enough Entry Credits" in self.cli_chain.compose_chain(self.entry_credit_address0, data, external_id_list=names_list), "Zero Entry Credit balance not detected")
 
         # force compose chain
         factom_flags_list = ['-f']
-        self.assertTrue("curl" in self.cli_chain.compose_chain_from_binary_file(self.entry_credit_address0, path, external_id_list=names_list, flag_list=factom_flags_list), "Zero Entry Credit balance compose chain not forced")
+        self.assertTrue("curl" in self.cli_chain.compose_chain(self.entry_credit_address0, data, external_id_list=names_list, flag_list=factom_flags_list), "Zero Entry Credit balance compose chain not forced")
 
     def test_compose_chain_with_not_enough_ec(self):
         self.entry_credit_address10 = fund_entry_credit_address(10)
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
+        data = create_random_string(1024)
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
-        self.assertTrue("Not enough Entry Credits" in self.cli_chain.compose_chain_from_binary_file(self.entry_credit_address10, path, external_id_list=names_list), "Insufficient balance not detected")
+        self.assertTrue("Not enough Entry Credits" in self.cli_chain.compose_chain(self.entry_credit_address10, data, external_id_list=names_list), "Insufficient balance not detected")
 
     def test_check_chain_height(self):
 

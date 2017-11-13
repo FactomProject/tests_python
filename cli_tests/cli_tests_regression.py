@@ -120,7 +120,7 @@ class CLITestsRegression(unittest.TestCase):
         wait_for_ack(tx_id)
 
         # transaction arrived?
-        self.assertNotEqual(self.cli_create.check_wallet_address_balance(self.second_address), '0', 'Factoids were not send to address: ' + self.second_address)
+        self.assertNotEqual(self.cli_create.check_wallet_address_balance(self.second_address), '0', 'Factoids were not sent to address: ' + self.second_address)
 
     def test_if_you_can_compose_wrong_transaction(self):
         self.assertIn("Transaction name was not found", self.cli_create.compose_transaction('not_existing_trans'), 'Non-existent transaction was found in wallet')

@@ -133,17 +133,16 @@ class APIObjectsWallet():
 
     def add_input_to_transaction(self, transaction_name, address, amount):
         blocks = json.loads(self.send_post_request_with_params_dict('add-input', {'tx-name': transaction_name,
-                                                                                 'address':address,'amount': amount}))
+        'address':address,'amount': amount}))
         return blocks#["result"]
 
     def add_output_to_transaction(self, transaction_name, address, amount):
         blocks = json.loads(self.send_post_request_with_params_dict('add-output', {'tx-name': transaction_name,
-                                                                                 'address': address, 'amount': amount}))
+        'address': address, 'amount': amount}))
         return blocks["result"]
 
     def add_entry_credit_output_to_transaction(self, transaction_name, address, amount):
-        blocks = json.loads(self.send_post_request_with_params_dict('add-ec-output', {'tx-name': transaction_name,
-                                                                                 'address': address, 'amount': amount}))
+        blocks = json.loads(self.send_post_request_with_params_dict('add-ec-output', {'tx-name': transaction_name, 'address': address, 'amount': amount}))
         return blocks["result"]
 
     def add_fee_to_transaction(self, transaction_name, address):

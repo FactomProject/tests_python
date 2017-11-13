@@ -34,7 +34,7 @@ class CLIObjectsCreate(CLIObjectsBase):
         for address in addresses[1:]:
             address_string = address_string + ' ' + address
         result = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._importaddress,
-                                                                      address_string)))
+                                                               address_string)))
         result = result.split('\n')
         return result
 
