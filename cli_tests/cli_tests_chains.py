@@ -166,7 +166,7 @@ class CLITestsChains(unittest.TestCase):
         names_list = ['-n', name_1, '-n', name_2]
         factom_flags_list = ['-q']
         self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=factom_flags_list)
-        wait_for_entry_in_block(external_id_list=names_list)
+        # wait_for_entry_in_block(external_id_list=names_list)
         self.assertNotIn('Entry not found', self.cli_chain.get_entry_by_hash(self.data['1st_entry_hash']))
 
     def test_compose_chain(self):

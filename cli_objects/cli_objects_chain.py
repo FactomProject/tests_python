@@ -3,11 +3,6 @@ from collections import defaultdict
 from helpers.cli_methods import send_command_to_cli_and_receive_text
 from cli_objects_base_ import CLIObjectsBase
 from subprocess import Popen, PIPE
-<<<<<<< HEAD
-=======
-import shlex
-import logging
->>>>>>> c329aca17a1a423694e70a402f039fb07cca5dce
 
 class CLIObjectsChain(CLIObjectsBase):
     _add_chain = 'addchain'

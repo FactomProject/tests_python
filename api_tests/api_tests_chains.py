@@ -1,4 +1,4 @@
-import unittest, time
+import unittest
 
 from nose.plugins.attrib import attr
 from helpers.helpers import read_data_from_json
