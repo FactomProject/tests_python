@@ -123,7 +123,7 @@ class APIObjectsFactomd():
         :param hash:
         :return: chainid, content, extids
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry', {'hash': hash}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry', {'hash': hash})[0])
         return blocks['result']
 
     def get_pending_entries(self):

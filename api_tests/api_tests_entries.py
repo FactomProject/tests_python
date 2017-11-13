@@ -71,6 +71,8 @@ class APIEntriesTests(unittest.TestCase):
                 # entry arrived in block?
                 self.assertIn('DBlockConfirmed', str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Entry not arrived in block')
 
+                # look for entry by hash
+                self.assertIn(reveal['chainid'], str(self.api_objects_factomd.get_entry_by_hash(reveal['entryhash'])), 'Entry with entryhash ' + reveal['entryhash'] + ' not found')
 
 
 
