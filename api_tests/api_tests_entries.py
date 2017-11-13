@@ -74,6 +74,15 @@ class APIEntriesTests(unittest.TestCase):
                 # look for entry by hash
                 self.assertIn(reveal['chainid'], str(self.api_objects_factomd.get_entry_by_hash(reveal['entryhash'])), 'Entry with entryhash ' + reveal['entryhash'] + ' not found')
 
+    def test_pending_entries(self):
+        self.entry_credit_address100 = fund_entry_credit_address(100)
+        data = create_random_string(1024)
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list = ['-n', name_1, '-n', name_2]
+        chain_flag_list = ['-E']
+        entry_hash = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
+        self.assertIn(entry_hash, str(self.api_objects_factomd.get_pending_entries()), 'Entry not pending')
 
 
 
