@@ -38,8 +38,7 @@ class APITestsChainhead(unittest.TestCase):
                     if chainid not in self.chainlist:
                         keyMR = dblock['dbentries'][x]['keymr']
                         chainhead = self.factomd_api.get_chain_head_by_chain_id(chainid)
-                        self.assertEqual(keyMR, chainhead, 'Problematic KeyMR: ' + keyMR + " problematic chainhead: "
-                                     + chainhead)
+                        self.assertEqual(keyMR, chainhead, 'Problematic KeyMR: ' + keyMR + " problematic chainhead: " + chainhead)
                         self.chainlist[chainid] = keyMR
 
 

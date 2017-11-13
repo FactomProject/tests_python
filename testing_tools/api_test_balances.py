@@ -6,8 +6,6 @@ from api_objects.api_objects_factomd import APIObjectsFactomd
 
 from helpers.helpers import read_data_from_json
 
-
-
 class APITestsBalances(unittest.TestCase):
 
     def setUp(self):
@@ -39,11 +37,12 @@ class APITestsBalances(unittest.TestCase):
 
     @attr(production_tool=True)
     def test_negative_balances_mainnet(self):
-        #testcase to check all the negative balances in production blockchain
-        #steps- list all transactions
-        #parse the output and fetch all the input and output addresses
-        #verify the balance of all the addresses is not negative
-
+        '''
+        testcase to check all the negative balances in production blockchain
+        steps- list all transactions
+        parse the output and fetch all the input and output addresses
+        verify the balance of all the addresses is not negative
+        '''
         addresses = read_data_from_json('addresses.json')
         factomd_address = addresses['localhost']
         self.api_objects.change_factomd_address(factomd_address)
@@ -66,9 +65,10 @@ class APITestsBalances(unittest.TestCase):
                     if (self.check_if_exists(self.address_list, output_address) != True):
                         self.add_balance(output_address)
                         self.assertFalse(self.balance < 0,"negative balance found. Address %s, balance %s" % (output_address, self.balance))
-
-        #check if total balance is more than what we gave away in round one ie. 8.7 million
-        #divide to fetch factoids and then convert to millions
+        '''
+        check if total balance is more than what we gave away in round one ie. 8.7 million
+        divide to fetch factoids and then convert to millions
+        '''
         factoids =  self.total_balance/100000000000000
         self.assertFalse(factoids > 8.8, "CRITICAL: Factoids has increased in the blockchain")
 

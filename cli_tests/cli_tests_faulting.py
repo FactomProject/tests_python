@@ -64,12 +64,11 @@ class CLITestsFaulting(unittest.TestCase):
         send_command_to_cli_and_receive_text('addservermessage -host=' + self.data['default_server_port'] + ' send f ' + self.data['federated_full'] + ' ' + self.data['default_private_key'])
 
     def wait_for_server_status_change(self, server_type, server_hash, status):
-        """
+        '''
         The online/offline status of the server of type server_type ('federated' or 'audit') identified by the identity server_hash (888888...) will be monitored until either its status matches the requested input status ('online' or something else) or the number of blocks elapsed exceeds a preset limit (BLOCKS_TO_WAIT).
-
         :param server_type: 'federated' or 'audit'; used to get a list of either all the current federated servers or all the current audit servers along with their online or offline status via the calls api_objects_debug/get_federated_servers() or api_objects_debug/get_audit_servers(). The call is constructed using the parameter, so if the parameter is incorrectly specified, the call will fail.
         :return blocks_waited; This is the number of blocks elapsed before the sought situation was found. If this equals the BLOCKS_TO_WAIT limit on the number of blocks to search, then the search failed.
-        """
+        '''
         command = 'result = self.api_debug.get_' + server_type + '_servers()'
 
         """

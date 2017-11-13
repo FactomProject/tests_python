@@ -3,7 +3,7 @@ import os, binascii
 
 from api_objects.api_objects_factomd import APIObjectsFactomd
 from api_objects.api_objects_wallet import APIObjectsWallet
-from helpers.helpers import read_data_from_json
+from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack, wait_for_entry_in_block, fund_entry_credit_address
 from nose.plugins.attrib import attr
 
@@ -64,9 +64,7 @@ class APIEntriesTests(unittest.TestCase):
         external_ids = [name_1, name_2]
 
         # content must be in hex
-        path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
-        with open(path, 'r') as fin:
-            content = binascii.hexlify(fin.read())
+        content = binascii.hexlify(create_random_string(1024))
 
         # compose chain
         message, entry = self.wallet_api_objects.compose_chain(external_ids, content, self.entry_credit_address1000)

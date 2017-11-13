@@ -3,6 +3,7 @@ from helpers.cli_methods import send_command_to_cli_and_receive_text
 from cli_objects_base_ import CLIObjectsBase
 from subprocess import Popen, PIPE
 import shlex
+import logging
 
 class CLIObjectsChain(CLIObjectsBase):
     _add_chain = 'addchain'
@@ -25,7 +26,6 @@ class CLIObjectsChain(CLIObjectsBase):
     _get_entryblock = 'get eblock '
     _get_entry_by_hash = 'get entry '
     _get_raw = 'get raw '
-    # _backup_wallet = 'backupwallet'
 
     def parse_simple_data(self, text):
         return dict(item.split(": ") for item in text.split('\n'))
@@ -71,73 +71,94 @@ class CLIObjectsChain(CLIObjectsBase):
 
         return parsed_dict
 
-    def make_chain_from_binary_file(self, ecaddress, file_data, **kwargs):
+    def make_chain(self, ecaddress, content, **kwargs):
         flags = ''
         if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
         chain_identifier = ''
         if 'external_id_list' in kwargs:
             chain_identifier = ' '.join(kwargs['external_id_list'])
-        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._add_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
 
-    def make_chain_from_string(self, ecaddress, data, **kwargs):
-        flags = ''
-        if 'flag_list' in kwargs:
-            flags = ' '.join(kwargs['flag_list'])
-        chain_identifier = ''
-        if 'external_id_list' in kwargs:
-            chain_identifier = ' '.join(kwargs['external_id_list'])
+        # open subprocess as a way to 'write' content into the command instead of it coming from a file
         args = shlex.split(''.join((self._cli_command, self._add_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
         p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
-        p.stdin.write(data)
+        text = p.communicate(content)
+        '''
+        separate output from status
+        If all goes well, the output from the command will be in the 1st piece, followed by a null
+        If an error occurs, the output of the command will be in the 2nd piece, preceded by a null
+        '''
+        text = text[0] if text[0] else text[1]
+        # strip final line feed
+        text = text[:-1]
         p.stdin.close()
-        text = p.stdout.read(1024)
         return text
 
-    def compose_chain_from_binary_file(self, ecaddress, file_data, **kwargs):
+    def compose_chain(self, ecaddress, content, **kwargs):
         flags = ''
         if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
         chain_identifier = ''
         if 'external_id_list' in kwargs:
             chain_identifier = ' '.join(kwargs['external_id_list'])
-        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._compose_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
-        return text
 
-    def add_entry_to_chain(self, ecaddress, file_data, **kwargs):
-        flags = ''
-        if 'flag_list' in kwargs:
-            flags = ' '.join(kwargs['flag_list'])
-        chain_identifier = ''
-        if 'external_id_list' in kwargs:
-            chain_identifier = ' '.join(kwargs['external_id_list'])
-        return send_command_to_cli_and_receive_text(
-            ''.join((self._cli_command, self._add_entry, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
-
-    def add_entry_to_chain_by_string(self, ecaddress, data, **kwargs):
-        flags = ''
-        if 'flag_list' in kwargs:
-            flags = ' '.join(kwargs['flag_list'])
-        chain_identifier = ''
-        if 'external_id_list' in kwargs:
-            chain_identifier = ' '.join(kwargs['external_id_list'])
-        args =  shlex.split(''.join((self._cli_command, self._add_entry, ' ', flags, ' ', chain_identifier, ' ',
-                     ecaddress)))
+        # open subprocess as a way to 'write' content into the command instead of it coming from a file
+        args = shlex.split(''.join((self._cli_command, self._compose_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
         p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
-        p.stdin.write(data)
+        text = p.communicate(content)
+        '''
+        separate output from status
+        If all goes well, the output from the command will be in the 1st piece, followed by a null
+        If an error occurs, the output of the command will be in the 2nd piece, preceded by a null
+        '''
+        text = text[0] if text[0] else text[1]
+        # strip final line feed
+        text = text[:-1]
         p.stdin.close()
-        text = p.stdout.read(1024)
         return text
 
-    def compose_entry_from_binary_file(self, ecaddress, file_data, **kwargs):
+    def add_entry_to_chain(self, ecaddress, content, **kwargs):
         flags = ''
         if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
         chain_identifier = ''
         if 'external_id_list' in kwargs:
             chain_identifier = ' '.join(kwargs['external_id_list'])
-        text = send_command_to_cli_and_receive_text(''.join(
-            (self._cli_command, self._compose_entry, ' ', flags, ' ', chain_identifier, ' ', ecaddress, ' < ', file_data)))
+        # open subprocess as a way to 'write' content into the command instead of it coming from a file
+        args =  shlex.split(''.join((self._cli_command, self._add_entry, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
+        p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        text = p.communicate(content)
+        '''
+        separate output from status
+        If all goes well, the output from the command will be in the 1st piece, followed by a null
+        If an error occurs, the output of the command will be in the 2nd piece, preceded by a null
+        '''
+        text = text[0] if text[0] else text[1]
+        # strip final line feed
+        text = text[:-1]
+        p.stdin.close()
+        return text
+
+    def compose_entry(self, ecaddress, content, **kwargs):
+        flags = ''
+        if 'flag_list' in kwargs:
+            flags = ' '.join(kwargs['flag_list'])
+        chain_identifier = ''
+        if 'external_id_list' in kwargs:
+            chain_identifier = ' '.join(kwargs['external_id_list'])
+        # open subprocess as a way to 'write' content into the command instead of it coming from a file
+        args =  shlex.split(''.join((self._cli_command, self._compose_entry, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
+        p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        text = p.communicate(content)
+        '''
+        separate output from status
+        If all goes well, the output from the command will be in the 1st piece, followed by a null
+        If an error occurs, the output of the command will be in the 2nd piece, preceded by a null
+        '''
+        text = text[0] if text[0] else text[1]
+        # strip final line feed
+        text = text[:-1]
+        p.stdin.close()
         return text
 
     def get_firstentry(self, **kwargs):
@@ -175,6 +196,7 @@ class CLIObjectsChain(CLIObjectsBase):
         flags = ''
         if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
+        # pending_transactions for a particular address is not currently supported
         address_id = ''
         if 'address' in kwargs:
             address_id = kwargs['address']

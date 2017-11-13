@@ -61,15 +61,16 @@ class CLITestsTransactionLimits(unittest.TestCase):
         self.assertIn("Cannot send unsigned transaction", self.cli_create.send_transaction(transaction_name), "Attempt to send unsigned transaction not detected")
 
     def test_create_largest_allowable_transaction_10KB(self):
-        """creating a large transaction
+        '''
+        creating a large transaction
 
         a transaction with 78 inputs will take up 10KB
         so, 78 times:
         - a new factoid address is created (each input must come from a different address)
         - 1 factoid is transferred to this new address
         - an input from this new address is added to the master transaction
-        the master transaction should still be signable at this point"""
-
+        the master transaction should still be signable at this point
+        '''
         transaction_name = create_random_string(5)
         self.cli_create.create_new_transaction(transaction_name)
         for i in xrange(1, 79):
