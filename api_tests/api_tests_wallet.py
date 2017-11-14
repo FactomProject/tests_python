@@ -105,7 +105,7 @@ class ApiTestsWallet(unittest.TestCase):
             if 'TransactionACK' in str(pending):
                 if tx_id in pending[0]['transactionid']: break
             time.sleep(1)
-        self.assertLess(x, self.data['BLOCKTIME'], 'Transaction never pending')
+        self.assertLess(x, self.data['BLOCKTIME'] - 1, 'Transaction never pending')
 
 
 

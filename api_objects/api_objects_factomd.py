@@ -11,18 +11,14 @@ class APIObjectsFactomd():
         url = 'http://'+self.factomd_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
-        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print r.text
         return r.text, r.status_code
 
     def send_get_request_with_method(self, method):
         url = 'http://' + self.factomd_address + '/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
-        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print r.text
         return r.text
 
     def change_factomd_address(self,change_factomd_address):
@@ -128,27 +124,51 @@ class APIObjectsFactomd():
 
     def get_pending_entries(self):
         '''
-        Gets pemdomg emtroes
-        :return: json with entryhash, chainid
+        Gets pending entries
+        :return: JSON with
+           entryhash
+           chainid
+           status
         '''
-        #TODO przetestuj params
         blocks = json.loads(self.send_get_request_with_method('pending-entries'))
         return blocks['result']
 
     def get_transaction_by_hash(self, hash):
         '''
         Gets transaction by transaction hash
-        :param hash:
-        :return: factoidtransaction json
+        :param hash: str - entryhash
+        :return: blocks['result']['factoidtransaction']: JSON block with
+           factoidtransaction
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('transaction', {'hash': hash()}))
         return blocks['result']['factoidtransaction']
 
     def get_pending_transactions(self, *address):
         '''
-        Gets pending transaction
-        :param address: optional wallet address
-        :return: Transaction IDs, Statuses, Inputs, Outputs, ECOutputs, Fees
+        Gets pending transactions
+        :param address: str,  optional wallet address
+        :return blocks['result']: JSON block - for each pending transaction
+           transactionid: str
+           status: str, status of the transaction (see status types below)
+           inputs - for each input to the transaction
+              amount: int, (in factoshis)
+              address: str, non-human readable form of the input address
+              useraddress: str, public key of the input address
+           outputs - for each output of the transaction
+              amount: int, (in factoshis)
+              address: str, non-human readable form of the output address
+              useraddress: str, public key of the output address
+           ecoutputs - for each entry credit output of the transaction
+              amount: int, (in factoshis)
+              address: str, non-human readable form of the entry credit output address
+              useraddress: str, public key of the entry credit output address
+           fees: int, (in factoshis)
+
+        status types:
+        Unknown : not found anywhere
+        NotConfirmed : found on local node, but not in network (holding map)
+        TransactionACK : found in network, but not written to the blockchain yet (processList)
+        DBlockConfirmed : found in blockchain
         '''
 
         if address:

@@ -165,7 +165,6 @@ class CLITestsEntries(unittest.TestCase):
         # check for pending entries return entry hash
         factom_flags_list = ['-E']
         entry_hash_list = self.cli_chain.get_pending_entries(flag_list=factom_flags_list)
-        # entry_hash_list = '464d32f5962d60424caf5fb6e89e63db6e1807633743f4753ea295865531f62c'
         found = False
         for entry_hash in entry_hash_list.split('\n'):
             text = self.cli_chain.get_entry_by_hash(entry_hash)
