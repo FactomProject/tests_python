@@ -26,18 +26,25 @@ jobs:
 
            # Login to DockerHub
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+            
+            # If there is a tag, use it
+            if [ "$CIRCLE_TAG" != "" ]; then
+              docker tag factomd_integration_tests factominc/factomd_integration_tests:${CIRCLE_TAG}
+              docker push factominc/factomd_integration_tests:${CIRCLE_TAG}
+            fi
+            
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
 
-            if [ "${CIRCLE_BRANCH}" == "master" ] || [ "${CIRCLE_BRANCH}" == "develop" ]; then
-
-              # If there is a tag, use it
-              if [ "$CIRCLE_TAG" != "" ]; then
-                docker tag factomd_integration_tests factominc/factomd_integration_tests:${TAG}
-                docker push factominc/factomd_integration_tests:${TAG}
-              fi
-
-              # But tag it as latest anyhow
+              # Tag master as latest
               docker tag factomd_integration_tests factominc/factomd_integration_tests:latest
               docker push factominc/factomd_integration_tests:latest
+            fi
+
+            if [ "${CIRCLE_BRANCH}" == "develop" ]; then
+            
+              # Tag develop as develop anyhow
+              docker tag factomd_integration_tests factominc/factomd_integration_tests:develop
+              docker push factominc/factomd_integration_tests:develop
             fi
 
             docker logout
@@ -48,20 +55,25 @@ jobs:
             # Login to AWS ECR
             login="$(aws ecr get-login  --no-include-email --region $AWS_REGION)"
             ${login}
+            
+            # If there is a tag, use it
+            if [ "$CIRCLE_TAG" != "" ]; then
+              docker tag factomd_integration_tests ${AWS_REPO_BASE_URI}/factomd_integration_tests:${CIRCLE_TAG}
+              docker push ${AWS_REPO_BASE_URI}/factomd_integration_tests:${CIRCLE_TAG}
+            fi
+            
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
 
-            if [ "${CIRCLE_BRANCH}" == "master" ] || [ "${CIRCLE_BRANCH}" == "develop" ]; then
-
-              # If there is a tag, use it
-              if [ "$CIRCLE_TAG" != "" ]; then
-                docker tag factomd_integration_tests ${AWS_REPO_BASE_URI}/factomd_integration_tests:${TAG}
-                docker push ${AWS_REPO_BASE_URI}/factomd_integration_tests:${TAG}
-
-              fi
-
-              # But tag it as latest anyhow
+              # Tag master as latest
               docker tag factomd_integration_tests ${AWS_REPO_BASE_URI}/factomd_integration_tests:latest
               docker push ${AWS_REPO_BASE_URI}/factomd_integration_tests:latest
+            fi
 
+            if [ "${CIRCLE_BRANCH}" == "develop" ]; then
+            
+              # Tag develop as develop anyhow
+              docker tag factomd_integration_tests ${AWS_REPO_BASE_URI}/factomd_integration_tests:develop
+              docker push ${AWS_REPO_BASE_URI}/factomd_integration_tests:develop
             fi
 
             docker logout
@@ -72,7 +84,9 @@ workflows:
     jobs:
       - build:
           context: org-global
-
+          filters:
+            tags:
+              only: /.*/
 
   scheduled-workflow:
     triggers:
