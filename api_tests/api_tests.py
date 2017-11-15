@@ -1,9 +1,7 @@
-from api_objects.api_objects_factomd import APIObjectsFactomd
-import unittest
-
+import unittest, re
 from nose.plugins.attrib import attr
-import re
-
+from api_objects.api_objects_factomd import APIObjectsFactomd
+from api_objects.api_objects_wallet import APIObjectsWallet
 from helpers.cli_methods import get_data_dump_from_nonansible_server
 from helpers.helpers import read_data_from_json
 
@@ -12,6 +10,7 @@ class APITests(unittest.TestCase):
 
     def setUp(self):
         self.factom_api = APIObjectsFactomd()
+        self.wallet_api = APIObjectsWallet()
         data = read_data_from_json('addresses.json')
         self.factomd_address = data['factomd_controlpanel']
 
@@ -38,5 +37,13 @@ class APITests(unittest.TestCase):
         diff =  cli_minute - controlpanel_minute
         self.assertFalse(diff > 2,"minutes are not matching")
 
+    def test_get_factomd_properties(self):
+        result = str(self.factom_api.get_factomd_properties())
+        print 'result', result
+        self.assertTrue('factomdversion' in result and 'factomdapiversion' in result, 'factomd properties command not working' )
+
+    def test_get_wallet_properties(self):
+        result = str(self.wallet_api.get_wallet_properties())
+        self.assertTrue('walletversion' in result and 'walletapiversion' in result, 'wallet properties command not working' )
 
 

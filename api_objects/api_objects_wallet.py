@@ -166,3 +166,15 @@ class APIObjectsWallet():
     def get_wallet_height(self):
         blocks = json.loads(self.send_get_request_with_method('get-height'))
         return blocks["result"]
+
+    def get_wallet_properties(self):
+        '''
+        Get wallet properties
+        :return blocks['result']: JSON block, containing
+           walletversion: str, current version of the wallet software
+           walletapiversion: str, current version of the wallet API software
+        '''
+        blocks = json.loads(self.send_get_request_with_method('properties'))
+        print blocks
+        return blocks['result']
+

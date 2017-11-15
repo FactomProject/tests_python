@@ -11,7 +11,9 @@ class APIObjectsFactomd():
         url = 'http://'+self.factomd_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
+        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
+        print r.text
         return r.text, r.status_code
 
     def send_get_request_with_method(self, method):
@@ -190,12 +192,15 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_method('entry-credit-rate'))
         return blocks#['result']['rate']
 
-    def get_properties(self):
+    def get_factomd_properties(self):
         '''
-        Get properties
-        :return: factomdversion, factomapiversion
+        Get factomd properties
+        :return blocks['result']: JSON block, containing
+           factomdversion: str, current version of the factomd software
+           factomapiversion: str, current version of the factomd API software
         '''
         blocks = json.loads(self.send_get_request_with_method('properties'))
+        print blocks
         return blocks['result']
 
     def submit_factoid_by_transaction(self, transaction):
