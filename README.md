@@ -1,4 +1,5 @@
 # tests_python
+[![CircleCI](https://circleci.com/gh/FactomProject/tests_python.svg?style=shield&circle-token=80f863fcd9484403e6d7b30c8b8952ff3361bc27)]
 Python tests for continuous integration
 
 #before all test runs

@@ -32,7 +32,7 @@ class CLITestsTransactionsMultipleServers(unittest.TestCase):
         cli_three = CLIObjectsCreate()
         cli_three.change_factomd_address(self.server_addresses['factomd_address_5'])
         cli_four = CLIObjectsCreate()
-        cli_four.change_factomd_address(self.server_addresses['factomd_address_6'])
+        cli_four.change_factomd_address(self.server_addresses['factomd_address_3'])
 
         cli_one.send_factoids(self.first_address, self.second_address, '200')
         third_address = self.cli_create.create_new_factoid_address()
@@ -57,7 +57,9 @@ class CLITestsTransactionsMultipleServers(unittest.TestCase):
         balance_after_4 = cli_four.check_wallet_address_balance(third_address)
         self.assertTrue(balance_after_1 == balance_after_2 and
                         balance_after_2 == balance_after_3 and balance_after_3 == balance_after_4,
-                        'Balances are different')
+                        'Balances are different Balance_1: ' + str(balance_after_1) + ' balance_2: ' +
+                        str(balance_after_2) + ' balance_3 ' + str(balance_after_3) + ' balance_4 ' +
+                        str(balance_after_4))
 
 
     def _send_factoid_transaction_on_cli_object(self, cli, address_from, address_to, amount):
