@@ -46,4 +46,26 @@ class APITests(unittest.TestCase):
         result = str(self.wallet_api.get_wallet_properties())
         self.assertTrue('walletversion' in result and 'walletapiversion' in result, 'wallet properties command not working' )
 
+    def test_raw_commit(self):
+        self.entry_credit_address100 = fund_entry_credit_address(100)
+        data = create_random_string(1024)
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list = ['-n', name_1, '-n', name_2]
+        chain_flag_list = ['-T']
+        tx_id = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
+        raw = self.cli_create.get_raw(tx_id)
+
+        # exclude public key and signature (last 32 + 64 bytes = 192 characters)
+        raw_trimmed = raw[:-192]
+
+        # convert to binary
+        serialized_raw = binascii.unhexlify(raw_trimmed)
+
+        # hash via SHA256
+        hashed256_raw = hashlib.sha256(serialized_raw).hexdigest()
+
+        self.assertEqual(hashed256_raw, tx_id, 'Raw data string is not correct')
+
+
 

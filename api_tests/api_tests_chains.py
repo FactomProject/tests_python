@@ -11,25 +11,31 @@ from nose.plugins.attrib import attr
 class APIEntriesTests(unittest.TestCase):
 
     def setUp(self):
-        self.factom_api = APIObjectsFactomd()
-        self.wallet_api_objects = APIObjectsWallet()
+        self.api_objects_factomd = APIObjectsFactomd()
+        self.api_objects_wallet = APIObjectsWallet()
         self.data = read_data_from_json('shared_test_data.json')
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
+
+    def test_send_raw_message(self):
+        # commit chain
+        message, external_ids = self.__compose_chain()
+        print 'message', message
+        self.api_objects_factomd.send_raw_message(message)
 
     def test_commit_chain(self):
         # commit chain
         message, external_ids = self.__compose_chain()
-        commit_success, commit_response = self.factom_api.commit_chain_by_message(message)
+        commit_success, commit_response = self.api_objects_factomd.commit_chain_by_message(message)
         if not commit_success:
             fail_message, info, entryhash = self.__failure_data(commit_response)
             self.assertTrue(False, 'Chain commit failed - ' + fail_message + ' - ' + info + ' - entryhash ' + entryhash)
 
     def test_repeated_commits(self):
-        balance_before = self.factom_api.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
+        balance_before = self.api_objects_factomd.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
 
         # commit chain
         message, external_ids = self.__compose_chain()
-        commit_success, commit_response = self.factom_api.commit_chain_by_message(message)
+        commit_success, commit_response = self.api_objects_factomd.commit_chain_by_message(message)
 
         if not commit_success:
             fail_message, info, entryhash = self.__failure_data(commit_response)
@@ -43,7 +49,7 @@ class APIEntriesTests(unittest.TestCase):
             wait_for_ack(tx_id)
 
         # try to repeat commit
-        commit_success, commit_response = self.factom_api.commit_chain_by_message(message)
+        commit_success, commit_response = self.api_objects_factomd.commit_chain_by_message(message)
 
         if commit_success:
             self.assertFalse(True, 'Repeated commit allowed - entryhash ' + str(commit_response['entryhash']))
@@ -53,7 +59,7 @@ class APIEntriesTests(unittest.TestCase):
 
         # see if 2nd commit has been mistakenly paid for
         wait_for_entry_in_block(external_id_list=external_ids)
-        balance_after = self.factom_api.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
+        balance_after = self.api_objects_factomd.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
         self.assertEqual(balance_before, balance_after + 12, 'Balance before commit = ' + str(balance_before) + '. Balance after commit = ' + str(balance_after) + '. Balance after single commit SHOULD be = ' + str(balance_after + 12))
 
     def __compose_chain(self):
@@ -67,7 +73,7 @@ class APIEntriesTests(unittest.TestCase):
         content = binascii.hexlify(create_random_string(1024))
 
         # compose chain
-        message, entry = self.wallet_api_objects.compose_chain(external_ids, content, self.entry_credit_address1000)
+        message, entry = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
 
         return message, external_ids
 

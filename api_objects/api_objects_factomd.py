@@ -271,6 +271,7 @@ class APIObjectsFactomd():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('send-raw-message', {'message': message}))
+        print 'blocks', blocks
         return blocks['result']
 
     def get_current_minute(self):

@@ -89,6 +89,7 @@ class APIObjectsWallet():
         :return: json, transactions
         '''
         blocks = json.loads(self.send_get_request_with_method('transactions'))
+        print 'blocks', blocks
         return blocks["result"]
 
     def list_transactions_by_txid(self, txid):
