@@ -2,6 +2,7 @@ import unittest
 import string
 import random
 import time
+from flaky import flaky
 
 from nose.plugins.attrib import attr
 
@@ -11,6 +12,7 @@ from helpers.helpers import read_data_from_json
 from helpers.general_test_methods import wait_for_ack
 
 @attr(fast=True)
+@flaky(max_runs=3, min_passes=1)
 class ApiTestsWallet(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
