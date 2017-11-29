@@ -58,8 +58,9 @@ class ApiTestsWallet(unittest.TestCase):
                         self.wallet_api_objects.sign_transaction(transaction_name)['error']['data'])
 
     def test_list_transactions_api_call(self):
-        self.assertTrue('transactions' in self.wallet_api_objects.list_all_transactions_in_factoid_blockchain(),
-                        'Transactions are not listed')
+        return_data, error_message = self.wallet_api_objects.list_all_transactions_in_factoid_blockchain()
+        self.assertFalse(error_message, error_message)
+        self.assertTrue('transactions' in return_data, 'Transactions are not listed')
 
     def test_list_transaction_by_id(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))

@@ -213,19 +213,48 @@ class APIObjectsFactomd():
                                                                                              transaction})[0])
         return blocks['result']
 
-    def commit_chain_by_message(self, message):
+    # def commit_chain_by_message(self, message):
+    #     '''
+    #     Commit chain by message
+    #     :param message: str, message
+    #     :return:
+    #     '''
+    #     blocks = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message})[0])
+    #     if 'error' in blocks:
+    #         success = False
+    #         return success, blocks['error']
+    #     else:
+    #         success = True
+    #         return success, blocks['result']
+    #
+    def commit_chain(self, message):
         '''
         Commit chain by message
-        :param message: str, message
-        :return:
+        :param message: str, the message portion of the API call
+        :return return_data: if API call succeeds, transaction JSON block containing:
+            message:"Chain Commit Success"
+            txid
+            entryhash
+            chainidhash
+        if API call fails, error JSON block containing:
+            code
+            message
+            data (optional)
+        :return error_message: if API call succeeds, nil
+        if API call fails, useful error message
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message})[0])
-        if 'error' in blocks:
-            success = False
-            return success, blocks['error']
+        block = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message})[0])
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
         else:
-            success = True
-            return success, blocks['result']
+            print 'result', block['result']
+            return_data = block['result']
+            error_message = ''
+        return return_data, error_message
 
     def reveal_chain_by_entry(self, entry):
         '''

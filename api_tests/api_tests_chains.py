@@ -8,7 +8,7 @@ from helpers.general_test_methods import wait_for_ack, wait_for_entry_in_block, 
 from nose.plugins.attrib import attr
 
 @attr(api=True)
-class APIEntriesTests(unittest.TestCase):
+class APIChainsTests(unittest.TestCase):
 
     def setUp(self):
         self.api_objects_factomd = APIObjectsFactomd()
@@ -18,51 +18,87 @@ class APIEntriesTests(unittest.TestCase):
 
     def test_send_raw_message(self):
         # commit chain
-        message, external_ids = self.__compose_chain()
+        message, external_ids = self.__random_chain()
         print 'message', message
         self.api_objects_factomd.send_raw_message(message)
 
+    def test_raw_create_chain(self):
+        '''
+        Create a new chain
+        :param external_ids: list, all the external ids (in hex) that will determine the identity of the chain
+        :param content: str, the content (in hex) of the 1st entry of the chain
+        :param ec_address: str, the public key of the entry credit address that will pay for the creation of the chain
+        :return txid: str
+        :return entryhash: str
+        :return chainid: str
+        :return error_message: str, nil for no error
+        '''
+        txid = ''
+        entryhash = ''
+        chainid = ''
+        external_ids, content = self.__random_chain()
+        compose, error_message = self.compose_chain(external_ids, content, self.entry_credit_address1000)
+        print 'compose', compose
+        if not error_message:
+            commit, error_message = self.commit_chain(compose['commit']['params']['message'])
+            print 'commit', commit
+            if not error_message:
+                reveal, error_message = self.reveal_chain(compose['reveal']['params']['entry'])
+                print 'reveal', reveal
+                if not error_message:
+                    txid = commit['txid']
+                    entryhash = commit['entryhash']
+                    chainid = reveal['chainid']
+        return txid, entryhash, chainid, error_message
+
     def test_commit_chain(self):
         # commit chain
-        message, external_ids = self.__compose_chain()
-        commit_success, commit_response = self.api_objects_factomd.commit_chain_by_message(message)
-        if not commit_success:
-            fail_message, info, entryhash = self.__failure_data(commit_response)
-            self.assertTrue(False, 'Chain commit failed - ' + fail_message + ' - ' + info + ' - entryhash ' + entryhash)
+        external_ids, content = self.__random_chain()
+        compose, error_message = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
+        print 'compose', compose
+        if not error_message:
+            commit, error_message = self.api_objects_factomd.commit_chain(compose['commit']['params']['message'])
+            print 'commit', commit
+            if error_message:
+                fail_message, info, entryhash = self.__failure_data(commit)
+                self.assertTrue(False, 'Chain commit failed - ' + fail_message + ' - ' + info + ' - entryhash ' + entryhash)
 
     def test_repeated_commits(self):
         balance_before = self.api_objects_factomd.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
 
         # commit chain
-        message, external_ids = self.__compose_chain()
-        commit_success, commit_response = self.api_objects_factomd.commit_chain_by_message(message)
-
-        if not commit_success:
-            fail_message, info, entryhash = self.__failure_data(commit_response)
-            self.assertNotIn('Repeated Commit', fail_message,
-                             'Chain commit failed - ' + fail_message + ' - ' + info + ' - entryhash ' + entryhash)
+        external_ids, content = self.__random_chain()
+        compose, error_message = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
+        print 'compose', compose
+        if not error_message:
+            commit, error_message = self.api_objects_factomd.commit_chain(compose['commit']['params']['message'])
+            print 'commit', commit
+            if error_message:
+                fail_message, info, entryhash = self.__failure_data(commit)
+                self.assertNotIn('Repeated Commit', fail_message,
+                                 'Chain commit failed - ' + fail_message + ' - ' + info + ' - entryhash ' + entryhash)
             # failed for some other reason
-            self.assertTrue(False, 'Chain commit failed - ' + fail_message)
-        else:
-            # wait for 1st commit to be acknowledged
-            tx_id = commit_response['txid']
-            wait_for_ack(tx_id)
+                self.assertTrue(False, 'Chain commit failed - ' + fail_message)
+            else:
+                # wait for 1st commit to be acknowledged
+                tx_id = commit['txid']
+                wait_for_ack(tx_id)
 
-        # try to repeat commit
-        commit_success, commit_response = self.api_objects_factomd.commit_chain_by_message(message)
+                # try to repeat commit
+                commit, error_message = self.api_objects_factomd.commit_chain(compose['commit']['params']['message'])
+                print 'commit', commit
+                if not error_message:
+                    self.assertFalse(True, 'Repeated commit allowed - entryhash ' + str(commit['entryhash']))
+                else:
+                    fail_message, info, entryhash = self.__failure_data(commit)
+                    self.assertIn('Repeated Commit', fail_message, 'Chain commit failed because of - ' + fail_message + ' - ' + info + ' instead of Repeated Commit - entryhash ' + entryhash)
 
-        if commit_success:
-            self.assertFalse(True, 'Repeated commit allowed - entryhash ' + str(commit_response['entryhash']))
-        else:
-            fail_message, info, entryhash = self.__failure_data(commit_response)
-            self.assertIn('Repeated Commit', fail_message, 'Chain commit failed because of - ' + fail_message + ' - ' + info + ' instead of Repeated Commit - entryhash ' + entryhash)
+                # see if 2nd commit has been mistakenly paid for
+                wait_for_entry_in_block(external_id_list=external_ids)
+                balance_after = self.api_objects_factomd.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
+                self.assertEqual(balance_before, balance_after + 12, 'Balance before commit = ' + str(balance_before) + '. Balance after commit = ' + str(balance_after) + '. Balance after single commit SHOULD be = ' + str(balance_after + 12))
 
-        # see if 2nd commit has been mistakenly paid for
-        wait_for_entry_in_block(external_id_list=external_ids)
-        balance_after = self.api_objects_factomd.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
-        self.assertEqual(balance_before, balance_after + 12, 'Balance before commit = ' + str(balance_before) + '. Balance after commit = ' + str(balance_after) + '. Balance after single commit SHOULD be = ' + str(balance_after + 12))
-
-    def __compose_chain(self):
+    def __random_chain(self):
 
         # external ids must be in hex
         name_1 = binascii.b2a_hex(os.urandom(2))
@@ -73,11 +109,12 @@ class APIEntriesTests(unittest.TestCase):
         content = binascii.hexlify(create_random_string(1024))
 
         # compose chain
-        message, entry = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
+        # message, entry = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
 
-        return message, external_ids
+        return external_ids, content
 
     def __failure_data(self, commit_response):
+        print 'commit_response'
         message = str(commit_response['message'])
         info = str(commit_response['data']['info'])
         entryhash = str(commit_response['data']['entryhash'])
