@@ -176,10 +176,9 @@ class CLITestsChains(unittest.TestCase):
         name_2 = create_random_string(5)
         names_list = ['-n', name_1, '-n', name_2]
         text = self.cli_chain.compose_chain(self.entry_credit_address100, data, external_id_list=names_list)
-        print 'text', text
         start = text.find('"message":"') + 11
         end = text.find('"},"method', start)
-        self.api_factomd.commit_chain_by_message(text[start:end])
+        self.api_factomd.commit_chain(text[start:end])
         self.assertTrue("commit-chain" and "reveal-chain" in text)
 
     def test_compose_chain_with_hex_external_id(self):
@@ -191,7 +190,7 @@ class CLITestsChains(unittest.TestCase):
         text = self.cli_chain.compose_chain(self.entry_credit_address100, data, external_id_list=names_list)
         start = text.find('"message":"') + 11
         end = text.find('"},"method', start)
-        self.api_factomd.commit_chain_by_message(text[start:end])
+        self.api_factomd.commit_chain(text[start:end])
         self.assertTrue("commit-chain" and "reveal-chain" in text)
 
     def test_compose_chain_with_zero_ec(self):

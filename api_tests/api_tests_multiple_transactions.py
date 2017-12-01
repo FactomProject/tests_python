@@ -10,6 +10,7 @@ from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import read_data_from_json
 
 @attr(stress_test=True)
+@attr(fast=True)
 class ApiTestsTransactions(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 

@@ -11,9 +11,7 @@ class APIObjectsFactomd():
         url = 'http://'+self.factomd_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
-        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print r.text
         return r.text, r.status_code
 
     def send_get_request_with_method(self, method):
@@ -200,7 +198,6 @@ class APIObjectsFactomd():
            factomapiversion: str, current version of the factomd API software
         '''
         blocks = json.loads(self.send_get_request_with_method('properties'))
-        print blocks
         return blocks['result']
 
     def submit_factoid_by_transaction(self, transaction):
@@ -251,20 +248,46 @@ class APIObjectsFactomd():
             else:
                 error_message = block['error']['message']
         else:
-            print 'result', block['result']
             return_data = block['result']
             error_message = ''
         return return_data, error_message
 
-    def reveal_chain_by_entry(self, entry):
+    def reveal_chain(self, entry):
         '''
         Reveal chain by entry
-        :param entry: str, entry
-        :return:
-        '''
-        blocks = json.loads(self.send_get_request_with_params_dict('reveal-chain', {'entry': entry}))
-        return blocks['result']
+        :param entry: str, the entry portion of the API call
+        :return: return_data: if API call succeeds, reveal JSON block containing:
+            message":"Entry Reveal Success"
+            entryhash
+            chainid
+        if API call fails, error JSON block containing:
+            code
+            message
+            data (optional)
+        :return error_message: if API call succeeds, nil
+        if API call fails, useful error message
+      '''
+        block = json.loads(self.send_get_request_with_params_dict('reveal-chain', {'entry': entry})[0])
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            return_data = block['result']
+            error_message = ''
+        return return_data, error_message
 
+    # def reveal_chain(self, entry):
+    #     '''
+    #     Reveal chain by entry
+    #     :param entry: str, entry
+    #     :return:
+    #     '''
+    #     blocks = json.loads(self.send_get_request_with_params_dict('reveal-chain', {'entry': entry})[0])
+    #     return blocks['result']
+    #
     def commit_entry(self, entry):
         '''
         Commit entry
@@ -299,9 +322,7 @@ class APIObjectsFactomd():
         :param message: str message
         :return:
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('send-raw-message', {'message': message}))
-        print 'blocks', blocks
-        return blocks['result']
+        self.send_get_request_with_params_dict('send-raw-message', {'message': message})
 
     def get_current_minute(self):
         '''
