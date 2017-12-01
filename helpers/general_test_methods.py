@@ -8,7 +8,8 @@ cli_create = CLIObjectsCreate()
 chain_objects = CLIObjectsChain()
 data = read_data_from_json('shared_test_data.json')
 
-BLOCK_WAIT_TIME = data['blocktime'] * 2
+BLOCK_WAIT_TIME = data['BLOCKTIME'] * 2
+ACK_WAIT_TIME = 60
 
 def wait_for_ack(transaction_id):
     for x in range(0, ACK_WAIT_TIME):
@@ -31,6 +32,7 @@ def fund_entry_credit_address(amount):
     first_address = cli_create.import_addresses(data['factoid_wallet_address'])[0]
     entry_credit_address = cli_create.create_entry_credit_address()
     text = cli_create.buy_entry_credits(first_address, entry_credit_address, str(amount))
+    print 'text', text
     chain_dict = chain_objects.parse_simple_data(text)
     tx_id = chain_dict['TxID']
     wait_for_ack(tx_id)
