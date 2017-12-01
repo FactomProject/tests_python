@@ -6,8 +6,8 @@ from flaky import flaky
 
 from nose.plugins.attrib import attr
 
-from api_objects.api_objects_wallet import APIObjectsWallet
 from api_objects.api_objects_factomd import APIObjectsFactomd
+from api_objects.api_objects_wallet import APIObjectsWallet
 from helpers.helpers import read_data_from_json
 from helpers.general_test_methods import wait_for_ack
 
@@ -17,8 +17,8 @@ class ApiTestsWallet(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.wallet_api_objects = APIObjectsWallet()
         self.api_objects = APIObjectsFactomd()
+        self.wallet_api_objects = APIObjectsWallet()
         public_keys = self.wallet_api_objects.import_addresses(
             self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
         self.first_address = public_keys[0]
@@ -60,8 +60,9 @@ class ApiTestsWallet(unittest.TestCase):
                         self.wallet_api_objects.sign_transaction(transaction_name)['error']['data'])
 
     def test_list_transactions_api_call(self):
-        self.assertTrue('transactions' in self.wallet_api_objects.list_all_transactions_in_factoid_blockchain(),
-                        'Transactions are not listed')
+        return_data, error_message = self.wallet_api_objects.list_all_transactions_in_factoid_blockchain()
+        self.assertFalse(error_message, error_message)
+        self.assertTrue('transactions' in return_data, 'Transactions are not listed')
 
     def test_list_transaction_by_id(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))

@@ -10,10 +10,9 @@ class CLIObjectsBase():
 
     #_gopath = os.environ['GOPATH']
     _cli_command = '/srv/factom-cli -w ' \
-                                    '' + wallet_address +' -s ' + factomd_address +' '
+                                  '' + wallet_address +' -s ' + factomd_address +' '
 
     def change_factomd_address(self, value):
         self._cli_command = '/srv/factom-cli -w ' \
-                                                  '' + self.wallet_address + ' -s ' + value + ' '
 
 
