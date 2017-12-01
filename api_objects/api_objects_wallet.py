@@ -88,8 +88,19 @@ class APIObjectsWallet():
         List all transactions
         :return: json, transactions
         '''
-        blocks = json.loads(self.send_get_request_with_method('transactions'))
-        return blocks["result"]
+        block = json.loads(self.send_get_request_with_method('transactions'))
+        print 'block', block
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            print 'result', block['result']
+            return_data = block['result']
+            error_message = ''
+        return return_data, error_message
 
     def list_transactions_by_txid(self, txid):
         '''
@@ -153,7 +164,7 @@ class APIObjectsWallet():
         blocks = json.loads(self.send_post_request_with_params_dict('sign-transaction', {'tx-name': transaction_name}))
         return blocks
 
-    def compose_chain(self, external_ids, content, ecpub):
+    def compose_chain_old(self, external_ids, content, ecpub):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-chain',
                  {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ecpub}))
         if 'error' in blocks:
@@ -181,6 +192,34 @@ class APIObjectsWallet():
             error_message = ''
         return return_data, error_message
 
+    def compose_chain(self, external_ids, content, ec_address):
+        '''
+        Create both the 'commit-chain' JSON and the 'reveal-chain' JSON that can then be sent in API calls to create a chain at a later time
+        :param external_ids: list, all the external ids (in hex) that will determine the identity of the chain
+        :param content: str, the content (in hex) of the 1st entry of the chain
+        :param ec_address: str, the public key of the entry credit address that will pay for the creation of the chain
+        :return return_data: if API call succeeds, JSON of the two API calls (commit and reveal) that when sent later will actually create the chain
+        if API call fails, error JSON block containing:
+            code
+            message
+            data (optional)
+        :return error_message: if API call succeeds, nil
+        if API call fails, useful error message
+       '''
+        block = json.loads(self.send_post_request_with_params_dict('compose-chain',
+                 {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ec_address}))
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            print 'result', block['result']
+            return_data = block['result']
+            error_message = ''
+        return return_data, error_message
+
     def compose_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-transaction',
                                                                     {'tx-name': transaction_name}))
@@ -189,3 +228,15 @@ class APIObjectsWallet():
     def get_wallet_height(self):
         blocks = json.loads(self.send_get_request_with_method('get-height'))
         return blocks["result"]
+
+    def get_wallet_properties(self):
+        '''
+        Get wallet properties
+        :return blocks['result']: JSON block, containing
+           walletversion: str, current version of the wallet software
+           walletapiversion: str, current version of the wallet API software
+        '''
+        blocks = json.loads(self.send_get_request_with_method('properties'))
+        print blocks
+        return blocks['result']
+

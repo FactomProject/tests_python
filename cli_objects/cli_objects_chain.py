@@ -24,7 +24,6 @@ class CLIObjectsChain(CLIObjectsBase):
     _get_directoryblock = 'get dblock '
     _get_entryblock = 'get eblock '
     _get_entry_by_hash = 'get entry '
-    _get_raw = 'get raw '
 
     def parse_simple_data(self, text):
         return dict(item.split(": ") for item in text.split('\n'))
