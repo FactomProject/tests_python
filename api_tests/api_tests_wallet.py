@@ -2,6 +2,7 @@ import unittest
 import string
 import random
 import time
+from flaky import flaky
 
 from nose.plugins.attrib import attr
 
@@ -11,6 +12,7 @@ from helpers.helpers import read_data_from_json
 from helpers.general_test_methods import wait_for_ack
 
 @attr(fast=True)
+@flaky(max_runs=3, min_passes=1)
 class ApiTestsWallet(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
@@ -100,12 +102,12 @@ class ApiTestsWallet(unittest.TestCase):
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         tx_id = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
         self.assertIn("Successfully submitted", self.api_objects.submit_factoid_by_transaction(transaction)['message'], "Transaction failed")
-        for x in range(0, self.data['BLOCKTIME']):
+        for x in range(0, self.data['blocktime']):
             pending = self.api_objects.get_pending_transactions(self.first_address)
             if 'TransactionACK' in str(pending):
                 if tx_id in pending[0]['transactionid']: break
             time.sleep(1)
-        self.assertLess(x, self.data['BLOCKTIME'] - 1, 'Transaction never pending')
+        self.assertLess(x, self.data['blocktime'], 'Transaction never pending')
 
 
 

@@ -8,8 +8,7 @@ cli_create = CLIObjectsCreate()
 chain_objects = CLIObjectsChain()
 data = read_data_from_json('shared_test_data.json')
 
-ACK_WAIT_TIME = 20
-BLOCK_WAIT_TIME = 50
+BLOCK_WAIT_TIME = data['blocktime'] * 2
 
 def wait_for_ack(transaction_id):
     for x in range(0, ACK_WAIT_TIME):
