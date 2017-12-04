@@ -46,7 +46,7 @@ class APITestsBalances(unittest.TestCase):
         addresses = read_data_from_json('addresses.json')
         factomd_address = addresses['localhost']
         self.api_objects.change_factomd_address(factomd_address)
-        listtxs =  self.api_wallet_objects.list_all_transactions_in_factoid_blockchain()
+        listtxs =  self.api_wallet_objects.list_all_transactions_in_factoid_blockchain()[0]
         count_transactions =  len(listtxs['transactions'])
 
         for i in range(0,count_transactions):

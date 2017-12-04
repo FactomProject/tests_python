@@ -57,7 +57,7 @@ class APIChainsTests(unittest.TestCase):
                     self.assertTrue('DBlockConfirmed' in str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
     def test_repeated_commits(self):
-        balance_before = self.api_objects_factomd.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
+        balance_before = self.api_objects_factomd.get_entry_credits_balance(self.entry_credit_address1000)
 
         # commit chain
         external_ids, content = self.__random_chain()
@@ -86,8 +86,8 @@ class APIChainsTests(unittest.TestCase):
                     self.assertFalse(True, 'Repeated commit allowed - entryhash ' + str(commit['entryhash']))
 
                 # see if 2nd commit has been mistakenly paid for
-                wait_for_entry_in_block(external_id_list=external_ids)
-                balance_after = self.api_objects_factomd.get_entry_credits_balance_by_ec_address(self.entry_credit_address1000)
+                wait_for_chain_in_block(external_id_list=external_ids)
+                balance_after = self.api_objects_factomd.get_entry_credits_balance(self.entry_credit_address1000)
                 self.assertEqual(balance_before, balance_after + 12, 'Balance before commit = ' + str(balance_before) + '. Balance after commit = ' + str(balance_after) + '. Balance after single commit SHOULD be = ' + str(balance_after + 12))
 
     def test_raw_message(self):
@@ -108,7 +108,9 @@ class APIChainsTests(unittest.TestCase):
             # failed for some other reason
                 self.assertTrue(False, 'Chain commit failed - ' + fail_message)
             else:
-                self.api_objects_factomd.send_raw_message(raw_message)
+                raw, error_message = self.api_objects_factomd.send_raw_message(raw_message)
+                if error_message:
+                    self.assertFalse(True, 'Send raw message failed - ' + error_message)
 
     def __random_chain(self):
 
@@ -123,7 +125,6 @@ class APIChainsTests(unittest.TestCase):
         return external_ids, content
 
     def __failure_data(self, commit_response):
-        print 'commit_response'
         message = str(commit_response['message'])
         info = str(commit_response['data']['info'])
         entryhash = str(commit_response['data']['entryhash'])

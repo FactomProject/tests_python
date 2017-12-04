@@ -336,10 +336,20 @@ class APIObjectsFactomd():
     def send_raw_message(self, message):
         '''
         Send raw message
-        :param message: str message
+        :param message: str, pure message to be injected into system
         :return:
         '''
-        self.send_get_request_with_params_dict('send-raw-message', {'message': message})
+        block = json.loads(self.send_get_request_with_params_dict('send-raw-message', {'message': message})[0])
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            return_data = block['result']
+            error_message = ''
+        return return_data, error_message
 
     def get_current_minute(self):
         '''

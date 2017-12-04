@@ -215,7 +215,6 @@ class APIObjectsWallet():
             else:
                 error_message = block['error']['message']
         else:
-            print 'result', block['result']
             return_data = block['result']
             error_message = ''
         return return_data, error_message
