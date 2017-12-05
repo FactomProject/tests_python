@@ -97,12 +97,35 @@ class APIObjectsFactomd():
 
     def get_receipt_by_hash(self, hash):
         '''
-        Get receip by hash
-        :param hash: str hash
-        :return: receipt
+        Get receipt by hash
+        :param hash: str, entry hash of transaction
+        :return return_data: if API call succeeds, transaction JSON block containing:
+            receipt
+                entry
+                    entryhash
+                merklebranch - collection of (left, right, top) triplets which describe the merkletree verifying the receipt of the entry in the factom blockchain.
+                    The 1st (bottom of the tree) left entry  will match the entryhash.
+                    The 1st right entry will be the minute number of the entry.
+                entryblockkeymr
+                directoryblockkeymr
+        if API call fails, error JSON block containing:
+            code
+            message
+            data (optional)
+        :return error_message: if API call succeeds, nil
+        if API call fails, useful error message
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('receipt', {'hash': hash}))
-        return blocks['result']['Receipt']
+        block = json.loads(self.send_get_request_with_params_dict('receipt', {'hash': hash})[0])
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            return_data = block['result']
+            error_message = ''
+        return return_data, error_message
 
     def get_entry_block(self, key_mr):
         '''
@@ -212,7 +235,7 @@ class APIObjectsFactomd():
         :return: int - rate
         '''
         blocks = json.loads(self.send_get_request_with_method('entry-credit-rate'))
-        return blocks#['result']['rate']
+        return blocks
 
     def get_factomd_properties(self):
         '''

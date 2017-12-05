@@ -18,7 +18,6 @@ class APIObjectsWallet():
         url = 'http://' + self.wallet_address + '/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
-        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
         return r.text
 
@@ -89,7 +88,6 @@ class APIObjectsWallet():
         :return: json, transactions
         '''
         block = json.loads(self.send_get_request_with_method('transactions'))
-        print 'block', block
         if 'error' in block:
             return_data = block['error']
             if 'data' in block['error']:
@@ -97,7 +95,6 @@ class APIObjectsWallet():
             else:
                 error_message = block['error']['message']
         else:
-            print 'result', block['result']
             return_data = block['result']
             error_message = ''
         return return_data, error_message

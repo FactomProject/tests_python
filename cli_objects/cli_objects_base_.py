@@ -16,3 +16,4 @@ class CLIObjectsBase():
         self._cli_command = '/srv/factom-cli -w ' \
                                                  '' + self.wallet_address + ' -s ' + value + ' '
 
+

@@ -24,6 +24,7 @@ class APIEntriesTests(unittest.TestCase):
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
 
     @unittest.expectedFailure
+    # TODO remove expectedFailure tag once commit_chain function is fixed so that it actually creates the requested chain instead of trying to create the null chain
     def test_compose_commit_reveal_entry(self):
         chain_external_ids, content = generate_random_external_ids_and_content()
 
@@ -78,6 +79,25 @@ class APIEntriesTests(unittest.TestCase):
         entry_hash = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
 
         self.assertIn(entry_hash, str(self.api_objects_factomd.get_pending_entries()), 'Entry not pending')
+
+    def test_receipt(self):
+        # TODO replace following CLI 'make chain' code below with API 'compose chain' code once it is working
+        self.entry_credit_address100 = fund_entry_credit_address(100)
+        data = create_random_string(1024)
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list = ['-n', name_1, '-n', name_2]
+        chain_flag_list = ['-E']
+        entry_hash = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
+
+        wait_for_chain_in_block(external_id_list=names_list)
+        receipt, receipt_error  = self.api_objects_factomd.get_receipt_by_hash(entry_hash)
+        if receipt_error:
+            self.assertFalse(True, 'Receipt creation failed - ' + receipt_error)
+        else:
+            self.assertEquals(receipt['receipt']['entry']['entryhash'], receipt['receipt']['merklebranch'][0]['left'], 'Receipt entryhash ' + receipt['receipt']['merklebranch'][0]['left'] + ' does not match entryhash ' + receipt['receipt']['entry']['entryhash'])
+
+
 
 
 
