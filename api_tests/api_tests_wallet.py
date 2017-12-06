@@ -37,15 +37,18 @@ class ApiTestsWallet(unittest.TestCase):
         self.wallet_api_objects.sign_transaction(transaction_name)
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         result = self.api_objects.submit_factoid_by_transaction(transaction)
+        print 'result', result
         self.assertIn("Successfully submitted", result['message'], 'Factoid transaction not successful')
 
         # chain id for factoid transaction is always 000...f, abbreviated to just f
         for x in range(0, 300):
             status = self.api_objects.get_status(result['txid'], 'f')['status']
+            print 'result', self.api_objects.get_status(result['txid'], 'f')
             if (status == 'TransactionACK'):
                 break
             time.sleep(1)
         self.assertLess(x, 299, 'Factoid transaction not acknowledged within 5 minutes')
+        self.wallet_api_objects.list_transactions_by_txid(result['txid'])
 
     def test_allocate_not_enough_funds(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))

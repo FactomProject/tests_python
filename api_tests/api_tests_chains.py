@@ -57,8 +57,6 @@ class APIChainsTests(unittest.TestCase):
                     # chain arrived in block?
                     self.assertTrue('DBlockConfirmed' in str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
-    @unittest.expectedFailure
-    # TODO remove expectedFailure tag once commit_chain function is fixed so that it actually creates the requested chain instead of trying to create the null chain
     def test_repeated_commits(self):
         balance_before = self.api_objects_factomd.get_entry_credits_balance(self.entry_credit_address1000)
 

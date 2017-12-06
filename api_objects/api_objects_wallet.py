@@ -233,6 +233,5 @@ class APIObjectsWallet():
            walletapiversion: str, current version of the wallet API software
         '''
         blocks = json.loads(self.send_get_request_with_method('properties'))
-        print blocks
         return blocks['result']
 
