@@ -85,9 +85,49 @@ class APIObjectsWallet():
     def list_all_transactions_in_factoid_blockchain(self):
         '''
         List all transactions
-        :return: json, transactions
+        :return return_data: if API call succeeds, list of JSON transactions, each containing:
+            txid
+            blockheight
+            feespaid: factoshis
+            signed: boolean
+            timestamp
+            totalecoutputs: factoshis
+            totalinputs: factoshis
+            totaloutputs: factoshis
+            inputs
+                address
+                amount: factoshis
+            outputs
+                address
+                amount: factoshis
+            ecoutputs
+                address
+                amount: factoshis
+        if API call fails, error JSON block containing:
+            code
+            message
+            data (optional)
+        :return error_message: if API call succeeds, nil
+        if API call fails, useful error message
         '''
         block = json.loads(self.send_get_request_with_method('transactions'))
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            return_data = block['result']['transactions']
+            error_message = ''
+        return return_data, error_message
+
+    def list_transactions_by_txid(self, txid):
+        '''
+        :param txid: str
+        :return:
+        '''
+        block = json.loads(self.send_post_request_with_params_dict('transactions', {'txid': txid}))
         if 'error' in block:
             return_data = block['error']
             if 'data' in block['error']:
@@ -98,15 +138,6 @@ class APIObjectsWallet():
             return_data = block['result']
             error_message = ''
         return return_data, error_message
-
-    def list_transactions_by_txid(self, txid):
-        '''
-
-        :param txid: str
-        :return:
-        '''
-        blocks = json.loads(self.send_post_request_with_params_dict('transactions', {'txid': txid}))
-        return blocks["result"]
 
     def list_transactions_by_address(self, address):
         blocks = json.loads(self.send_post_request_with_params_dict('transactions', {'address': address}))

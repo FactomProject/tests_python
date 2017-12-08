@@ -163,8 +163,8 @@ class APIObjectsFactomd():
         :return: blocks['result']['factoidtransaction']: JSON block with
            factoidtransaction
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('transaction', {'hash': hash()}))
-        return blocks['result']['factoidtransaction']
+        blocks = json.loads(self.send_get_request_with_params_dict('transaction', {'hash': hash})[0])
+        return blocks['result']
 
     def get_pending_transactions(self, *address):
         '''
