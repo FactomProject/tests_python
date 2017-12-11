@@ -1,4 +1,4 @@
-import unittest, json, binascii, hashlib
+import unittest, json, binascii, hashlib, re
 from nose.plugins.attrib import attr
 
 from cli_objects.cli_objects_chain import CLIObjectsChain
@@ -79,6 +79,9 @@ class CLITestsRegression(unittest.TestCase):
 
         # exclude signatures (164 length for 1 input, 1 output, 0 ecoutputs)
         raw_trimmed = raw[:164]
+
+        # check for non-hex error message
+        self.assertTrue(re.search(r'^[0-9A-Fa-f]+$', raw_trimmed) is not None, 'Raw data string ' + raw_trimmed + ' is not all hex digits')
 
         # convert to binary
         serialized_raw_trimmed = binascii.unhexlify(raw_trimmed)

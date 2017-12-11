@@ -46,6 +46,8 @@ class ApiTestsWallet(unittest.TestCase):
                 break
             time.sleep(1)
         self.assertLess(x, 299, 'Factoid transaction not acknowledged within 5 minutes')
+        self.wallet_api_objects.list_transactions_by_txid(result['txid'])
+
 
     def test_allocate_not_enough_funds(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))
@@ -60,9 +62,8 @@ class ApiTestsWallet(unittest.TestCase):
                         self.wallet_api_objects.sign_transaction(transaction_name)['error']['data'])
 
     def test_list_transactions_api_call(self):
-        return_data, error_message = self.wallet_api_objects.list_all_transactions_in_factoid_blockchain()
+        transactions, error_message = self.wallet_api_objects.list_all_transactions_in_factoid_blockchain()
         self.assertFalse(error_message, error_message)
-        self.assertTrue('transactions' in return_data, 'Transactions are not listed')
 
     def test_list_transaction_by_id(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
@@ -75,7 +76,7 @@ class ApiTestsWallet(unittest.TestCase):
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         txid = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
         wait_for_ack(txid)
-        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)['transactions'][0]['inputs'][0]['amount'] == 100000000, 'Transaction is not listed')
+        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)[0]['transactions'][0]['inputs'][0]['amount'] == 100000000, 'Transaction is not listed')
 
     def test_list_current_working_transactions_in_wallet(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
@@ -103,12 +104,12 @@ class ApiTestsWallet(unittest.TestCase):
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         tx_id = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
         self.assertIn("Successfully submitted", self.api_objects.submit_factoid_by_transaction(transaction)['message'], "Transaction failed")
-        for x in range(0, self.data['blocktime']):
+        for x in range(0, self.data['BLOCKTIME']):
             pending = self.api_objects.get_pending_transactions(self.first_address)
             if 'TransactionACK' in str(pending):
                 if tx_id in pending[0]['transactionid']: break
             time.sleep(1)
-        self.assertLess(x, self.data['blocktime'], 'Transaction never pending')
+        self.assertLess(x, self.data['BLOCKTIME'], 'Transaction never pending')
 
 
 

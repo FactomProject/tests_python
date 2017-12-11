@@ -30,9 +30,9 @@ class APITestsBalances(unittest.TestCase):
             for address in factomd_server_list:
                 self.api_objects.change_factomd_address(address)
                 if 'FA' in w_address[:3]:
-                    balance.append(self.api_objects.get_factoid_balance_by_factoid_address(w_address))
+                    balance.append(self.api_objects.get_factoid_balance(w_address))
                 else:
-                    balance.append(self.api_objects.get_entry_credits_balance_by_ec_address(w_address))
+                    balance.append(self.api_objects.get_entry_credits_balance(w_address))
                 self.assertTrue(all(x == balance[0] for x in balance), "Wrong balance in address: " + w_address + "\n")
 
     @attr(production_tool=True)
@@ -46,7 +46,7 @@ class APITestsBalances(unittest.TestCase):
         addresses = read_data_from_json('addresses.json')
         factomd_address = addresses['localhost']
         self.api_objects.change_factomd_address(factomd_address)
-        listtxs =  self.api_wallet_objects.list_all_transactions_in_factoid_blockchain()
+        listtxs =  self.api_wallet_objects.list_all_transactions_in_factoid_blockchain()[0]
         count_transactions =  len(listtxs['transactions'])
 
         for i in range(0,count_transactions):
@@ -80,6 +80,6 @@ class APITestsBalances(unittest.TestCase):
 
     def add_balance(self,address):
         self.address_list.append(address)
-        self.balance = self.api_objects.get_factoid_balance_by_factoid_address(address)
+        self.balance = self.api_objects.get_factoid_balance(address)
         self.total_balance = self.total_balance + self.balance
         return self.balance

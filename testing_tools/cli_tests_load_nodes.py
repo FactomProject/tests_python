@@ -26,7 +26,7 @@ class CLITestsLoadNodes(unittest.TestCase):
         '''
         CONTINUOUS = True
         # print statement is necessary to see the calculated sleep time
-        print 'sleep time', float(self.data['blocktime']) / float(self.data['ENTRIES_PER_BLOCK'])
+        print 'sleep time', float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK'])
         self.cli_create.check_wallet_address_balance(self.entry_credit_address1000000)
         chain_flags_list = ['-f', '-C']
         for i in xrange(20):

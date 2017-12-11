@@ -97,12 +97,35 @@ class APIObjectsFactomd():
 
     def get_receipt_by_hash(self, hash):
         '''
-        Get receip by hash
-        :param hash: str hash
-        :return: receipt
+        Get receipt by hash
+        :param hash: str, entry hash of transaction
+        :return return_data: if API call succeeds, transaction JSON block containing:
+            receipt
+                entry
+                    entryhash
+                merklebranch - collection of (left, right, top) triplets which describe the merkletree verifying the receipt of the entry in the factom blockchain.
+                    The 1st (bottom of the tree) left entry  will match the entryhash.
+                    The 1st right entry will be the minute number of the entry.
+                entryblockkeymr
+                directoryblockkeymr
+        if API call fails, error JSON block containing:
+            code
+            message
+            data (optional)
+        :return error_message: if API call succeeds, nil
+        if API call fails, useful error message
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('receipt', {'hash': hash}))
-        return blocks['result']['Receipt']
+        block = json.loads(self.send_get_request_with_params_dict('receipt', {'hash': hash})[0])
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            return_data = block['result']
+            error_message = ''
+        return return_data, error_message
 
     def get_entry_block(self, key_mr):
         '''
@@ -119,32 +142,56 @@ class APIObjectsFactomd():
         :param hash:
         :return: chainid, content, extids
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry', {'hash': hash}))
+        blocks = json.loads(self.send_get_request_with_params_dict('entry', {'hash': hash})[0])
         return blocks['result']
 
     def get_pending_entries(self):
         '''
-        Gets pemdomg emtroes
-        :return: json with entryhash, chainid
+        Gets pending entries
+        :return: JSON with
+           entryhash
+           chainid
+           status
         '''
-        #TODO przetestuj params
         blocks = json.loads(self.send_get_request_with_method('pending-entries'))
         return blocks['result']
 
     def get_transaction_by_hash(self, hash):
         '''
         Gets transaction by transaction hash
-        :param hash:
-        :return: factoidtransaction json
+        :param hash: str - entryhash
+        :return: blocks['result']['factoidtransaction']: JSON block with
+           factoidtransaction
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('transaction', {'hash': hash()}))
-        return blocks['result']['factoidtransaction']
+        blocks = json.loads(self.send_get_request_with_params_dict('transaction', {'hash': hash})[0])
+        return blocks['result']
 
     def get_pending_transactions(self, *address):
         '''
-        Gets pending transaction
-        :param address: optional wallet address
-        :return: Transaction IDs, Statuses, Inputs, Outputs, ECOutputs, Fees
+        Gets pending transactions
+        :param address: str,  optional wallet address
+        :return blocks['result']: JSON block - for each pending transaction
+           transactionid: str
+           status: str, status of the transaction (see status types below)
+           inputs - for each input to the transaction
+              amount: int, (in factoshis)
+              address: str, non-human readable form of the input address
+              useraddress: str, public key of the input address
+           outputs - for each output of the transaction
+              amount: int, (in factoshis)
+              address: str, non-human readable form of the output address
+              useraddress: str, public key of the output address
+           ecoutputs - for each entry credit output of the transaction
+              amount: int, (in factoshis)
+              address: str, non-human readable form of the entry credit output address
+              useraddress: str, public key of the entry credit output address
+           fees: int, (in factoshis)
+
+        status types:
+        Unknown : not found anywhere
+        NotConfirmed : found on local node, but not in network (holding map)
+        TransactionACK : found in network, but not written to the blockchain yet (processList)
+        DBlockConfirmed : found in blockchain
         '''
 
         if address:
@@ -164,7 +211,7 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_params_dict('chain-head', {'ChainID': chain_id})[0])
         return blocks['result']['chainhead']
 
-    def get_entry_credits_balance_by_ec_address(self, ec_address):
+    def get_entry_credits_balance(self, ec_address):
         '''
         Gets entry credit balance by ec address
         :param ec_address: str - ec address
@@ -173,7 +220,7 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address})[0])
         return blocks['result']['balance']
 
-    def get_factoid_balance_by_factoid_address(self, factoid_address):
+    def get_factoid_balance(self, factoid_address):
         '''
         Gets factoid balance by factoid address
         :param factoid_address: str address
@@ -188,7 +235,7 @@ class APIObjectsFactomd():
         :return: int - rate
         '''
         blocks = json.loads(self.send_get_request_with_method('entry-credit-rate'))
-        return blocks#['result']['rate']
+        return blocks
 
     def get_factomd_properties(self):
         '''
@@ -210,20 +257,6 @@ class APIObjectsFactomd():
                                                                                              transaction})[0])
         return blocks['result']
 
-    # def commit_chain_by_message(self, message):
-    #     '''
-    #     Commit chain by message
-    #     :param message: str, message
-    #     :return:
-    #     '''
-    #     blocks = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message})[0])
-    #     if 'error' in blocks:
-    #         success = False
-    #         return success, blocks['error']
-    #     else:
-    #         success = True
-    #         return success, blocks['result']
-    #
     def commit_chain(self, message):
         '''
         Commit chain by message
@@ -290,18 +323,25 @@ class APIObjectsFactomd():
     #
     def commit_entry(self, entry):
         '''
-        Commit entry
-        :param entry: str
-        :return:
+        Reveal entry by entry
+        :param entry: str, entry generated by compose
+        :return blocks['result'] or blocks['error']: JSON, either the result JSON or the error JSON returned by the commit depending on whether or not the commit succeeded
+        :return error: boolean, True if the commit failed, False if the commit succeeded
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('commit-entry', {'entry': entry}))
-        return blocks['result']
+        blocks = json.loads(self.send_get_request_with_params_dict('reveal-entry', {'entry': entry})[0])
+        if 'error' in blocks:
+            error = True
+            return blocks['error'], error
+        else:
+            error = False
+            return blocks['result'], error
 
     def reveal_entry(self, entry):
         '''
-        Commit entry
-        :param entry: str
-        :return:
+        Reveal entry by entry
+        :param entry: str, entry generated by compose
+        :return blocks['result'] or blocks['error']: JSON, either the result JSON or the error JSON returned by the commit depending on whether or not the commit succeeded
+        :return error: boolean, True if the commit failed, False if the commit succeeded
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('reveal-entry', {'entry': entry}))
         return blocks['result']
@@ -319,10 +359,20 @@ class APIObjectsFactomd():
     def send_raw_message(self, message):
         '''
         Send raw message
-        :param message: str message
+        :param message: str, pure message to be injected into system
         :return:
         '''
-        self.send_get_request_with_params_dict('send-raw-message', {'message': message})
+        block = json.loads(self.send_get_request_with_params_dict('send-raw-message', {'message': message})[0])
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            return_data = block['result']
+            error_message = ''
+        return return_data, error_message
 
     def get_current_minute(self):
         '''

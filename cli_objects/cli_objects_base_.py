@@ -14,5 +14,6 @@ class CLIObjectsBase():
 
     def change_factomd_address(self, value):
         self._cli_command = '/srv/factom-cli -w ' \
+                                                 '' + self.wallet_address + ' -s ' + value + ' '
 
 

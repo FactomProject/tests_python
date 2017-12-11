@@ -8,22 +8,24 @@ cli_create = CLIObjectsCreate()
 chain_objects = CLIObjectsChain()
 data = read_data_from_json('shared_test_data.json')
 
-BLOCK_WAIT_TIME = data['blocktime'] * 2
+BLOCK_WAIT_TIME = data['BLOCKTIME'] * 2
+ACK_WAIT_TIME = 60
 
 def wait_for_ack(transaction_id):
-    for x in range(0, BLOCK_WAIT_TIME):
+    for x in range(0, ACK_WAIT_TIME):
         if any(status in cli_create.request_transaction_acknowledgement(transaction_id) for status in ('TransactionACK', 'DBlockConfirmed')):
             break
         time.sleep(1)
 
-def wait_for_entry_in_block(**kwargs):
+def wait_for_chain_in_block(**kwargs):
     chain_identifier = ''
     if 'external_id_list' in kwargs:
         chain_identifier = ' '.join(kwargs['external_id_list'])
     for x in range(0, BLOCK_WAIT_TIME):
-        if 'Chain not yet included in a Directory Block' not in chain_objects.get_chainhead(external_id_list=[chain_identifier]):
-            break
+        result = chain_objects.get_chainhead(external_id_list=[chain_identifier])
+        if 'Missing Chain Head' in result or 'Chain not yet included in a Directory Block' not in result: break
         time.sleep(1)
+    return result
 
 def fund_entry_credit_address(amount):
     # all entry credit addresses are funded from first_address

@@ -70,7 +70,7 @@ class APITestsHeights(unittest.TestCase):
         blocks = self.api.get_heights()
         directory_block_height = blocks['directoryblockheight']
         # transactions need to be listed for wallet to catch up the directory block height
-        listtxs = self.api_wallet.list_all_transactions_in_factoid_blockchain()
+        self.api_wallet.list_all_transactions_in_factoid_blockchain()
         wallet_height = (self.api_wallet.get_wallet_height()["height"])
         self.assertTrue(directory_block_height == wallet_height, "mismatch in wallet height")
 

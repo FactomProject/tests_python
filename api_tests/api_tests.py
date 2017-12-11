@@ -40,7 +40,6 @@ class APITests(unittest.TestCase):
 
     def test_get_factomd_properties(self):
         result = str(self.factom_api.get_factomd_properties())
-        print 'result', result
         self.assertTrue('factomdversion' in result and 'factomdapiversion' in result, 'factomd properties command not working' )
 
     def test_get_wallet_properties(self):
