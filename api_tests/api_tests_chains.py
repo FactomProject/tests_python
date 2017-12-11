@@ -8,7 +8,6 @@ from helpers.general_test_methods import wait_for_ack, wait_for_entry_in_block, 
 from nose.plugins.attrib import attr
 
 @attr(api=True)
-@attr(fast=True)
 class APIChainsTests(unittest.TestCase):
 
     def setUp(self):
