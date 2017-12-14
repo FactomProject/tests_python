@@ -2,6 +2,7 @@ import unittest
 import string
 import random
 import time
+import os
 
 from nose.plugins.attrib import attr
 
@@ -12,7 +13,7 @@ from helpers.helpers import read_data_from_json
 @attr(stress_test=True)
 class ApiTestsTransactions(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
-    blocktime = os.environ['BLOCKTIME']
+    blocktime = int(os.environ['BLOCKTIME'])
 
     def setUp(self):
         self.wallet_api_objects = APIObjectsWallet()

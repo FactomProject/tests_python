@@ -16,7 +16,7 @@ class CLITestsHeight(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
     '''
-    blocktime = os.environ['BLOCKTIME']
+    blocktime = int(os.environ['BLOCKTIME'])
     data = read_data_from_json('addresses.json')
     data1 = read_data_from_json('shared_test_data.json')
     factomd_address = data['factomd_address']

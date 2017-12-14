@@ -8,7 +8,7 @@ from helpers import read_data_from_json
 cli_create = CLIObjectsCreate()
 chain_objects = CLIObjectsChain()
 data = read_data_from_json('shared_test_data.json')
-blocktime = os.environ['BLOCKTIME']
+blocktime = int(os.environ['BLOCKTIME'])
 
 
 BLOCK_WAIT_TIME = blocktime * 2

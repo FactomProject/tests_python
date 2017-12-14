@@ -13,7 +13,7 @@ from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, 
 @attr(fast=True)
 class CLITestsChains(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
-    blocktime = os.environ['BLOCKTIME']
+    blocktime = int(os.environ['BLOCKTIME'])
 
     TIME_TO_WAIT = 5
 
