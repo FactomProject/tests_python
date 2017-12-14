@@ -1,4 +1,5 @@
 import unittest, time
+import os
 
 from nose.plugins.attrib import attr
 from cli_objects.cli_objects_create import CLIObjectsCreate
@@ -9,7 +10,9 @@ from random import randint
 
 @attr(load_tool=True)
 class CLITestsLoadNodes(unittest.TestCase):
+
     data = read_data_from_json('shared_test_data.json')
+    blocktime = os.environ['BLOCKTIME']
 
     def setUp(self):
         self.cli_create = CLIObjectsCreate()
@@ -26,7 +29,7 @@ class CLITestsLoadNodes(unittest.TestCase):
         '''
         CONTINUOUS = True
         # print statement is necessary to see the calculated sleep time
-        print 'sleep time', float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK'])
+        print 'sleep time', float(self.blocktime) / float(self.data['ENTRIES_PER_BLOCK'])
         self.cli_create.check_wallet_address_balance(self.entry_credit_address1000000)
         chain_flags_list = ['-f', '-C']
         for i in xrange(20):
@@ -43,6 +46,6 @@ class CLITestsLoadNodes(unittest.TestCase):
                     names_list = ['-c', chain_id, '-e', name_1, '-e', name_2]
                     content = create_random_string(randint(100, 5000))
                     self.chain_objects.add_entry_to_chain(self.entry_credit_address1000000, content, external_id_list=names_list, flag_list=chain_flags_list)
-                    if not CONTINUOUS: time.sleep(float(self.data['BLOCKTIME']) / float(self.data['ENTRIES_PER_BLOCK']) * 0.2)
+                    if not CONTINUOUS: time.sleep(float(self.blocktime) / float(self.data['ENTRIES_PER_BLOCK']) * 0.2)
                     self.assertFalse('0' == self.cli_create.check_wallet_address_balance(self.entry_credit_address1000000), 'out of entry credits')
 

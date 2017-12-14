@@ -1,5 +1,6 @@
 import unittest
 import time
+import os
 
 from nose.plugins.attrib import attr
 
@@ -10,6 +11,8 @@ from helpers.cli_methods import send_command_to_cli_and_receive_text, get_data_d
 
 @attr(slow=True)
 class CLITestsSyncing(unittest.TestCase):
+
+    blocktime = os.environ['BLOCKTIME']
     data_shared = read_data_from_json('shared_test_data.json')
     data_fault = read_data_from_json('faulting.json')
     data_sync = read_data_from_json('syncing.json')
@@ -24,11 +27,11 @@ class CLITestsSyncing(unittest.TestCase):
 
         # stop node
         send_command_to_cli_and_receive_text(self._faulting_command + self.data_fault['audit1'])
-        time.sleep(self.data_shared['BLOCKTIME'])
+        time.sleep(self.blocktime)
         self.assertIn(self.data_fault['audit1_hash'] + ' offline', get_data_dump_from_server(self.data_fault['default_server_address']), 'Audit server ' + self.data_fault['audit1_hash'] + ' not faulted')
 
         # keep node stopped for a bit
-        for i in xrange(self.data_sync['BLOCKS_TO_FALL_BEHIND']): time.sleep(self.data_shared['BLOCKTIME'])
+        for i in xrange(self.data_sync['BLOCKS_TO_FALL_BEHIND']): time.sleep(self.blocktime)
 
         # restart node
         send_command_to_cli_and_receive_text(self._restart_command + self.data_fault['audit1'])
