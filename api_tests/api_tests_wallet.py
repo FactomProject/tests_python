@@ -42,6 +42,8 @@ class ApiTestsWallet(unittest.TestCase):
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         result = self.api_objects.submit_factoid_by_transaction(transaction)
         self.assertIn("Successfully submitted", result['message'], 'Factoid transaction not successful')
+        # self. api_objects.get_transaction_by_hash(result['txid'])
+        self. api_objects.get_transaction_by_hash('b75e4d082b0921e744ea351b46fbfb369e00c2e04bc0cf9f834787d58c33df6b')
 
         # chain id for factoid transaction is always 000...f, abbreviated to just f
         for x in range(0, 300):
@@ -108,7 +110,8 @@ class ApiTestsWallet(unittest.TestCase):
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         tx_id = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
         self.assertIn("Successfully submitted", self.api_objects.submit_factoid_by_transaction(transaction)['message'], "Transaction failed")
-        for x in range(0, self.blocktime):
+        for x in range(0, self.blocktime +1):
+
             pending = self.api_objects.get_pending_transactions(self.first_address)
             if 'TransactionACK' in str(pending):
                 if tx_id in pending[0]['transactionid']: break

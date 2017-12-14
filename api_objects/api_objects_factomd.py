@@ -95,7 +95,7 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_params_dict('fblock-by-height', {'height': height})[0])
         return blocks['result']['fblock']
 
-    def get_receipt_by_hash(self, hash):
+    def get_receipt(self, hash):
         '''
         Get receipt by hash
         :param hash: str, entry hash of transaction
