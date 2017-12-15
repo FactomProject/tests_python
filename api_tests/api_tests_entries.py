@@ -80,7 +80,7 @@ class APIEntriesTests(unittest.TestCase):
 
         for x in range(0, self.data['BLOCKTIME']+1):
             pending = self.api_objects_factomd.get_pending_entries()
-            if pending: break
+            if (pending and not str(pending).isspace()): break
             else: time.sleep(1)
         self.assertLess(x, self.data['BLOCKTIME'], 'Entry ' + entry_hash + ' never pending')
         self.assertIn(entry_hash, str(pending), 'Entry not pending')

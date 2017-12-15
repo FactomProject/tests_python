@@ -134,7 +134,7 @@ class CLITestsEntries(unittest.TestCase):
         # check for pending entries
         for x in range(0, self.data['BLOCKTIME']+1):
             chain = self.cli_chain.get_pending_entries()
-            if chain: break
+            if (chain and not chain.isspace()): break
             else: time.sleep(1)
         self.assertLess(x, self.data['BLOCKTIME'], 'Chain ' + chain_id + ' never pending')
         self.assertIn(chain_id, chain, 'Chain not shown as pending')
@@ -172,7 +172,7 @@ class CLITestsEntries(unittest.TestCase):
         factom_flags_list = ['-E']
         for x in range(0, self.data['BLOCKTIME']+1):
             entry_hash_list = self.cli_chain.get_pending_entries(flag_list=factom_flags_list)
-            if entry_hash_list: break
+            if (entry_hash_list and not entry_hash_list.isspace()): break
             else: time.sleep(1)
         self.assertLess(x, self.data['BLOCKTIME'], 'Entry ' + str(names_list) + ' never pending')
         found = False
