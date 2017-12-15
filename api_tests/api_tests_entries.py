@@ -1,4 +1,4 @@
-import unittest
+import unittest, time
 
 from nose.plugins.attrib import attr
 from helpers.helpers import create_random_string, read_data_from_json
@@ -78,7 +78,12 @@ class APIEntriesTests(unittest.TestCase):
         chain_flag_list = ['-E']
         entry_hash = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
 
-        self.assertIn(entry_hash, str(self.api_objects_factomd.get_pending_entries()), 'Entry not pending')
+        for x in range(0, self.data['BLOCKTIME']+1):
+            pending = self.api_objects_factomd.get_pending_entries()
+            if (pending and not str(pending).isspace()): break
+            else: time.sleep(1)
+        self.assertLess(x, self.data['BLOCKTIME'], 'Entry ' + entry_hash + ' never pending')
+        self.assertIn(entry_hash, str(pending), 'Entry not pending')
 
     def test_receipt(self):
         # TODO replace following CLI 'make chain' code below with API 'compose chain' code once it is working
@@ -91,7 +96,7 @@ class APIEntriesTests(unittest.TestCase):
         entry_hash = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
 
         wait_for_chain_in_block(external_id_list=names_list)
-        receipt, receipt_error  = self.api_objects_factomd.get_receipt_by_hash(entry_hash)
+        receipt, receipt_error  = self.api_objects_factomd.get_receipt(entry_hash)
         if receipt_error:
             self.assertFalse(True, 'Receipt creation failed - ' + receipt_error)
         else:

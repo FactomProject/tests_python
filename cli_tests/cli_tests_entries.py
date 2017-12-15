@@ -1,5 +1,5 @@
 import unittest
-import os, binascii, hashlib
+import os, binascii, hashlib, time
 
 from flaky import flaky
 
@@ -62,6 +62,7 @@ class CLITestsEntries(unittest.TestCase):
 
         self.assertEqual(hashed256_raw, entry_hash, 'Raw data string is not correct')
 
+    @attr(fast=False)
     def test_verify_entry_costs(self):
         ONE_K_MINUS_8 = 1016
         '''
@@ -131,7 +132,12 @@ class CLITestsEntries(unittest.TestCase):
         self.assertIn("Entry cannot be larger than 10KB", self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, data, external_id_list=names_list))
 
         # check for pending entries
-        self.assertIn(chain_id, self.cli_chain.get_pending_entries(), 'Entry not shown as pending')
+        for x in range(0, self.data['BLOCKTIME']+1):
+            chain = self.cli_chain.get_pending_entries()
+            if (chain and not chain.isspace()): break
+            else: time.sleep(1)
+        self.assertLess(x, self.data['BLOCKTIME'], 'Chain ' + chain_id + ' never pending')
+        self.assertIn(chain_id, chain, 'Chain not shown as pending')
 
         # validate get firstentry command
         wait_for_chain_in_block(external_id_list=chain_names_list)
@@ -164,10 +170,14 @@ class CLITestsEntries(unittest.TestCase):
 
         # check for pending entries return entry hash
         factom_flags_list = ['-E']
-        entry_hash_list = self.cli_chain.get_pending_entries(flag_list=factom_flags_list)
+        for x in range(0, self.data['BLOCKTIME']+1):
+            pending_list = self.cli_chain.get_pending_entries(flag_list=factom_flags_list)
+            if (pending_list and not pending_list.isspace()): break
+            else: time.sleep(1)
+        self.assertLess(x, self.data['BLOCKTIME'], 'Entry ' + str(names_list) + ' never pending')
         found = False
-        for entry_hash in entry_hash_list.split('\n'):
-            text = self.cli_chain.get_entry_by_hash(entry_hash)
+        for pending in pending_list.split('\n'):
+            text = self.cli_chain.get_entry_by_hash(pending)
             self.assertNotIn('Invalid', text,'Entry Hash is invalid')
             entry_chain_id = self.cli_chain.parse_entry_data(text)['ChainID']
             if entry_chain_id == chain_id:
