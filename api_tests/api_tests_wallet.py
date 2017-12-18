@@ -111,10 +111,8 @@ class ApiTestsWallet(unittest.TestCase):
         tx_id = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
         self.assertIn("Successfully submitted", self.api_objects.submit_factoid_by_transaction(transaction)['message'], "Transaction failed")
         for x in range(0, self.blocktime +1):
-
             pending = self.api_objects.get_pending_transactions(self.first_address)
-            if 'TransactionACK' in str(pending):
-                if tx_id in pending[0]['transactionid']: break
+            if 'TransactionACK' in str(pending) and tx_id in str(pending): break
             time.sleep(1)
         self.assertLess(x, self.blocktime, 'Transaction never pending')
 

@@ -118,7 +118,7 @@ class CLITestsRegression(unittest.TestCase):
         # check for pending transaction
         for x in range(0, self.data['BLOCKTIME']+1):
             pending = self.cli_chain.get_pending_transactions()
-            if pending: break
+            if (pending and not pending.isspace()): break
             else: time.sleep(1)
         self.assertLess(x, self.data['BLOCKTIME'], 'Transaction never pending')
         self.assertIn(transaction_dict['TxID'], pending, 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
@@ -210,7 +210,7 @@ class CLITestsRegression(unittest.TestCase):
         factom_flags_list = ['-T']
         for x in range(0, self.data['BLOCKTIME']+1):
             pending = self.cli_chain.get_pending_transactions(flag_list=factom_flags_list)
-            if pending: break
+            if (pending and not pending.isspace()): break
             else: time.sleep(1)
         self.assertLess(x, self.data['BLOCKTIME'], 'Transaction never pending')
         self.assertIn(transaction_dict['TxID'], pending, 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
