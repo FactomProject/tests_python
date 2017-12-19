@@ -29,18 +29,18 @@ class ApiTestsWallet(unittest.TestCase):
 
     def test_addresses(self):
         # check factoid address
-        fac = self.wallet_api_objects.check_address_by_public_address(self.first_address)
-        self.assertEquals(fac[0:2], 'Fs', 'Incorrect private key ' + fac + ' returned')
+        factoid_address = self.wallet_api_objects.check_address_by_public_address(self.first_address)
+        self.assertEquals(factoid_address[0:2], 'Fs', 'Incorrect private key ' + factoid_address + ' returned')
 
         # check entry credit address
-        ent = self.wallet_api_objects.check_address_by_public_address(self.entry_creds_wallet)
-        self.assertEquals(ent[0:2], 'Es', 'Incorrect private key ' + ent + ' returned')
+        ec_address = self.wallet_api_objects.check_address_by_public_address(self.entry_creds_wallet)
+        self.assertEquals(ec_address[0:2], 'Es', 'Incorrect private key ' + ec_address + ' returned')
 
         # check all addresses
-        fac = self.wallet_api_objects.check_all_addresses()
-        for _ in fac:
-            self.assertIn(_['secret'][0:2], ('Fs', 'Es'), 'Incorrect private key ' + _['secret'] + ' returned')
-            self.assertIn(_['public'][0:2], ('FA', 'EC'), 'Incorrect public key ' + _['public'] + ' returned')
+        all_addresses = self.wallet_api_objects.check_all_addresses()
+        for address in all_addresses:
+            self.assertIn(address['secret'][0:2], ('Fs', 'Es'), 'Incorrect private key ' + address['secret'] + ' returned')
+            self.assertIn(address['public'][0:2], ('FA', 'EC'), 'Incorrect public key ' + address['public'] + ' returned')
 
     def test_allocate_funds_to_factoid_wallet_address(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))
