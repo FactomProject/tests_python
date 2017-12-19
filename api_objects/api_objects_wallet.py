@@ -30,7 +30,7 @@ class APIObjectsWallet():
 
     def check_address_by_public_address(self, address):
         '''
-        Import address by public address
+        Return private address corresponding to public address
         :param address: str
         :return: secret address
         '''
@@ -39,7 +39,7 @@ class APIObjectsWallet():
 
     def check_all_addresses(self):
         '''
-        Import all addresses from wallet
+        Return all public and private addresses
         :return: list of dicts, addresses
         '''
         blocks = json.loads(self.send_get_request_with_method('all-addresses'))
@@ -191,20 +191,6 @@ class APIObjectsWallet():
     def sign_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('sign-transaction', {'tx-name': transaction_name}))
         return blocks
-
-    def compose_chain_old(self, external_ids, content, ecpub):
-        blocks = json.loads(self.send_post_request_with_params_dict('compose-chain',
-                 {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ecpub}))
-        if 'error' in blocks:
-            return_data = blocks['error']
-            if 'data' in blocks['error']:
-                error_message = blocks['error']['data']
-            else:
-                error_message = blocks['error']['message']
-        else:
-            return_data = blocks['result']
-            error_message = ''
-        return return_data, error_message
 
     def compose_entry(self, chainid, external_ids, content, ecpub):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-entry',

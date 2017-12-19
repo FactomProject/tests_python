@@ -27,6 +27,21 @@ class ApiTestsWallet(unittest.TestCase):
         self.ecrate = self.api_objects.get_entry_credits_rate()
         self.entry_creds_wallet2 = self.wallet_api_objects.generate_ec_address()
 
+    def test_addresses(self):
+        # check factoid address
+        fac = self.wallet_api_objects.check_address_by_public_address(self.first_address)
+        self.assertEquals(fac[0:2], 'Fs', 'Incorrect private key ' + fac + ' returned')
+
+        # check entry credit address
+        ent = self.wallet_api_objects.check_address_by_public_address(self.entry_creds_wallet)
+        self.assertEquals(ent[0:2], 'Es', 'Incorrect private key ' + ent + ' returned')
+
+        # check all addresses
+        fac = self.wallet_api_objects.check_all_addresses()
+        for _ in fac:
+            self.assertIn(_['secret'][0:2], ('Fs', 'Es'), 'Incorrect private key ' + _['secret'] + ' returned')
+            self.assertIn(_['public'][0:2], ('FA', 'EC'), 'Incorrect public key ' + _['public'] + ' returned')
+
     def test_allocate_funds_to_factoid_wallet_address(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range (5))
 
@@ -38,8 +53,9 @@ class ApiTestsWallet(unittest.TestCase):
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         result = self.api_objects.submit_factoid_by_transaction(transaction)
         self.assertIn("Successfully submitted", result['message'], 'Factoid transaction not successful')
+        # TODO insert code here (or somewhere) to test api_objects.get_transaction_by_hash after designers have decided on how exactly it should work
         # self. api_objects.get_transaction_by_hash(result['txid'])
-        self. api_objects.get_transaction_by_hash('b75e4d082b0921e744ea351b46fbfb369e00c2e04bc0cf9f834787d58c33df6b')
+        # self. api_objects.get_transaction_by_hash('b75e4d082b0921e744ea351b46fbfb369e00c2e04bc0cf9f834787d58c33df6b')
 
         # chain id for factoid transaction is always 000...f, abbreviated to just f
         for x in range(0, 300):
