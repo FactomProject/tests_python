@@ -23,7 +23,8 @@ class CLITestsLoadNodes(unittest.TestCase):
 
     def test_make_chain_and_check_balance(self):
         '''
-        BLOCKTIME and ENTRIES_PER_BLOCK are variables in shared_test_data.json
+        ENTRIES in block is defined in shared_test_data.json,
+        blocktime is value passed to docker container at start
         increasing ENTRIES_PER_BLOCK decreases sleep time between entries.
         set CONTINUOUS for no sleeping at all.
         '''

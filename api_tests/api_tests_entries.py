@@ -1,4 +1,5 @@
 import unittest, time
+import os
 
 from nose.plugins.attrib import attr
 from helpers.helpers import create_random_string, read_data_from_json
@@ -22,6 +23,7 @@ class APIEntriesTests(unittest.TestCase):
         self.api_objects_wallet = APIObjectsWallet()
         self.data = read_data_from_json('shared_test_data.json')
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
+        self.blocktime = int(os.environ['BLOCKTIME'])
 
     @unittest.expectedFailure
     # TODO remove expectedFailure tag once commit_chain function is fixed so that it actually creates the requested chain instead of trying to create the null chain
@@ -78,11 +80,11 @@ class APIEntriesTests(unittest.TestCase):
         chain_flag_list = ['-E']
         entry_hash = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
 
-        for x in range(0, self.data['BLOCKTIME']+1):
+        for x in range(0, self.blocktime+1):
             pending = self.api_objects_factomd.get_pending_entries()
             if (pending and not str(pending).isspace()): break
             else: time.sleep(1)
-        self.assertLess(x, self.data['BLOCKTIME'], 'Entry ' + entry_hash + ' never pending')
+        self.assertLess(x, self.blocktime, 'Entry ' + entry_hash + ' never pending')
         self.assertIn(entry_hash, str(pending), 'Entry not pending')
 
     def test_receipt(self):
