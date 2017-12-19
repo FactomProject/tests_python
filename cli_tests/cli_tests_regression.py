@@ -118,7 +118,7 @@ class CLITestsRegression(unittest.TestCase):
         transaction_dict = self.cli_chain.parse_transaction_data(text)
 
         # check for pending transaction
-        for x in range(0, self.data['BLOCKTIME']+1):
+        for x in range(0, self.blocktime+1):
             pending = self.cli_chain.get_pending_transactions()
             if (pending and not pending.isspace()): break
             else: time.sleep(1)
