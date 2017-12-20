@@ -13,6 +13,7 @@ from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, 
 @attr(fast=True)
 class CLITestsChains(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
+    blocktime = int(os.environ['BLOCKTIME'])
 
     TIME_TO_WAIT = 5
 
@@ -92,7 +93,7 @@ class CLITestsChains(unittest.TestCase):
                 break
             time.sleep(1)
         self.assertTrue(found, 'Chainhead is missing')
-        for x in range(0, self.data['BLOCKTIME']):
+        for x in range(0, self.blocktime):
             if 'Chain not yet included in a Directory Block' not in self.cli_chain.get_allentries(chain_id=chainid):
                 found = True
                 break

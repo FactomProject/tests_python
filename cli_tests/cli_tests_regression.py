@@ -1,4 +1,5 @@
 import unittest, json, binascii, hashlib, re, time
+import os
 from nose.plugins.attrib import attr
 
 from cli_objects.cli_objects_chain import CLIObjectsChain
@@ -20,6 +21,7 @@ class CLITestsRegression(unittest.TestCase):
         words = '"'+self.data['words']+'"'
         self.third_address = self.cli_create.import_words_from_koinify_into_wallet(words)
         self.ecrate = self.cli_create.get_entry_credit_rate()
+        self.blocktime = int(os.environ['BLOCKTIME'])
 
     def test_raw_blocks(self):
 
@@ -116,11 +118,11 @@ class CLITestsRegression(unittest.TestCase):
         transaction_dict = self.cli_chain.parse_transaction_data(text)
 
         # check for pending transaction
-        for x in range(0, self.data['BLOCKTIME']+1):
+        for x in range(0, self.blocktime+1):
             pending = self.cli_chain.get_pending_transactions()
             if (pending and not pending.isspace()): break
             else: time.sleep(1)
-        self.assertLess(x, self.data['BLOCKTIME'], 'Transaction never pending')
+        self.assertLess(x, self.blocktime, 'Transaction never pending')
         self.assertIn(transaction_dict['TxID'], pending, 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
 
         chain_dict = self.cli_chain.parse_simple_data(text)
@@ -208,11 +210,11 @@ class CLITestsRegression(unittest.TestCase):
 
         # check for pending transaction return transaction id
         factom_flags_list = ['-T']
-        for x in range(0, self.data['BLOCKTIME']+1):
+        for x in range(0, self.blocktime+1):
             pending = self.cli_chain.get_pending_transactions(flag_list=factom_flags_list)
             if (pending and not pending.isspace()): break
             else: time.sleep(1)
-        self.assertLess(x, self.data['BLOCKTIME'], 'Transaction never pending')
+        self.assertLess(x, self.blocktime, 'Transaction never pending')
         self.assertIn(transaction_dict['TxID'], pending, 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
 
         balance_after = self.cli_create.check_wallet_address_balance(self.first_address)

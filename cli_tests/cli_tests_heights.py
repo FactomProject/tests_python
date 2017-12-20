@@ -1,4 +1,5 @@
 import unittest
+import os
 
 from nose.plugins.attrib import attr
 from flaky import flaky
@@ -15,6 +16,7 @@ class CLITestsHeight(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
     '''
+    blocktime = int(os.environ['BLOCKTIME'])
     data = read_data_from_json('addresses.json')
     data1 = read_data_from_json('shared_test_data.json')
     factomd_address = data['factomd_address']
@@ -102,7 +104,7 @@ class CLITestsHeight(unittest.TestCase):
         wallet_height = self.cli_chain.get_wallet_height()
 
         # throw error if wallet doesn't sync up within 1 block
-        while directory_block_height != wallet_height and time_waited < self.data1['BLOCKTIME']:
+        while directory_block_height != wallet_height and time_waited < self.blocktime:
             time.sleep(1)
             self.cli_create.get_all_transactions()
             directory_block_height = self.cli_chain.get_directory_block_height_from_head()

@@ -19,6 +19,7 @@ class CLITestsEntries(unittest.TestCase):
         self.cli_chain = CLIObjectsChain()
         self.ecrate = self.cli_create.get_entry_credit_rate()
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
+        self.blocktime = int(os.environ['BLOCKTIME'])
 
     def test_make_entry_return_entry_hash(self):
         # make chain
@@ -132,11 +133,11 @@ class CLITestsEntries(unittest.TestCase):
         self.assertIn("Entry cannot be larger than 10KB", self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, data, external_id_list=names_list))
 
         # check for pending entries
-        for x in range(0, self.data['BLOCKTIME']+1):
+        for x in range(0, self.blocktime+1):
             chain = self.cli_chain.get_pending_entries()
             if (chain and not chain.isspace()): break
             else: time.sleep(1)
-        self.assertLess(x, self.data['BLOCKTIME'], 'Chain ' + chain_id + ' never pending')
+        self.assertLess(x, self.blocktime, 'Chain ' + chain_id + ' never pending')
         self.assertIn(chain_id, chain, 'Chain not shown as pending')
 
         # validate get firstentry command
@@ -170,11 +171,11 @@ class CLITestsEntries(unittest.TestCase):
 
         # check for pending entries return entry hash
         factom_flags_list = ['-E']
-        for x in range(0, self.data['BLOCKTIME']+1):
+        for x in range(0, self.blocktime+1):
             pending_list = self.cli_chain.get_pending_entries(flag_list=factom_flags_list)
             if (pending_list and not pending_list.isspace()): break
             else: time.sleep(1)
-        self.assertLess(x, self.data['BLOCKTIME'], 'Entry ' + str(names_list) + ' never pending')
+        self.assertLess(x, self.blocktime, 'Entry ' + str(names_list) + ' never pending')
         found = False
         for pending in pending_list.split('\n'):
             text = self.cli_chain.get_entry_by_hash(pending)

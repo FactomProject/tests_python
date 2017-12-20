@@ -1,4 +1,5 @@
 import time
+import os
 
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from cli_objects.cli_objects_chain import CLIObjectsChain
@@ -7,8 +8,10 @@ from helpers import read_data_from_json
 cli_create = CLIObjectsCreate()
 chain_objects = CLIObjectsChain()
 data = read_data_from_json('shared_test_data.json')
+blocktime = int(os.environ['BLOCKTIME'])
 
-BLOCK_WAIT_TIME = data['BLOCKTIME'] * 2
+
+BLOCK_WAIT_TIME = blocktime * 2
 ACK_WAIT_TIME = 60
 
 def wait_for_ack(transaction_id):
