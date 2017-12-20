@@ -58,8 +58,9 @@ class APIChainsTests(unittest.TestCase):
                     self.assertTrue('DBlockConfirmed' in str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
     def test_repeated_commits(self):
-        balance_before = self.api_objects_factomd.get_entry_credits_balance(self.entry_credit_address1000)
+        self.entry_credit_address1000 = fund_entry_credit_address(1000)
 
+        balance_before = self.api_objects_factomd.get_entry_credits_balance(self.entry_credit_address1000)
         # commit chain
         external_ids, content = self.__random_chain()
         compose, error_message = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
@@ -92,6 +93,8 @@ class APIChainsTests(unittest.TestCase):
                 self.assertEqual(balance_before, balance_after + 12, 'Balance before commit = ' + str(balance_before) + '. Balance after commit = ' + str(balance_after) + '. Balance after single commit SHOULD be = ' + str(balance_after + 12))
 
     def test_raw_message(self):
+        self.entry_credit_address1000 = fund_entry_credit_address(1000)
+
         external_ids, content = self.__random_chain()
         compose, error_message = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
         if error_message:
