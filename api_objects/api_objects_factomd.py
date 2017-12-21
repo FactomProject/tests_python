@@ -211,31 +211,78 @@ class APIObjectsFactomd():
         blocks = json.loads(self.send_get_request_with_params_dict('chain-head', {'ChainID': chain_id})[0])
         return blocks['result']['chainhead']
 
-    def get_entry_credits_balance(self, ec_address):
+    def get_entry_credit_balance(self, ec_address):
         '''
         Gets entry credit balance by ec address
         :param ec_address: str - ec address
         :return: int - balance
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address})[0])
-        return blocks['result']['balance']
+        block = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address})[0])
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            return_data = block['result']
+            error_message = ''
+        print 'address', ec_address
+        print 'return_data', return_data
+        return return_data, error_message
 
     def get_factoid_balance(self, factoid_address):
         '''
         Gets factoid balance by factoid address
-        :param factoid_address: str address
-        :return: int - balance
+        :param factoid_address: str, address of which to return balance
+        :return return_data: if API call succeeds, transaction JSON block containing:
+            balance
+        if API call fails, error JSON block containing:
+            code
+            message
+            data (optional)
+        :return error_message: if API call succeeds, nil
+        if API call fails, useful error message
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('factoid-balance', {'address': factoid_address})[0])
-        return blocks['result']['balance']
+        block = json.loads(self.send_get_request_with_params_dict('factoid-balance', {'address': factoid_address})[0])
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            return_data = block['result']
+            error_message = ''
+        print 'address', factoid_address
+        print 'return_data', return_data
+        return return_data, error_message
 
-    def get_entry_credits_rate(self):
+    def get_entry_credit_rate(self):
         '''
         Gets entry credit rate
-        :return: int - rate
+        :return return_data: if API call succeeds, JSON block, containing
+            rate
+        if API call fails, error JSON block containing:
+            code
+            message
+            data (optional)
+        :return error_message: if API call succeeds, nil
+        if API call fails, useful error message
         '''
-        blocks = json.loads(self.send_get_request_with_method('entry-credit-rate'))
-        return blocks
+        block = json.loads(self.send_get_request_with_method('entry-credit-rate'))
+        print 'block', block
+        if 'error' in block:
+            return_data = block['error']
+            if 'data' in block['error']:
+                error_message = block['error']['data']
+            else:
+                error_message = block['error']['message']
+        else:
+            return_data = block['result']
+            error_message = ''
+        print 'ecr return_data', return_data
+        return return_data, error_message
 
     def get_factomd_properties(self):
         '''
@@ -290,7 +337,7 @@ class APIObjectsFactomd():
         Reveal chain by entry
         :param entry: str, the entry portion of the API call
         :return: return_data: if API call succeeds, reveal JSON block containing:
-            message":"Entry Reveal Success"
+            message :"Entry Reveal Success"
             entryhash
             chainid
         if API call fails, error JSON block containing:
@@ -312,15 +359,6 @@ class APIObjectsFactomd():
             error_message = ''
         return return_data, error_message
 
-    # def reveal_chain(self, entry):
-    #     '''
-    #     Reveal chain by entry
-    #     :param entry: str, entry
-    #     :return:
-    #     '''
-    #     blocks = json.loads(self.send_get_request_with_params_dict('reveal-chain', {'entry': entry})[0])
-    #     return blocks['result']
-    #
     def commit_entry(self, entry):
         '''
         Reveal entry by entry
@@ -360,8 +398,15 @@ class APIObjectsFactomd():
         '''
         Send raw message
         :param message: str, pure message to be injected into system
-        :return:
-        '''
+        :return: return_data: if API call succeeds, JSON block containing:
+            message :"Successfully sent the message"
+        if API call fails, error JSON block containing:
+            code
+            message
+            data (optional)
+        :return error_message: if API call succeeds, nil
+        if API call fails, useful error message
+      '''
         block = json.loads(self.send_get_request_with_params_dict('send-raw-message', {'message': message})[0])
         if 'error' in block:
             return_data = block['error']

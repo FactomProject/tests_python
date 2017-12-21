@@ -26,7 +26,7 @@ class CLITestsChainsMakeMany(unittest.TestCase):
         self.api_objects = APIObjectsFactomd()
 
     def test_make_chain_and_check_balance(self):
-        self.entry_credit_address = fund_entry_credit_address(NUMBER_OF_RUNS * 12)
+        self.entry_credit_address = fund_entry_credit_address(NUMBER_OF_RUNS * 12)[0]
         content = create_random_string(1024)
         for i in range(NUMBER_OF_RUNS):
             # this print statement is necessary to monitor the test progress

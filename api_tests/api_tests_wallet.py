@@ -28,7 +28,7 @@ class ApiTestsWallet(unittest.TestCase):
         self.first_address = public_keys[0]
         self.entry_creds_wallet = public_keys[1]
         self.second_address = self.wallet_api_objects.generate_factoid_address()
-        self.ecrate = self.api_objects.get_entry_credits_rate()
+        self.ecrate = self.api_objects.get_entry_credit_rate()[0]['rate']
         self.entry_creds_wallet2 = self.wallet_api_objects.generate_ec_address()
 
     def test_allocate_funds_to_factoid_wallet_address(self):

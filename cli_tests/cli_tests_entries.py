@@ -18,7 +18,7 @@ class CLITestsEntries(unittest.TestCase):
         self.cli_create = CLIObjectsCreate()
         self.cli_chain = CLIObjectsChain()
         self.ecrate = self.cli_create.get_entry_credit_rate()
-        self.entry_credit_address1000 = fund_entry_credit_address(1000)
+        self.entry_credit_address1000 = fund_entry_credit_address(1000)[0]
         self.blocktime = int(os.environ['BLOCKTIME'])
 
     def test_make_entry_return_entry_hash(self):

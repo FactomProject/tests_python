@@ -32,7 +32,7 @@ class APITestsBalances(unittest.TestCase):
                 if 'FA' in w_address[:3]:
                     balance.append(self.api_objects.get_factoid_balance(w_address))
                 else:
-                    balance.append(self.api_objects.get_entry_credits_balance(w_address))
+                    balance.append(self.api_objects.get_entry_credit_balance(w_address))[0]['balance']
                 self.assertTrue(all(x == balance[0] for x in balance), "Wrong balance in address: " + w_address + "\n")
 
     @attr(production_tool=True)

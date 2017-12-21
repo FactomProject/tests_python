@@ -22,7 +22,7 @@ class APIEntriesTests(unittest.TestCase):
         self.api_objects_factomd = APIObjectsFactomd()
         self.api_objects_wallet = APIObjectsWallet()
         self.data = read_data_from_json('shared_test_data.json')
-        self.entry_credit_address1000 = fund_entry_credit_address(1000)
+        self.entry_credit_address1000 = fund_entry_credit_address(1000)[0]
         self.blocktime = int(os.environ['BLOCKTIME'])
 
     @unittest.expectedFailure
@@ -72,7 +72,7 @@ class APIEntriesTests(unittest.TestCase):
 
     def test_pending_entries(self):
         # TODO replace following CLI 'make chain' code below with API 'compose chain' code once it is working
-        self.entry_credit_address100 = fund_entry_credit_address(100)
+        self.entry_credit_address100 = fund_entry_credit_address(100)[0]
         data = create_random_string(1024)
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -89,7 +89,7 @@ class APIEntriesTests(unittest.TestCase):
 
     def test_receipt(self):
         # TODO replace following CLI 'make chain' code below with API 'compose chain' code once it is working
-        self.entry_credit_address100 = fund_entry_credit_address(100)
+        self.entry_credit_address100 = fund_entry_credit_address(100)[0]
         data = create_random_string(1024)
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)

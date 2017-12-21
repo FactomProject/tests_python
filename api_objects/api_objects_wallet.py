@@ -192,20 +192,6 @@ class APIObjectsWallet():
         blocks = json.loads(self.send_post_request_with_params_dict('sign-transaction', {'tx-name': transaction_name}))
         return blocks
 
-    def compose_chain_old(self, external_ids, content, ecpub):
-        blocks = json.loads(self.send_post_request_with_params_dict('compose-chain',
-                 {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ecpub}))
-        if 'error' in blocks:
-            return_data = blocks['error']
-            if 'data' in blocks['error']:
-                error_message = blocks['error']['data']
-            else:
-                error_message = blocks['error']['message']
-        else:
-            return_data = blocks['result']
-            error_message = ''
-        return return_data, error_message
-
     def compose_entry(self, chainid, external_ids, content, ecpub):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-entry',
                  {'entry': {'chainid': chainid, 'extids': external_ids, 'content': content}, 'ecpub': ecpub}))

@@ -15,7 +15,7 @@ class APIChainsTests(unittest.TestCase):
         self.api_objects_factomd = APIObjectsFactomd()
         self.api_objects_wallet = APIObjectsWallet()
         self.data = read_data_from_json('shared_test_data.json')
-        self.entry_credit_address1000 = fund_entry_credit_address(1000)
+        self.entry_credit_address1000 = fund_entry_credit_address(1000)[0]
 
     @unittest.expectedFailure
     # TODO remove expectedFailure tag once commit_chain function is fixed so that it actually creates the requested chain instead of trying to create the null chain
@@ -58,7 +58,7 @@ class APIChainsTests(unittest.TestCase):
                     self.assertTrue('DBlockConfirmed' in str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
     def test_repeated_commits(self):
-        balance_before = self.api_objects_factomd.get_entry_credits_balance(self.entry_credit_address1000)
+        balance_before = self.api_objects_factomd.get_entry_credit_balance(self.entry_credit_address1000)[0]['balance']
 
         # commit chain
         external_ids, content = self.__random_chain()
@@ -88,11 +88,13 @@ class APIChainsTests(unittest.TestCase):
 
                 # see if 2nd commit has been mistakenly paid for
                 wait_for_chain_in_block(external_id_list=external_ids)
-                balance_after = self.api_objects_factomd.get_entry_credits_balance(self.entry_credit_address1000)
+                balance_after = self.api_objects_factomd.get_entry_credit_balance(self.entry_credit_address1000)[0]['balance']
                 self.assertEqual(balance_before, balance_after + 12, 'Balance before commit = ' + str(balance_before) + '. Balance after commit = ' + str(balance_after) + '. Balance after single commit SHOULD be = ' + str(balance_after + 12))
 
     def test_raw_message(self):
         external_ids, content = self.__random_chain()
+        print 'external_ids', external_ids
+        print 'content', content
         compose, error_message = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
         if error_message:
             self.assertFalse(True, 'Chain compose failed - ' + error_message)
