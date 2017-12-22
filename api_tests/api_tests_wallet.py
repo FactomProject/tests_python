@@ -42,8 +42,9 @@ class ApiTestsWallet(unittest.TestCase):
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         result = self.api_objects.submit_factoid_by_transaction(transaction)
         self.assertIn("Successfully submitted", result['message'], 'Factoid transaction not successful')
+        # TODO insert code here (or somewhere) to test api_objects.get_transaction_by_hash after designers have decided on how exactly it should work
         # self. api_objects.get_transaction_by_hash(result['txid'])
-        self. api_objects.get_transaction_by_hash('b75e4d082b0921e744ea351b46fbfb369e00c2e04bc0cf9f834787d58c33df6b')
+        # self. api_objects.get_transaction_by_hash('b75e4d082b0921e744ea351b46fbfb369e00c2e04bc0cf9f834787d58c33df6b')
 
         # chain id for factoid transaction is always 000...f, abbreviated to just f
         for x in range(0, 300):
