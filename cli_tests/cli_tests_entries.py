@@ -18,7 +18,7 @@ class CLITestsEntries(unittest.TestCase):
         self.cli_create = CLIObjectsCreate()
         self.cli_chain = CLIObjectsChain()
         self.ecrate = self.cli_create.get_entry_credit_rate()
-        self.entry_credit_address1000 = fund_entry_credit_address(1000)[0]
+        self.entry_credit_address1000 = fund_entry_credit_address(1000)
         self.blocktime = int(os.environ['BLOCKTIME'])
 
     def test_make_entry_return_entry_hash(self):
@@ -166,8 +166,7 @@ class CLITestsEntries(unittest.TestCase):
         name_2 = create_random_string(5)
         names_list = chain_names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-f', '-T']
-        tx_id = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000,
-                                                  data, external_id_list=names_list, flag_list=factom_flags_list)
+        tx_id = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000,                                      data, external_id_list=names_list, flag_list=factom_flags_list)
 
         # check for pending entries return entry hash
         factom_flags_list = ['-E']
@@ -179,6 +178,7 @@ class CLITestsEntries(unittest.TestCase):
         found = False
         for pending in pending_list.split('\n'):
             text = self.cli_chain.get_entry_by_hash(pending)
+            print 'text', text
             self.assertNotIn('Invalid', text,'Entry Hash is invalid')
             entry_chain_id = self.cli_chain.parse_entry_data(text)['ChainID']
             if entry_chain_id == chain_id:

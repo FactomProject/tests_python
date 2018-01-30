@@ -31,38 +31,25 @@ def wait_for_chain_in_block(**kwargs):
         chain_identifier = ' '.join(kwargs['external_id_list'])
     for x in range(0, BLOCK_WAIT_TIME):
         result = chain_objects.get_chainhead(external_id_list=[chain_identifier])
-        if 'Missing Chain Head' in result or 'Chain not yet included in a Directory Block' not in result: break
+        # if 'Missing Chain Head' in result or 'Chain not yet included in a Directory Block' not in result: break
+        if 'Missing Chain Head' not in result and 'Chain not yet included in a Directory Block' not in result: break
         time.sleep(1)
     return result
 
 def fund_entry_credit_address(amount):
     '''
     create an entry credit addresses and fund it with <amount> entry credits from primary factoid address
-    :param amount: int, number of entry credits to convert from factoid address to new entry credit address
-    :return: return_data: str,
-        if API call succeeds, newly created entry credit address
-        if fetching balance of primary factoid address fails, returned balance
-        if fetching entry credit rate fails, returned entry credit rate
-        if factoid address balance is less than needed, shortfall
-    :return error_message: if API call succeeds, nil
-    if API call fails, useful error message
+    :param: int, number of entry credits to convert from factoid address to new entry credit address
+    :return: str, newly created entry credit address
   '''
     first_address = cli_create.import_addresses(data['factoid_wallet_address'])[0]
-    balance, error_message = api_objects_factomd.get_factoid_balance(first_address)
-    return_data = balance
-    if not error_message:
-        entry_credit_rate, error_message = api_objects_factomd.get_entry_credit_rate()
-        if error_message:
-            return_data = entry_credit_rate
-        else:
-            factoshi_amount = amount * entry_credit_rate['rate']
-            if int(balance['balance']) < factoshi_amount:
-                error_message = 'Factoid address ' + first_address + ' only has ' + balance['balance'] + ' factoshis and needs ' + str(factoshi_amount) + ' to buy ' + amount + ' entry credits'
-            else:
-                entry_credit_address = cli_create.create_entry_credit_address()
-                text = cli_create.buy_entry_credits(first_address, entry_credit_address, str(amount))
-                chain_dict = chain_objects.parse_simple_data(text)
-                tx_id = chain_dict['TxID']
-                wait_for_ack(tx_id)
-                return_data = entry_credit_address
-    return return_data, error_message
+    balance = api_objects_factomd.get_factoid_balance(first_address)
+    factoshi_amount = amount * api_objects_factomd.get_entry_credit_rate()
+    if int(balance) < factoshi_amount: exit('Factoid address ' + first_address + ' only has ' + balance + ' factoshis but needs ' + str(factoshi_amount) + ' to buy ' + amount + ' entry credits')
+    else:
+        entry_credit_address = cli_create.create_entry_credit_address()
+        text = cli_create.buy_entry_credits(first_address, entry_credit_address, str(amount))
+        chain_dict = chain_objects.parse_simple_data(text)
+        tx_id = chain_dict['TxID']
+        wait_for_ack(tx_id)
+    return entry_credit_address

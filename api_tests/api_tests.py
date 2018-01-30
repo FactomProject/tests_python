@@ -5,6 +5,8 @@ from api_objects.api_objects_wallet import APIObjectsWallet
 from helpers.cli_methods import get_data_dump_from_nonansible_server
 from helpers.helpers import read_data_from_json
 
+import requests
+
 @attr(api=True)
 class APITests(unittest.TestCase):
 
@@ -13,6 +15,10 @@ class APITests(unittest.TestCase):
         self.wallet_api = APIObjectsWallet()
         data = read_data_from_json('addresses.json')
         self.factomd_address = data['factomd_controlpanel']
+
+    def test_HARMONY_API(self):
+        r = requests.post('https://harmony-api-dev-testnet.factom.com/sessions', data = {"username" : "auto",                                                                  "password" : "cwxeZ18q8kcEbKQU3wu5"})
+        print(r.text)
 
     def test_directory_blocks(self):
         keymr = self.factom_api.get_directory_block_head()

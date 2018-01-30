@@ -28,7 +28,6 @@ class ApiTestsWallet(unittest.TestCase):
         self.first_address = public_keys[0]
         self.entry_creds_wallet = public_keys[1]
         self.second_address = self.wallet_api_objects.generate_factoid_address()
-        self.ecrate = self.api_objects.get_entry_credit_rate()[0]['rate']
         self.entry_creds_wallet2 = self.wallet_api_objects.generate_ec_address()
 
     def test_allocate_funds_to_factoid_wallet_address(self):
@@ -43,7 +42,15 @@ class ApiTestsWallet(unittest.TestCase):
         result = self.api_objects.submit_factoid_by_transaction(transaction)
         self.assertIn("Successfully submitted", result['message'], 'Factoid transaction not successful')
         # self. api_objects.get_transaction_by_hash(result['txid'])
+        print 'start get by transaction hash'
         self. api_objects.get_transaction_by_hash('b75e4d082b0921e744ea351b46fbfb369e00c2e04bc0cf9f834787d58c33df6b')
+        print 'start get by transaction id'
+        self. api_objects.get_transaction_by_hash('6f837fe9a8dde5a78ec21fa7b6abbcd671c35375ea807b2fe87ffbf1eebb5511')
+        print 'start get by entry hash'
+        self. api_objects.get_transaction_by_hash('bb3c774409222ab4c8b9f503ffbee0024c8bfc5b71a5e2cc45705a42596b63d3')
+        print 'start get by nonexistent transaction'
+        self. api_objects.get_transaction_by_hash('6f837fe9a8dde5a78ec21fa7b6abbcd671c35375ea807b2fe87ffbf1eebbaaaa')
+        print 'stop get transaction2'
 
         # chain id for factoid transaction is always 000...f, abbreviated to just f
         for x in range(0, 300):
@@ -52,6 +59,7 @@ class ApiTestsWallet(unittest.TestCase):
                 break
             time.sleep(1)
         self.assertLess(x, 299, 'Factoid transaction not acknowledged within 5 minutes')
+        print 'start list transactions'
         self.wallet_api_objects.list_transactions_by_txid(result['txid'])
 
 
@@ -68,8 +76,7 @@ class ApiTestsWallet(unittest.TestCase):
                         self.wallet_api_objects.sign_transaction(transaction_name)['error']['data'])
 
     def test_list_transactions_api_call(self):
-        transactions, error_message = self.wallet_api_objects.list_all_transactions_in_factoid_blockchain()
-        self.assertFalse(error_message, error_message)
+        self.wallet_api_objects.list_all_transactions_in_factoid_blockchain()
 
     def test_list_transaction_by_id(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
@@ -82,7 +89,7 @@ class ApiTestsWallet(unittest.TestCase):
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         txid = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
         wait_for_ack(txid)
-        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)[0]['transactions'][0]['inputs'][0]['amount'] == 100000000, 'Transaction is not listed')
+        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)['transactions'][0]['inputs'][0]['amount'] == 100000000, 'Transaction is not listed')
 
     def test_list_current_working_transactions_in_wallet(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
