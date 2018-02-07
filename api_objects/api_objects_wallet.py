@@ -80,7 +80,6 @@ class APIObjectsWallet():
         :return: str, public key of imported address
         '''
         block = json.loads(self.send_get_request_with_params_dict('import-koinify', {'words': words}))
-        print 'result', block['result']['public']
         if 'error' in str(block): exit('Import 12 words failed - ' + str(block['error']))
         else: return block['result']['public']
 

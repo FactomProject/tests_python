@@ -46,7 +46,6 @@ class ApiTestsWallet(unittest.TestCase):
                 break
             time.sleep(1)
         self.assertLess(x, 299, 'Factoid transaction not acknowledged within 5 minutes')
-        print 'start list transactions'
         self.wallet_api_objects.list_transactions_by_txid(result['txid'])
 
 

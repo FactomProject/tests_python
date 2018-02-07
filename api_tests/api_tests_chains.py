@@ -79,8 +79,6 @@ class APIChainsTests(unittest.TestCase):
 
     def test_raw_message(self):
         external_ids, content = generate_random_external_ids_and_content()
-        print 'external_ids', external_ids
-        print 'content', content
         compose = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
         prefix = '0d'
         timestamp = compose['commit']['params']['message'][2:14]

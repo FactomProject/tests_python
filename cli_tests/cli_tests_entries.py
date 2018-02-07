@@ -178,7 +178,6 @@ class CLITestsEntries(unittest.TestCase):
         found = False
         for pending in pending_list.split('\n'):
             text = self.cli_chain.get_entry_by_hash(pending)
-            print 'text', text
             self.assertNotIn('Invalid', text,'Entry Hash is invalid')
             entry_chain_id = self.cli_chain.parse_entry_data(text)['ChainID']
             if entry_chain_id == chain_id:

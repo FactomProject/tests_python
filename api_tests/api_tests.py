@@ -16,10 +16,6 @@ class APITests(unittest.TestCase):
         data = read_data_from_json('addresses.json')
         self.factomd_address = data['factomd_controlpanel']
 
-    def test_HARMONY_API(self):
-        r = requests.post('https://harmony-api-dev-testnet.factom.com/sessions', data = {"username" : "auto",                                                                  "password" : "cwxeZ18q8kcEbKQU3wu5"})
-        print(r.text)
-
     def test_directory_blocks(self):
         keymr = self.factom_api.get_directory_block_head()
         self.assertTrue('000000000000000000000000000000000000000000000000000000000000000a' ==

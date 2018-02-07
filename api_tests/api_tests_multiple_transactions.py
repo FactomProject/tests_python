@@ -65,7 +65,6 @@ class ApiTestsTransactions(unittest.TestCase):
                     transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
                     self.wallet_api_objects.create_new_transaction(transaction_name)
                     example = self.wallet_api_objects.add_input_to_transaction(transaction_name, self.first_address, 100000000)
-                    print 'example', example
                     self.wallet_api_objects.add_entry_credit_output_to_transaction(transaction_name, self.entrycredit_address, 100000000)
                     self.wallet_api_objects.add_fee_to_transaction(transaction_name, self.first_address)
                     self.wallet_api_objects.sign_transaction(transaction_name)
