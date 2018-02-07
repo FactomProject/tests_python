@@ -44,7 +44,7 @@ class CLIObjectsCreate(CLIObjectsBase):
     def import_words_from_koinify_into_wallet(self, words):
         '''Import 12 words from Koinify sale into the Wallet
         :param words: space separated 12 words from koinify
-        :return: txt, factoid wallet address'''
+        :return: str, factoid wallet address'''
 
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._importwords, words)))
 

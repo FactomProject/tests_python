@@ -25,32 +25,33 @@ class APIEntriesTests(unittest.TestCase):
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
         self.blocktime = int(os.environ['BLOCKTIME'])
 
-    @unittest.expectedFailure
-    # TODO remove expectedFailure tag once commit_chain function is fixed so that it actually creates the requested chain instead of trying to create the null chain
     def test_compose_commit_reveal_entry(self):
         chain_external_ids, content = generate_random_external_ids_and_content()
 
         # compose chain
-        compose = self.api_objects_wallet.compose_chain(chain_external_ids, content, self.entry_credit_address1000)[0]
+        compose = self.api_objects_wallet.compose_chain(chain_external_ids, content, self.entry_credit_address1000)
 
         # commit chain
         commit  = self.api_objects_factomd.commit_chain(compose['commit']['params']['message'])
 
         # reveal_chain
-        reveal  = self.api_objects_factomd.reveal_chain(compose['reveal']['params']['entry'])[0]
+        reveal  = self.api_objects_factomd.reveal_chain(compose['reveal']['params']['entry'])
+
+        chain_external_ids.insert(0, '-h')
+        chain_external_ids.insert(2, '-h')
+        status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
         # compose entry
         entry_external_ids, content = generate_random_external_ids_and_content()
-        compose, compose_error = self.api_objects_wallet.compose_entry(reveal['chainid'], entry_external_ids, content, self.entry_credit_address1000)
-        self.assertFalse(compose_error, 'Compose entry failed because ' + compose_error)
+        compose = self.api_objects_wallet.compose_entry(reveal['chainid'], entry_external_ids, content, self.entry_credit_address1000)
 
         # commit entry
         commit  = self.api_objects_factomd.commit_entry(compose['commit']['params']['message'])
         # reveal entry
-        reveal, reveal_error  = self.api_objects_factomd.reveal_entry(compose['reveal']['params']['entry'])
+        reveal  = self.api_objects_factomd.reveal_entry(compose['reveal']['params']['entry'])
         # search for revealed entry
-        chain_external_ids.insert(0, '-h')
-        chain_external_ids.insert(2, '-h')
+        entry_external_ids.insert(0, '-h')
+        entry_external_ids.insert(2, '-h')
         status = wait_for_chain_in_block(external_id_list=entry_external_ids)
         # status = wait_for_chain_in_block(external_id_list=chain_names_list)
 

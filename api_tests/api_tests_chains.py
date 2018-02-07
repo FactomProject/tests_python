@@ -17,97 +17,77 @@ class APIChainsTests(unittest.TestCase):
         self.data = read_data_from_json('shared_test_data.json')
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
 
-    @unittest.expectedFailure
-    # TODO remove expectedFailure tag once commit_chain function is fixed so that it actually creates the requested chain instead of trying to create the null chain
     def test_compose_commit_reveal_chain(self):
         chain_external_ids, content = generate_random_external_ids_and_content()
 
         # compose chain
-        compose, compose_error = self.api_objects_wallet.compose_chain(chain_external_ids, content, self.entry_credit_address1000)
-        self.assertFalse(compose_error,'Compose chain failed because ' + compose_error)
+        compose = self.api_objects_wallet.compose_chain(chain_external_ids, content, self.entry_credit_address1000)
 
         # commit chain
-        chain_external_ids, content = self.__random_chain()
-        compose, error_message = self.api_objects_wallet.compose_chain(chain_external_ids, content, self.entry_credit_address1000)
-        if error_message:
-            self.assertFalse(True, 'Chain compose failed - ' + error_message)
-        else:
-            commit = self.api_objects_factomd.commit_chain(compose['commit']['params']['message'])
-            # reveal chain
-            reveal  = self.api_objects_factomd.reveal_chain(compose['reveal']['params']['entry'])
-            # recreate external id parameter from external id list
-            chain_external_ids.insert(0, '-h')
-            chain_external_ids.insert(2, '-h')
+        commit = self.api_objects_factomd.commit_chain(compose['commit']['params']['message'])
 
-            # search for revealed chain
-            status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+        # reveal chain
+        reveal  = self.api_objects_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
-            # chain's existence is acknowledged?
-            self.assertNotIn('Missing Chain Head', status, 'Chain not revealed')
+        # search for revealed chain
+        chain_external_ids.insert(0, '-h')
+        chain_external_ids.insert(2, '-h')
+        status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
-            # chain arrived in block?
-            self.assertTrue('DBlockConfirmed' in str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
+        # chain's existence is acknowledged?
+        self.assertNotIn('Missing Chain Head', status, 'Chain not revealed')
+
+        # chain arrived in block?
+        self.assertTrue('DBlockConfirmed' in str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
     def test_repeated_commits(self):
         balance_before = self.api_objects_factomd.get_entry_credit_balance(self.entry_credit_address1000)
 
         # commit chain
-        external_ids, content = self.__random_chain()
-        compose, error_message = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
-        if error_message:
-            self.assertFalse(True, 'Chain compose failed - ' + error_message)
-        else:
-            commit = self.api_objects_factomd.commit_chain(compose['commit']['params']['message'])
+        chain_external_ids, content = generate_random_external_ids_and_content()
 
-            # wait for 1st commit to be acknowledged
-            tx_id = commit['txid']
-            wait_for_ack(tx_id)
+        # compose chain
+        compose = self.api_objects_wallet.compose_chain(chain_external_ids, content, self.entry_credit_address1000)
 
-            # try to repeat commit
-            allow_fail = True
-            block = json.loads(self.api_objects_factomd.send_get_request_with_params_dict('commit-chain', {'message': compose['commit']['params']['message']}, allow_fail))
+        # commit chain
+        commit = self.api_objects_factomd.commit_chain(compose['commit']['params']['message'])
 
-            if 'Repeated Commit' not in str(block):
+        # wait for 1st commit to be acknowledged
+        tx_id = commit['txid']
+        wait_for_ack(tx_id)
 
-                # repeated chain commit wrongly allowed
-                if 'error' in str(block):
+        # try to repeat commit
+        allow_fail = True
+        block = json.loads(self.api_objects_factomd.send_get_request_with_params_dict('commit-chain', {'message': compose['commit']['params']['message']}, allow_fail))
 
-                    # repeated chain commit failed for a different reason
-                    exit('Chain commit of entryhash ' + str(commit['entryhash']) + ' failed - ' + str(block['error']))
-                else:
+        if 'Repeated Commit' not in str(block):
 
-                    # see if 2nd commit has been mistakenly paid for
-                    wait_for_chain_in_block(external_id_list=external_ids)
-                    balance_after = self.api_objects_factomd.get_entry_credit_balance(self.entry_credit_address1000)
-                    self.assertEqual(balance_before, balance_after + 12, 'Balance before commit = ' + str(balance_before) + '. Balance after commit = ' + str(balance_after) + '. Balance after single commit SHOULD be = ' + str(balance_after + 12))
-                    exit('Repeated commit allowed for entryhash ' + str(commit['entryhash']))
+            # repeated chain commit wrongly allowed
+            if 'error' in str(block):
+
+                # repeated chain commit failed for a different reason
+                exit('Chain commit of entryhash ' + str(commit['entryhash']) + ' failed - ' + str(block['error']))
+            else:
+
+                # see if 2nd commit has been mistakenly paid for
+                chain_external_ids.insert(0, '-h')
+                chain_external_ids.insert(2, '-h')
+                wait_for_chain_in_block(external_id_list=chain_external_ids)
+                balance_after = self.api_objects_factomd.get_entry_credit_balance(self.entry_credit_address1000)
+                self.assertEqual(balance_before, balance_after + 12, 'Balance before commit = ' + str(balance_before) + '. Balance after commit = ' + str(balance_after) + '. Balance after single commit SHOULD be = ' + str(balance_after + 12))
+                exit('Repeated commit allowed for entryhash ' + str(commit['entryhash']))
 
     def test_raw_message(self):
-        external_ids, content = self.__random_chain()
+        external_ids, content = generate_random_external_ids_and_content()
         print 'external_ids', external_ids
         print 'content', content
-        compose, error_message = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
-        if error_message:
-            self.assertFalse(True, 'Chain compose failed - ' + error_message)
-        else:
-            prefix = '0d'
-            timestamp = compose['commit']['params']['message'][2:14]
-            entry = compose['reveal']['params']['entry']
-            raw_message = prefix + timestamp + entry
-            self.api_objects_factomd.commit_chain(compose['commit']['params']['message'])
-            self.api_objects_factomd.send_raw_message(raw_message)
-
-    def __random_chain(self):
-
-        # external ids must be in hex
-        name_1 = binascii.b2a_hex(os.urandom(2))
-        name_2 = binascii.b2a_hex(os.urandom(2))
-        external_ids = [name_1, name_2]
-
-        # content must be in hex
-        content = binascii.hexlify(create_random_string(1024))
-
-        return external_ids, content
+        compose = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
+        prefix = '0d'
+        timestamp = compose['commit']['params']['message'][2:14]
+        entry = compose['reveal']['params']['entry']
+        raw_message = prefix + timestamp + entry
+        self.api_objects_factomd.commit_chain(compose['commit']['params']['message'])
+        self.api_objects_factomd.send_raw_message(raw_message)
 
     def __failure_data(self, commit_response):
         message = str(commit_response['message'])

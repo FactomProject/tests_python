@@ -10,9 +10,7 @@ class APIObjectsFactomd():
         url = 'http://'+self.factomd_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
-        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print r.text
         if not allow_fail and not r.status_code == requests.codes.ok: exit('Get failed - ' + r.text)
         return r.text
 
@@ -20,9 +18,7 @@ class APIObjectsFactomd():
         url = 'http://' + self.factomd_address + '/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
-        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print r.text
         if not r.status_code == requests.codes.ok: exit('Get failed - ' + r.text)
         return r.text
 

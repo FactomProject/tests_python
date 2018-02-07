@@ -1,12 +1,6 @@
-import unittest
-import string
-import random
-import time
-import os
-
+import unittest, string, random, time, os
 
 from flaky import flaky
-
 from nose.plugins.attrib import attr
 
 from api_objects.api_objects_factomd import APIObjectsFactomd
@@ -82,7 +76,7 @@ class ApiTestsWallet(unittest.TestCase):
         transaction = self.wallet_api_objects.compose_transaction(transaction_name)
         txid = self.api_objects.submit_factoid_by_transaction(transaction)['txid']
         wait_for_ack(txid)
-        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)['transactions'][0]['inputs'][0]['amount'] == 100000000, 'Transaction is not listed')
+        self.assertTrue(self.wallet_api_objects.list_transactions_by_txid(txid)[0]['inputs'][0]['amount'] == 100000000, 'Transaction is not listed')
 
     def test_list_current_working_transactions_in_wallet(self):
         transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
@@ -116,5 +110,7 @@ class ApiTestsWallet(unittest.TestCase):
             time.sleep(1)
         self.assertLess(x, self.blocktime, 'Transaction never pending')
 
+    def test_import_12_words(self):
+        self.wallet_api_objects.import_mnemonic(self.data['words'])
 
 

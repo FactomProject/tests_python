@@ -30,10 +30,8 @@ class APITestsBalances(unittest.TestCase):
             for address in factomd_server_list:
                 self.api_objects.change_factomd_address(address)
                 if 'FA' in w_address[:3]:
-                    print 'address', address
                     balance.append(self.api_objects.get_factoid_balance(w_address))
                 else:
-                    print 'address', address
                     balance.append(self.api_objects.get_entry_credit_balance(w_address))
                 self.assertTrue(all(x == balance[0] for x in balance), "Wrong balance in address: " + w_address + "\n")
 

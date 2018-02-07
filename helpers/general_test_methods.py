@@ -28,10 +28,11 @@ def wait_for_ack(transaction_id):
 def wait_for_chain_in_block(**kwargs):
     chain_identifier = ''
     if 'external_id_list' in kwargs:
+        # kwargs['external_id_list'].insert(0, '-h')
+        # kwargs['external_id_list'].insert(2, '-h')
         chain_identifier = ' '.join(kwargs['external_id_list'])
     for x in range(0, BLOCK_WAIT_TIME):
         result = chain_objects.get_chainhead(external_id_list=[chain_identifier])
-        # if 'Missing Chain Head' in result or 'Chain not yet included in a Directory Block' not in result: break
         if 'Missing Chain Head' not in result and 'Chain not yet included in a Directory Block' not in result: break
         time.sleep(1)
     return result

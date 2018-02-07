@@ -11,27 +11,21 @@ class APIObjectsWallet():
         url = 'http://'+ self.wallet_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
-        print data
         r = requests.post(url, data=json.dumps(data), headers=headers)
-        print r.text
         return r.text
 
     def send_get_request_with_params_dict(self, method, params_dict):
         url = 'http://' + self.wallet_address + '/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
-        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print r.text
         return r.text
 
     def send_get_request_with_method(self, method):
         url = 'http://' + self.wallet_address + '/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
-        print data
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        print r.text
         return r.text
 
     def check_address_by_public_address(self, address):
@@ -69,9 +63,9 @@ class APIObjectsWallet():
 
     def import_addresses(self, *secret_addresses):
         '''
-        Imports address by secret address and returns public
-        :param *secret_address: list of 1 or more str
-        :return: list of corresponding public addresses str
+        Imports address by secret address and returns public addresses
+        :param *secret_address: list, 1 or more private keys
+        :return: list, corresponding public addresses
         '''
         result = json.loads(self.send_post_request_with_params_dict('import-addresses', ast.literal_eval(json.dumps({'addresses': [{'secret': address} for address in secret_addresses]}))))
         public=[]
@@ -82,11 +76,13 @@ class APIObjectsWallet():
     def import_mnemonic(self, words):
         '''
         Import from mnemonics
-        :param words: string 12 words
-        :return: json
+        :param words: str, 12 words
+        :return: str, public key of imported address
         '''
-        blocks = json.loads(self.send_get_request_with_params_dict('import-mnemonic', {'words': words}))
-        return blocks#["result"]["public"]
+        block = json.loads(self.send_get_request_with_params_dict('import-koinify', {'words': words}))
+        print 'result', block['result']['public']
+        if 'error' in str(block): exit('Import 12 words failed - ' + str(block['error']))
+        else: return block['result']['public']
 
     def list_all_transactions_in_factoid_blockchain(self):
         '''
@@ -117,11 +113,27 @@ class APIObjectsWallet():
     def list_transactions_by_txid(self, txid):
         '''
         :param txid: str
-        :return:
+        :return: JSON transaction containing:
+            txid
+            feespaid: factoshis
+            signed: boolean
+            timestamp
+            totalecoutputs: factoshis
+            totalinputs: factoshis
+            totaloutputs: factoshis
+            inputs
+                address
+                amount: factoshis
+            outputs
+                address
+                amount: factoshis
+            ecoutputs
+                address
+                amount: factoshis
         '''
         block = json.loads(self.send_post_request_with_params_dict('transactions', {'txid': txid}))
         if 'error' in str(block): exit('List transaction ' + txid + ' failed - ' + str(block['error']))
-        else: return block['result']
+        else: return block['result']['transactions']
 
     def list_transactions_by_address(self, address):
         blocks = json.loads(self.send_post_request_with_params_dict('transactions', {'address': address}))
@@ -134,7 +146,7 @@ class APIObjectsWallet():
     def create_new_transaction(self, transaction_name):
         '''
         Create new transaction
-        :param transaction_name: str - name
+        :param transaction_name: str, name
         :return: transaction
         '''
         blocks = json.loads(self.send_post_request_with_params_dict('new-transaction', {'tx-name': transaction_name}))
@@ -151,7 +163,7 @@ class APIObjectsWallet():
     def add_input_to_transaction(self, transaction_name, address, amount):
         blocks = json.loads(self.send_post_request_with_params_dict('add-input', {'tx-name': transaction_name,
         'address':address,'amount': amount}))
-        return blocks#["result"]
+        return blocks["result"]
 
     def add_output_to_transaction(self, transaction_name, address, amount):
         blocks = json.loads(self.send_post_request_with_params_dict('add-output', {'tx-name': transaction_name,
@@ -163,32 +175,16 @@ class APIObjectsWallet():
         return blocks["result"]
 
     def add_fee_to_transaction(self, transaction_name, address):
-        blocks = json.loads(self.send_post_request_with_params_dict('add-fee', {'tx-name': transaction_name,
-                                                                                 'address': address}))
+        blocks = json.loads(self.send_post_request_with_params_dict('add-fee', {'tx-name': transaction_name, 'address': address}))
         return blocks["result"]
 
     def subtract_fee_from_transaction(self, transaction_name, address):
-        blocks = json.loads(self.send_post_request_with_params_dict('sub-fee', {'tx-name': transaction_name,
-                                                                               'address': address}))
+        blocks = json.loads(self.send_post_request_with_params_dict('sub-fee', {'tx-name': transaction_name, 'address': address}))
         return blocks
 
     def sign_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('sign-transaction', {'tx-name': transaction_name}))
         return blocks
-
-    def compose_entry(self, chainid, external_ids, content, ecpub):
-        blocks = json.loads(self.send_post_request_with_params_dict('compose-entry',
-                 {'entry': {'chainid': chainid, 'extids': external_ids, 'content': content}, 'ecpub': ecpub}))
-        if 'error' in blocks:
-            return_data = blocks['error']
-            if 'data' in blocks['error']:
-                error_message = blocks['error']['data']
-            else:
-                error_message = blocks['error']['message']
-        else:
-            return_data = blocks['result']
-            error_message = ''
-        return return_data, error_message
 
     def compose_chain(self, external_ids, content, ec_address):
         '''
@@ -197,39 +193,49 @@ class APIObjectsWallet():
         :param content: str, the content (in hex) of the 1st entry of the chain
         :param ec_address: str, the public key of the entry credit address that will pay for the creation of the chain
         :return return_data: if API call succeeds, JSON of the two API calls (commit and reveal) that when sent later will actually create the chain
-        if API call fails, error JSON block containing:
-            code
-            message
-            data (optional)
-        :return error_message: if API call succeeds, nil
-        if API call fails, useful error message
+            commit
+                jsonrpc:"2.0"
+                id
+                params
+                    message
+                method: "commit-chain"
+            reveal
+                jsonrpc:"2.0"
+                id
+                params
+                    entry
+                method: "reveal-chain"
        '''
         block = json.loads(self.send_post_request_with_params_dict('compose-chain',
                  {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ec_address}))
-        if 'error' in block:
-            return_data = block['error']
-            if 'data' in block['error']:
-                error_message = block['error']['data']
-            else:
-                error_message = block['error']['message']
-        else:
-            return_data = block['result']
-            error_message = ''
-        return return_data, error_message
+        if 'error' in str(block): exit('Compose chain failed - ' + str(block['error']))
+        else: return block['result']
 
-    def compose_entry(self, chainid, external_ids, content, ecpub):
-        blocks = json.loads(self.send_post_request_with_params_dict('compose-entry',
-                 {'entry': {'chainid': chainid, 'extids': external_ids, 'content': content}, 'ecpub': ecpub}))
-        if 'error' in blocks:
-            return_data = blocks['error']
-            if 'data' in blocks['error']:
-                error_message = blocks['error']['data']
-            else:
-                error_message = blocks['error']['message']
-        else:
-            return_data = blocks['result']
-            error_message = ''
-        return return_data, error_message
+    def compose_entry(self, chainid, external_ids, content, ec_address):
+        '''
+        Create both the 'commit-entry' JSON and the 'reveal-entry' JSON that can then be sent in API calls to create an entry at a later time
+        :param chainid: of chain in which to make the entry
+        :param external_ids: list, all the external ids (in hex) that will determine the identity of the entry
+        :param content: str, the content (in hex) of the entry
+        :param ec_address: str, the public key of the entry credit address that will pay for the creation of the entry
+        :return: JSON of the two API calls (commit and reveal) that when sent later will actually create the entry
+            commit
+                jsonrpc:"2.0"
+                id
+                params
+                    message
+                method: "commit-entry"
+            reveal
+                jsonrpc:"2.0"
+                id
+                params
+                    entry
+                method: "reveal-entry"
+        '''
+        block = json.loads(self.send_post_request_with_params_dict('compose-entry',
+                 {'entry': {'chainid': chainid, 'extids': external_ids, 'content': content}, 'ecpub': ec_address}))
+        if 'error' in str(block): exit('Compose entry failed - ' + str(block['error']))
+        else: return block['result']
 
     def compose_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-transaction',
