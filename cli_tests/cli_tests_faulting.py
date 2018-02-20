@@ -3,7 +3,7 @@ import unittest, time, json
 from nose.plugins.attrib import attr
 
 from cli_objects.cli_objects_create import CLIObjectsCreate
-from api_objects.api_objects_debug import ApiObjectsDebug
+from api_objects.api_objects_debug import APIObjectsDebug
 from helpers.helpers import read_data_from_json
 from helpers.cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
@@ -17,7 +17,7 @@ class CLITestsFaulting(unittest.TestCase):
 
     def setUp(self):
         self.cli_create = CLIObjectsCreate()
-        self.api_debug = ApiObjectsDebug()
+        self.api_debug = APIObjectsDebug()
 
     def test_fault_audit_server(self):
 

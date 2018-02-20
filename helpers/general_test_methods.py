@@ -44,6 +44,7 @@ def fund_entry_credit_address(amount):
     :return: str, newly created entry credit address
   '''
     first_address = cli_create.import_addresses(data['factoid_wallet_address'])[0]
+    # first_address = 'cli_create'
     balance = api_objects_factomd.get_factoid_balance(first_address)
     factoshi_amount = amount * api_objects_factomd.get_entry_credit_rate()
     if int(balance) < factoshi_amount: exit('Factoid address ' + first_address + ' only has ' + balance + ' factoshis but needs ' + str(factoshi_amount) + ' to buy ' + amount + ' entry credits')

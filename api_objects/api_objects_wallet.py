@@ -106,8 +106,7 @@ class APIObjectsWallet():
                 amount: factoshis
         '''
         block = json.loads(self.send_get_request_with_method('transactions'))
-        if 'error' in str(block): exit('List transactions failed - ' + str(block['error']))
-        else: return block['result']['transactions']
+        return block['result']['transactions']
 
     def list_transactions_by_txid(self, txid):
         '''
@@ -131,8 +130,7 @@ class APIObjectsWallet():
                 amount: factoshis
         '''
         block = json.loads(self.send_post_request_with_params_dict('transactions', {'txid': txid}))
-        if 'error' in str(block): exit('List transaction ' + txid + ' failed - ' + str(block['error']))
-        else: return block['result']['transactions']
+        return block['result']['transactions']
 
     def list_transactions_by_address(self, address):
         blocks = json.loads(self.send_post_request_with_params_dict('transactions', {'address': address}))
@@ -207,8 +205,7 @@ class APIObjectsWallet():
        '''
         block = json.loads(self.send_post_request_with_params_dict('compose-chain',
                  {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ec_address}))
-        if 'error' in str(block): exit('Compose chain failed - ' + str(block['error']))
-        else: return block['result']
+        return block['result']
 
     def compose_entry(self, chainid, external_ids, content, ec_address):
         '''
@@ -233,8 +230,7 @@ class APIObjectsWallet():
         '''
         block = json.loads(self.send_post_request_with_params_dict('compose-entry',
                  {'entry': {'chainid': chainid, 'extids': external_ids, 'content': content}, 'ecpub': ec_address}))
-        if 'error' in str(block): exit('Compose entry failed - ' + str(block['error']))
-        else: return block['result']
+        return block['result']
 
     def compose_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-transaction',

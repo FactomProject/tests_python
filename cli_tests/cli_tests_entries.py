@@ -9,6 +9,9 @@ from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, 
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from cli_objects.cli_objects_chain import CLIObjectsChain
 
+from api_objects.api_objects_debug import APIObjectsDebug
+
+
 @flaky(max_runs=3, min_passes=1)
 @attr(fast=True)
 class CLITestsEntries(unittest.TestCase):
@@ -17,6 +20,10 @@ class CLITestsEntries(unittest.TestCase):
     def setUp(self):
         self.cli_create = CLIObjectsCreate()
         self.cli_chain = CLIObjectsChain()
+
+        self.api_objects_debug = APIObjectsDebug()
+
+
         self.ecrate = self.cli_create.get_entry_credit_rate()
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
         self.blocktime = int(os.environ['BLOCKTIME'])
@@ -38,6 +45,29 @@ class CLITestsEntries(unittest.TestCase):
         entry_hash = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, data, external_id_list=names_list, flag_list=factom_flags_list)
         self.assertNotIn("Entry not found", self.cli_chain.get_entry_by_hash(entry_hash),
                         "Entry not revealed")
+
+    def test_try_to_make_entry_without_chain(self):
+        # let holding queue clear
+        time.sleep(10)
+
+        # create non-existent chain external ids
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list = ['-n', name_1, '-n', name_2]
+
+        # make forced entry
+        data = create_random_string(1024)
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list += ['-e', name_1, '-e', name_2]
+        factom_flags_list = ['-f', '-E']
+        entry_hash = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, data, external_id_list=names_list, flag_list=factom_flags_list)
+        original = ''
+        while 'CommitEntry' not in str(original):
+            original, remote = self.api_objects_debug.compare_holding_queues()
+        self.assertIn('None', str(remote['Messages']), 'Entry in non-existent chain propagated to remote node holding queue')
+        self.assertIn("Entry not found", self.cli_chain.get_entry_by_hash(entry_hash),
+                        "Entry made without chain")
 
     def test_raw_entry(self):
         # make chain

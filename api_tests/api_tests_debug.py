@@ -1,4 +1,4 @@
-from api_objects.api_objects_debug import ApiObjectsDebug
+from api_objects.api_objects_debug import APIObjectsDebug
 import unittest
 import re
 from helpers.helpers import read_data_from_json
@@ -9,7 +9,7 @@ from nose.plugins.attrib import attr
 class FactomDebugAPItests(unittest.TestCase):
 
     def setUp(self):
-        self.factomd_debug_api = ApiObjectsDebug()
+        self.factomd_debug_api = APIObjectsDebug()
         data = read_data_from_json('addresses.json')
         self.factomd_address = data['factomd_address']
         self.controlpanel = read_data_from_json('faulting.json')
@@ -35,3 +35,4 @@ class FactomDebugAPItests(unittest.TestCase):
                 if re.search((r'.{64}$'), str(server)):
                     audit_list.append(server)
         return audit_list
+

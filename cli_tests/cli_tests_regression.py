@@ -141,8 +141,7 @@ class CLITestsRegression(unittest.TestCase):
 
     def test_entry_credits_wallet(self):
         self.assertIn(self.entry_credit_address, self.cli_create.export_addresses(), 'Not all addresses were exported')
-        self.assertIn(self.entry_credit_address, self.cli_create.list_addresses(), 'Not all addresses '
-                                                                                                  'were listed')
+        self.assertIn(self.entry_credit_address, self.cli_create.list_addresses(), 'Not all addresses were listed')
 
     def test_create_transaction_with_no_inputs_outputs_or_entry_creds(self):
         transaction_name = create_random_string(5)

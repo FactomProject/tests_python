@@ -9,10 +9,10 @@ class CLIObjectsBase():
     factomd_address_2 = data['factomd_address_2']
 
     _cli_command = '/srv/factom-cli -w ' \
-                                  '' + wallet_address +' -s ' + factomd_address +' '
+                   '' + wallet_address + ' -s ' + factomd_address + ' '
 
     def change_factomd_address(self, value):
         self._cli_command = '/srv/factom-cli -w ' \
-                                                 '' + self.wallet_address + ' -s ' + value + ' '
+                            '' + self.wallet_address + ' -s ' + value + ' '
 
 

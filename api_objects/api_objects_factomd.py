@@ -1,17 +1,18 @@
 import requests, json
 
 from helpers.helpers import read_data_from_json
+from requests.exceptions import HTTPError
 
 class APIObjectsFactomd():
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
 
-    def send_get_request_with_params_dict(self, method, params_dict, allow_fail=False):
+    def send_get_request_with_params_dict(self, method, params_dict, repeatOK=False):
         url = 'http://'+self.factomd_address+'/v2'
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "params": params_dict, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        if not allow_fail and not r.status_code == requests.codes.ok: exit('Get failed - ' + r.text)
+        self.raise_for_status_with_message(method, r, repeatOK)
         return r.text
 
     def send_get_request_with_method(self, method):
@@ -19,8 +20,24 @@ class APIObjectsFactomd():
         headers = {'content-type': 'text/plain'}
         data = {"jsonrpc": "2.0", "id": 0, "method": method}
         r = requests.get(url, data=json.dumps(data), headers=headers)
-        if not r.status_code == requests.codes.ok: exit('Get failed - ' + r.text)
+        self.raise_for_status_with_message(method, r)
         return r.text
+
+    def raise_for_status_with_message(self, method, response, repeatOK=False):
+        """
+        expand raise_for_status method to return helpful error message
+        :param response: JSON, requests response object
+        :param repeatOK: boolean, True means do not throw error if Repeated Commit is detected
+        """
+        try:
+            response.raise_for_status()
+        except HTTPError as error:
+            if response.text:
+                if not repeatOK or 'Repeated Commit' not in str(response.text):
+                    raise HTTPError('{} Error Message: {}'.format(str(error.message), 'API-call ' + method + ' failed - ' + response.text))
+            else:
+                raise error
+        return
 
     def change_factomd_address(self,change_factomd_address):
         self.factomd_address = change_factomd_address
@@ -110,8 +127,7 @@ class APIObjectsFactomd():
                 directoryblockkeymr
         '''
         block = json.loads(self.send_get_request_with_params_dict('receipt', {'hash': hash}))
-        if 'error' in str(block): exit('Receipt creation for hash ' + hash + ' failed - ' + str(block['error']))
-        else: return block['result']
+        return block['result']
 
     def get_entry_block(self, key_mr):
         '''
@@ -204,8 +220,7 @@ class APIObjectsFactomd():
         :return: int, balance
         '''
         block = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address}))
-        if 'error' in str(block): exit('Balance for entry credit address ' + ec_address + ' failed - ' + str(block['error']))
-        else: return block['result']['balance']
+        return block['result']['balance']
 
     def get_factoid_balance(self, factoid_address):
         '''
@@ -214,8 +229,7 @@ class APIObjectsFactomd():
         :return: int, balance
         '''
         block = json.loads(self.send_get_request_with_params_dict('factoid-balance', {'address': factoid_address}))
-        if 'error' in str(block): exit('Balance for factoid address ' + factoid_address + ' failed - ' + str(block['error']))
-        else: return block['result']['balance']
+        return block['result']['balance']
 
     def get_entry_credit_rate(self):
         '''
@@ -223,8 +237,7 @@ class APIObjectsFactomd():
         :return int, how many factoshis it currently takes to create an entry credit
         '''
         block = json.loads(self.send_get_request_with_method('entry-credit-rate'))
-        if 'error' in str(block): exit('Entry_credit_rate failed - ' + str(block['error']))
-        else: return block['result']['rate']
+        return block['result']['rate']
 
     def get_factomd_properties(self):
         '''
@@ -257,8 +270,7 @@ class APIObjectsFactomd():
             chainidhash
         '''
         block = json.loads(self.send_get_request_with_params_dict('commit-chain', {'message': message}))
-        if 'error' in str(block): exit('Chain commit of message ' + message + ' failed - ' + str(block['error']))
-        else: return block['result']
+        return block['result']
 
     def reveal_chain(self, entry):
         '''
@@ -270,8 +282,7 @@ class APIObjectsFactomd():
             chainid
       '''
         block = json.loads(self.send_get_request_with_params_dict('reveal-chain', {'entry': entry}))
-        if 'error' in str(block): exit('Chain reveal of entry ' + entry + ' failed - ' + str(block['error']))
-        else: return block['result']
+        return block['result']
 
     def commit_entry(self, message):
         '''
@@ -283,8 +294,7 @@ class APIObjectsFactomd():
             entryhash
         '''
         block = json.loads(self.send_get_request_with_params_dict('commit-entry', {'message': message}))
-        if 'error' in str(block): exit('Entry commit of message ' + message + ' failed - ' + str(block['error']))
-        else: return block['result']
+        return block['result']
 
     def reveal_entry(self, entry):
         '''
@@ -296,8 +306,7 @@ class APIObjectsFactomd():
             chainid
         '''
         block = json.loads(self.send_get_request_with_params_dict('reveal-entry', {'entry': entry}))
-        if 'error' in str(block): exit('Chain reveal of entry ' + entry + ' failed - ' + str(block['error']))
-        else: return block['result']
+        return block['result']
 
     def get_status(self, hash_or_tx_id, chain_id):
         '''
@@ -317,8 +326,7 @@ class APIObjectsFactomd():
             message :"Successfully sent the message"
       '''
         block = json.loads(self.send_get_request_with_params_dict('send-raw-message', {'message': message}))
-        if 'error' in str(block): exit('Send raw message of ' + message + ' failed - ' + str(block['error']))
-        else: return block['result']
+        return block['result']
 
     def get_current_minute(self):
         '''

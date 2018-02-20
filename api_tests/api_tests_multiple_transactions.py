@@ -21,7 +21,6 @@ class ApiTestsTransactions(unittest.TestCase):
         self.first_address = self.wallet_api_objects.import_addresses(self.data['factoid_wallet_address'])[0]
         self.second_address = self.wallet_api_objects.generate_factoid_address()
         self.entrycredit_address = self.wallet_api_objects.generate_ec_address()
-        # self.ecrate = self.api_objects.get_entry_credit_rate()
 
     def test_multiple_factoid_address_transactions(self):
         '''
