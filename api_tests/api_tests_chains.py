@@ -97,7 +97,7 @@ class APIChainsTests(unittest.TestCase):
         if error_message:
             self.assertFalse(True, 'Chain compose failed - ' + error_message)
         else:
-            prefix = '0d'
+            prefix = '0e'
             timestamp = compose['commit']['params']['message'][2:14]
             entry = compose['reveal']['params']['entry']
             raw_message = prefix + timestamp + entry
