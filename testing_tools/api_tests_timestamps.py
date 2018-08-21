@@ -5,7 +5,7 @@ from api_objects.api_objects_factomd import APIObjectsFactomd
 from api_objects.api_objects_wallet import APIObjectsWallet
 from helpers.helpers import read_data_from_json
 
-@attr(production_tool=True)
+@attr(production=True)
 class APITestsTimestamps(unittest.TestCase):
     # testcases to verify the various timestamps in entry credit block and entry block
     data = read_data_from_json('addresses.json')
@@ -37,8 +37,6 @@ class APITestsTimestamps(unittest.TestCase):
                     if "MilliTime" in ec_block['Body']['Entries'][j]:
                         entries_ecblock_time = int(ec_block['Body']['Entries'][j]['MilliTime'],16)/1000
                         self.assertFalse(entries_ecblock_time > dblock_time + 3600 or entries_ecblock_time < dblock_time - 3600,"Entry Credit Block has entry hashes more than 2 hrs range. height = %s" % str(i))
-
-
 
     def test_entry_block_time(self):
         '''

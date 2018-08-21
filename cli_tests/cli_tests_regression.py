@@ -1,4 +1,4 @@
-import unittest, json, binascii, hashlib, re, time
+import unittest, json, binascii, hashlib, re, time, datetime
 import os
 from nose.plugins.attrib import attr
 
@@ -97,8 +97,7 @@ class CLITestsRegression(unittest.TestCase):
         AMOUNT_SENT = 1
         transaction_name = create_random_string(5)
         self.cli_create.create_new_transaction(transaction_name)
-        self.cli_create.add_input_to_transaction(transaction_name, self.first_address,
-                                                 str(AMOUNT_SENT))
+        self.cli_create.add_input_to_transaction(transaction_name, self.first_address, str(AMOUNT_SENT))
 
         # test add_output_to_transaction_quiet_flag
         factom_flags_list = ['-q']
@@ -141,8 +140,8 @@ class CLITestsRegression(unittest.TestCase):
 
     def test_entry_credits_wallet(self):
         self.assertIn(self.entry_credit_address, self.cli_create.export_addresses(), 'Not all addresses were exported')
-        self.assertIn(self.entry_credit_address, self.cli_create.list_addresses(), 'Not all addresses '
-                                                                                                  'were listed')
+        self.cli_create.list_addresses()
+        self.assertIn(self.entry_credit_address, self.cli_create.list_addresses(), 'Not all addresses were listed')
 
     def test_create_transaction_with_no_inputs_outputs_or_entry_creds(self):
         transaction_name = create_random_string(5)
@@ -227,8 +226,7 @@ class CLITestsRegression(unittest.TestCase):
         transaction_name = create_random_string(5)
         self.cli_create.create_new_transaction(transaction_name)
         self.cli_create.add_input_to_transaction(transaction_name, self.first_address, str(FACTOID_AMOUNT))
-        self.cli_create.add_entry_credit_output_to_transaction(transaction_name,
-                                                               self.entry_credit_address, str(FACTOID_AMOUNT))
+        self.cli_create.add_entry_credit_output_to_transaction(transaction_name,                 self.entry_credit_address, str(FACTOID_AMOUNT))
 
         # test add_fee_to_transaction quiet flag
         factom_flags_list = ['-q']
@@ -299,8 +297,7 @@ class CLITestsRegression(unittest.TestCase):
         factom_flags_list = ['-T']
         tx_id = self.cli_create.buy_entry_credits(self.first_address, self.entry_credit_address, str(ENTRY_CREDIT_AMOUNT), flag_list=factom_flags_list)
         wait_for_ack(tx_id)
-        self.assertNotIn('Internal error', self.cli_create.list_transaction (tx_id), 'Transaction not '
-                                                                                                    'found')
+        self.assertNotIn('Internal error', self.cli_create.list_transaction (tx_id), 'Transaction not found')
 
     def test_force_buy_entry_credits_with_wrong_accounts(self):
         ENTRY_CREDIT_AMOUNT = 150

@@ -33,8 +33,7 @@ class CLIObjectsCreate(CLIObjectsBase):
         address_string = addresses[0]
         for address in addresses[1:]:
             address_string = address_string + ' ' + address
-        result = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._importaddress,
-                                                               address_string)))
+        result = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._importaddress, address_string)))
         result = result.split('\n')
         return result
 
@@ -44,7 +43,7 @@ class CLIObjectsCreate(CLIObjectsBase):
     def import_words_from_koinify_into_wallet(self, words):
         '''Import 12 words from Koinify sale into the Wallet
         :param words: space separated 12 words from koinify
-        :return: txt, factoid wallet address'''
+        :return: str, factoid wallet address'''
 
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._importwords, words)))
 

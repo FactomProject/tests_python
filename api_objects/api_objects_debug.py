@@ -4,9 +4,10 @@ import json
 from helpers.helpers import read_data_from_json
 
 
-class ApiObjectsDebug():
+class APIObjectsDebug():
     data = read_data_from_json('addresses.json')
     factomd_address = data['factomd_address']
+    factomd_address_5 = data['factomd_address_5']
 
     def send_get_request_with_params_dict(self, method, params_dict):
         url = 'http://' + self.factomd_address + '/debug'

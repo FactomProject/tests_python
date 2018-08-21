@@ -12,11 +12,4 @@ def generate_random_external_ids_and_content():
 
     return external_ids, content
 
-def commit_failure_data(commit_response):
-    message = str(commit_response['message'])
-    info = str(commit_response['data']['info'])
-    entryhash = str(commit_response['data']['entryhash'])
-    return message, info, entryhash
-
-
 

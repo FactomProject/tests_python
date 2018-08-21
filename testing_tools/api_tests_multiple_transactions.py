@@ -10,7 +10,7 @@ from api_objects.api_objects_wallet import APIObjectsWallet
 from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import read_data_from_json
 
-@attr(stress_test=True)
+@attr(load=True)
 class ApiTestsTransactions(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
     blocktime = int(os.environ['BLOCKTIME'])
@@ -21,7 +21,6 @@ class ApiTestsTransactions(unittest.TestCase):
         self.first_address = self.wallet_api_objects.import_addresses(self.data['factoid_wallet_address'])[0]
         self.second_address = self.wallet_api_objects.generate_factoid_address()
         self.entrycredit_address = self.wallet_api_objects.generate_ec_address()
-        self.ecrate = self.api_objects.get_entry_credits_rate()
 
     def test_multiple_factoid_address_transactions(self):
         '''
@@ -49,7 +48,6 @@ class ApiTestsTransactions(unittest.TestCase):
                 status = self.api_objects.get_status(txid,'f')['status']
                 self.assertEquals(status, 'DBlockConfirmed', 'Transaction = %s is still not confirmed' % txid)
 
-
     def test_multiple_entrycredit_address_transactions(self):
         '''
         This testcase will submit 4 entry credit transactions per second and checks for transaction status after one block time.
@@ -59,12 +57,13 @@ class ApiTestsTransactions(unittest.TestCase):
         '''
         blocktime = self.blocktime
         txidlist = []
+        count = 0
         for x in range(1, 6000):
             for temp in range(1, blocktime):
                 for y in range(1, 5):
                     transaction_name = ''.join(random.choice(string.ascii_letters) for _ in range(5))
                     self.wallet_api_objects.create_new_transaction(transaction_name)
-                    self.wallet_api_objects.add_input_to_transaction(transaction_name, self.first_address, 100000000)
+                    example = self.wallet_api_objects.add_input_to_transaction(transaction_name, self.first_address, 100000000)
                     self.wallet_api_objects.add_entry_credit_output_to_transaction(transaction_name, self.entrycredit_address, 100000000)
                     self.wallet_api_objects.add_fee_to_transaction(transaction_name, self.first_address)
                     self.wallet_api_objects.sign_transaction(transaction_name)
@@ -73,5 +72,6 @@ class ApiTestsTransactions(unittest.TestCase):
                 time.sleep(1)
             time.sleep(blocktime)
             for txid in txidlist:
+                count += 1
                 status = self.api_objects.get_status(txid, 'f')['status']
                 self.assertEquals(status, 'DBlockConfirmed', 'Transaction = %s is still not confirmed' % txid)

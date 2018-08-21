@@ -8,7 +8,7 @@ from helpers.helpers import read_data_from_json
 
 class APITestsChainhead(unittest.TestCase):
     data = read_data_from_json('addresses.json')
-    factomd_address_prod = data['factomd_address_prod3']
+    factomd_address_prod = data['factomd_address_prod2']
     factomd_address_ansible = data['factomd_address']
 
     def setUp(self):
@@ -16,13 +16,17 @@ class APITestsChainhead(unittest.TestCase):
         self.walletd_api = APIObjectsWallet()
         self.chainlist = {}
 
-    @attr(production=True)
-    def test_production_chains(self):
-        self._verify_chains_api(self.factomd_address_prod)
-
-    @attr(fast=False)
+    @attr(last=True)
     def test_ansible_chains(self):
         self._verify_chains_api(self.factomd_address_ansible)
+
+    @attr(production=True)
+    def test_production_chains(self):
+        # testing against courtesy node
+        self._verify_chains_api(self.factomd_address_prod)
+
+
+
 
 
     def _verify_chains_api(self, factomd_address):

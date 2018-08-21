@@ -18,5 +18,4 @@ class CLITestsWallet(unittest.TestCase):
         self.assertTrue("ec" in text)
     '''
     def test_backup_wallet(self):
-        self.assertTrue(len(self.cli_create.backup_wallet().split(' ')) == 12, "12 words are not present in "
-                                                                                      "wallet")
+        self.assertTrue(len(self.cli_create.backup_wallet().split(' ')) == 12, "12 words are not present in wallet")

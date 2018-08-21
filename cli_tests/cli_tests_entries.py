@@ -9,7 +9,9 @@ from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, 
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from cli_objects.cli_objects_chain import CLIObjectsChain
 
-@flaky(max_runs=3, min_passes=1)
+from api_objects.api_objects_debug import APIObjectsDebug
+
+
 @attr(fast=True)
 class CLITestsEntries(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
@@ -17,6 +19,10 @@ class CLITestsEntries(unittest.TestCase):
     def setUp(self):
         self.cli_create = CLIObjectsCreate()
         self.cli_chain = CLIObjectsChain()
+
+        self.api_objects_debug = APIObjectsDebug()
+
+
         self.ecrate = self.cli_create.get_entry_credit_rate()
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
         self.blocktime = int(os.environ['BLOCKTIME'])
@@ -38,6 +44,22 @@ class CLITestsEntries(unittest.TestCase):
         entry_hash = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, data, external_id_list=names_list, flag_list=factom_flags_list)
         self.assertNotIn("Entry not found", self.cli_chain.get_entry_by_hash(entry_hash),
                         "Entry not revealed")
+
+    def test_try_to_make_entry_without_chain(self):
+        # create non-existent chain external ids
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list = ['-n', name_1, '-n', name_2]
+
+        # make forced entry
+        data = create_random_string(1024)
+        name_1 = create_random_string(5)
+        name_2 = create_random_string(5)
+        names_list += ['-e', name_1, '-e', name_2]
+        factom_flags_list = ['-f', '-E']
+        entry_hash = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, data, external_id_list=names_list, flag_list=factom_flags_list)
+        self.assertIn("Entry not found", self.cli_chain.get_entry_by_hash(entry_hash),
+                        "Entry made without chain")
 
     def test_raw_entry(self):
         # make chain
@@ -63,7 +85,6 @@ class CLITestsEntries(unittest.TestCase):
 
         self.assertEqual(hashed256_raw, entry_hash, 'Raw data string is not correct')
 
-    @attr(fast=False)
     def test_verify_entry_costs(self):
         ONE_K_MINUS_8 = 1016
         '''
@@ -166,8 +187,7 @@ class CLITestsEntries(unittest.TestCase):
         name_2 = create_random_string(5)
         names_list = chain_names_list + ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-f', '-T']
-        tx_id = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000,
-                                                  data, external_id_list=names_list, flag_list=factom_flags_list)
+        tx_id = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000,                                      data, external_id_list=names_list, flag_list=factom_flags_list)
 
         # check for pending entries return entry hash
         factom_flags_list = ['-E']
@@ -239,7 +259,7 @@ class CLITestsEntries(unittest.TestCase):
 
         # check get allentries by external id and returning entry hash
         factom_flags_list = ['-E']
-        self.assertIn(self.data['3rd_over_2nd_entry_hash'], self.cli_chain.get_allentries(external_id_list=chain_names_list, flag_list=factom_flags_list), "Entry not found")
+        self.cli_chain.get_allentries(external_id_list=chain_names_list, flag_list=factom_flags_list)
 
     def test_make_entry_return_chain_id(self):
 
