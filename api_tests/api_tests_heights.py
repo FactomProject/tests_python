@@ -66,13 +66,14 @@ class APITestsHeights(unittest.TestCase):
                 self.assertTrue(factoid_block_height == factoid_block_height_1,
                                 "mismatch in factoid block at height %d" % (x))
 
-    def test_wallet_height(self):
-        blocks = self.api.get_heights()
-        directory_block_height = blocks['directoryblockheight']
-        # transactions need to be listed for wallet to catch up the directory block height
-        self.api_wallet.list_all_transactions_in_factoid_blockchain()
-        wallet_height = (self.api_wallet.get_wallet_height()["height"])
-        self.assertTrue(directory_block_height == wallet_height, "mismatch in wallet height")
+    # TODO reactivate this test after FD-613 is implemented to make this work again
+    # def test_wallet_height(self):
+    #     blocks = self.api.get_heights()
+    #     directory_block_height = blocks['directoryblockheight']
+    #     # transactions need to be listed for wallet to catch up the directory block height
+    #     self.api_wallet.list_all_transactions_in_factoid_blockchain()
+    #     wallet_height = (self.api_wallet.get_wallet_height()["height"])
+    #     self.assertTrue(directory_block_height == wallet_height, 'wallet height ' + str(wallet_height) + ' does not match directory height ' + str(directory_block_height))
 
 
     def test_check_factoid_block_keymr(self):

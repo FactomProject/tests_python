@@ -28,12 +28,17 @@ def wait_for_ack(transaction_id):
 def wait_for_chain_in_block(**kwargs):
     chain_identifier = ''
     if 'external_id_list' in kwargs:
-        # kwargs['external_id_list'].insert(0, '-h')
-        # kwargs['external_id_list'].insert(2, '-h')
         chain_identifier = ' '.join(kwargs['external_id_list'])
     for x in range(0, BLOCK_WAIT_TIME):
         result = chain_objects.get_chainhead(external_id_list=[chain_identifier])
         if 'Missing Chain Head' not in result and 'Chain not yet included in a Directory Block' not in result: break
+        time.sleep(1)
+    return result
+
+def wait_for_entry_in_block(entryhash, chainid):
+    for x in range(0, BLOCK_WAIT_TIME):
+        result = str(api_objects_factomd.get_status(entryhash, chainid))
+        if 'DBlockConfirmed' in result: break
         time.sleep(1)
     return result
 
@@ -44,10 +49,9 @@ def fund_entry_credit_address(amount):
     :return: str, newly created entry credit address
   '''
     first_address = cli_create.import_addresses(data['factoid_wallet_address'])[0]
-    # first_address = 'cli_create'
     balance = api_objects_factomd.get_factoid_balance(first_address)
     factoshi_amount = amount * api_objects_factomd.get_entry_credit_rate()
-    if int(balance) < factoshi_amount: exit('Factoid address ' + first_address + ' only has ' + balance + ' factoshis but needs ' + str(factoshi_amount) + ' to buy ' + amount + ' entry credits')
+    if int(balance) < factoshi_amount: exit('Factoid address ' + first_address + ' only has ' + str(balance) + ' factoshis but needs ' + str(factoshi_amount) + ' to buy ' + str(amount) + ' entry credits')
     else:
         entry_credit_address = cli_create.create_entry_credit_address()
         text = cli_create.buy_entry_credits(first_address, entry_credit_address, str(amount))

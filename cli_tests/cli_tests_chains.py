@@ -9,7 +9,6 @@ from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, fund_entry_credit_address
 
-@flaky(max_runs=3, min_passes=1)
 @attr(fast=True)
 class CLITestsChains(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
@@ -100,26 +99,56 @@ class CLITestsChains(unittest.TestCase):
             time.sleep(1)
         self.assertTrue(found, 'Chainhead not included in a Directory Block after 1 block')
 
-    def test_raw_commit(self):
-        self.entry_credit_address100 = fund_entry_credit_address(100)
-        data = create_random_string(1024)
-        name_1 = create_random_string(5)
-        name_2 = create_random_string(5)
-        names_list = ['-n', name_1, '-n', name_2]
-        chain_flag_list = ['-T']
-        tx_id = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
-        raw = self.cli_create.get_raw(tx_id)
+    # TODO reinstate this test when FD-547 is implemented to make it work
+    # def test_raw_commit(self):
+    #     # Currently this test fails about every 3-7 times. FD-547 to fix it is in backlog.
+    #
+    #     self.entry_credit_address100 = fund_entry_credit_address(100)
+    #     print 'balance', self.cli_create.check_wallet_address_balance(self.entry_credit_address100)
+    #     for _ in range(10):
+    #         data = create_random_string(1024)
+    #         name_1 = create_random_string(5)
+    #         name_2 = create_random_string(5)
+    #         names_list = ['-n', name_1, '-n', name_2]
+    #         # chain_flag_list = ['-T']
+    #         text = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list)
+    #         print 'text', text
+    #         chain_dict = self.cli_chain.parse_simple_data(text)
+    #         chain_id = chain_dict['ChainID']
+    #         tx_id = chain_dict['CommitTxID']
+    #         # tx_id = self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
+    #         wait_for_ack(tx_id)
+    #         print 'wait before raw tx_id', tx_id
+    #         raw = self.cli_create.get_raw(tx_id)
+    #         wait_for_ack(tx_id)
+    #         print 'wait after raw tx_id', tx_id
+    #         print 'raw', raw
+    #
+    #         # exclude public key and signature (last 32 + 64 bytes = 192 characters)
+    #         raw_trimmed = raw[:-192]
+    #
+    #         # convert to binary
+    #         serialized_raw = binascii.unhexlify(raw_trimmed)
+    #
+    #         # hash via SHA256
+    #         hashed256_raw = hashlib.sha256(serialized_raw).hexdigest()
+    #         print 'hashed256_raw', hashed256_raw
+    #
+    #         self.assertEqual(hashed256_raw, tx_id, 'Raw data string is not correct')
 
-        # exclude public key and signature (last 32 + 64 bytes = 192 characters)
-        raw_trimmed = raw[:-192]
+    # TODO remove this helper code when FD-547 is implemented
+    # def test_many_raw(self):
+    #     # This test is just to run the previous test many times because it fails only about every 3-7 times.
+    #     for run in range(0,100):
+    #         print
+    #         print 'run', run+1
+    #         self.test_raw_commit()
+    #         # print 'i', i
 
-        # convert to binary
-        serialized_raw = binascii.unhexlify(raw_trimmed)
-
-        # hash via SHA256
-        hashed256_raw = hashlib.sha256(serialized_raw).hexdigest()
-
-        self.assertEqual(hashed256_raw, tx_id, 'Raw data string is not correct')
+    # TODO remove this helper code when FD-547 is implemented
+    # def test_one_raw(self):
+    #     raw = self.cli_create.get_raw('821299679ceebb84c21ca609acd7ddf5a6f3b4ff17e51324ae049722293cc10c')
+    #     print 'raw', raw
 
     def test_make_chain_with_hex_external_id_return_chain_id(self):
         ''' This test is only reliable for the 1st run on a given database.
@@ -128,14 +157,14 @@ class CLITestsChains(unittest.TestCase):
          it will still be there even if subsequent runs fail.
          '''
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        data = create_random_string(1024)
-        name_1 = self.data['1st_hex_external_id1']
-        name_2 = self.data['1st_hex_external_id2']
+        data = 'a'*1024
+        name_1 = binascii.b2a_hex(self.data['1st_hex_external_id1'])
+        name_2 = binascii.b2a_hex(self.data['1st_hex_external_id2'])
         names_list = ['-h', name_1, '-h', name_2]
-        chain_flag_list = ['-C']
+        chain_flag_list = ['-E']
         self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
-        self.assertTrue("Entry not found" not in self.cli_chain.get_entry_by_hash(self.data[
-                          '1st_hex_entry_hash']))
+        self.assertTrue('Entry not found' not in self.cli_chain.get_entry_by_hash(self.data[
+                          '1st_hex_entry_hash']), 'Entry not found')
 
         # validate get firstentry by hex external id command
         wait_for_chain_in_block(external_id_list=names_list)

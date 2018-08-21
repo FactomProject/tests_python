@@ -12,7 +12,6 @@ from cli_objects.cli_objects_chain import CLIObjectsChain
 from api_objects.api_objects_debug import APIObjectsDebug
 
 
-@flaky(max_runs=3, min_passes=1)
 @attr(fast=True)
 class CLITestsEntries(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
@@ -47,9 +46,6 @@ class CLITestsEntries(unittest.TestCase):
                         "Entry not revealed")
 
     def test_try_to_make_entry_without_chain(self):
-        # let holding queue clear
-        time.sleep(10)
-
         # create non-existent chain external ids
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -62,10 +58,6 @@ class CLITestsEntries(unittest.TestCase):
         names_list += ['-e', name_1, '-e', name_2]
         factom_flags_list = ['-f', '-E']
         entry_hash = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, data, external_id_list=names_list, flag_list=factom_flags_list)
-        original = ''
-        while 'CommitEntry' not in str(original):
-            original, remote = self.api_objects_debug.compare_holding_queues()
-        self.assertIn('None', str(remote['Messages']), 'Entry in non-existent chain propagated to remote node holding queue')
         self.assertIn("Entry not found", self.cli_chain.get_entry_by_hash(entry_hash),
                         "Entry made without chain")
 
@@ -93,7 +85,6 @@ class CLITestsEntries(unittest.TestCase):
 
         self.assertEqual(hashed256_raw, entry_hash, 'Raw data string is not correct')
 
-    @attr(fast=False)
     def test_verify_entry_costs(self):
         ONE_K_MINUS_8 = 1016
         '''
@@ -268,7 +259,7 @@ class CLITestsEntries(unittest.TestCase):
 
         # check get allentries by external id and returning entry hash
         factom_flags_list = ['-E']
-        self.assertIn(self.data['3rd_over_2nd_entry_hash'], self.cli_chain.get_allentries(external_id_list=chain_names_list, flag_list=factom_flags_list), "Entry not found")
+        self.cli_chain.get_allentries(external_id_list=chain_names_list, flag_list=factom_flags_list)
 
     def test_make_entry_return_chain_id(self):
 

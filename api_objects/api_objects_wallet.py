@@ -35,7 +35,8 @@ class APIObjectsWallet():
         :return: secret address
         '''
         blocks = json.loads(self.send_post_request_with_params_dict('address', {'address': address}))
-        return blocks["result"]["secret"]
+        if 'error' in str(blocks): exit('check address failed - ' + str(blocks))
+        else: return blocks["result"]["secret"]
 
     def check_all_addresses(self):
         '''
@@ -43,7 +44,8 @@ class APIObjectsWallet():
         :return: list of dicts, addresses
         '''
         blocks = json.loads(self.send_get_request_with_method('all-addresses'))
-        return blocks['result']['addresses']
+        if 'error' in str(blocks): exit('check all addresses failed - ' + str(blocks))
+        else: return blocks['result']['addresses']
 
     def generate_ec_address(self):
         '''
@@ -51,7 +53,8 @@ class APIObjectsWallet():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_method('generate-ec-address'))
-        return blocks['result']['public']
+        if 'error' in str(blocks): exit('generate ec address failed - ' + str(blocks))
+        else: return blocks['result']['public']
 
     def generate_factoid_address(self):
         '''
@@ -59,19 +62,22 @@ class APIObjectsWallet():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_method('generate-factoid-address'))
-        return blocks['result']['public']
+        if 'error' in str(blocks): exit('generate factoid address failed - ' + str(blocks))
+        else: return blocks['result']['public']
 
     def import_addresses(self, *secret_addresses):
         '''
-        Imports address by secret address and returns public addresses
-        :param *secret_address: list, 1 or more private keys
+        Imports addresses by secret address and returns public addresses
+        :param *secret_addresses: list, 1 or more private keys
         :return: list, corresponding public addresses
         '''
         result = json.loads(self.send_post_request_with_params_dict('import-addresses', ast.literal_eval(json.dumps({'addresses': [{'secret': address} for address in secret_addresses]}))))
-        public=[]
-        for i in range(len(secret_addresses)):
-            public.append(result['result']['addresses'][i]['public'])
-        return public
+        if 'error' in str(result): exit('import addresses failed - ' + str(result))
+        else:
+            public=[]
+            for i in range(len(secret_addresses)):
+                public.append(result['result']['addresses'][i]['public'])
+            return public
 
     def import_mnemonic(self, words):
         '''
@@ -106,7 +112,8 @@ class APIObjectsWallet():
                 amount: factoshis
         '''
         block = json.loads(self.send_get_request_with_method('transactions'))
-        return block['result']['transactions']
+        if 'error' in str(block): exit('transaction list failed - ' + str(block['error']))
+        else: return block['result']['transactions']
 
     def list_transactions_by_txid(self, txid):
         '''
@@ -130,15 +137,20 @@ class APIObjectsWallet():
                 amount: factoshis
         '''
         block = json.loads(self.send_post_request_with_params_dict('transactions', {'txid': txid}))
-        return block['result']['transactions']
+        if 'error' in str(block): exit('transaction list by transaction id failed - ' + str(block['error']))
+        else: return block['result']['transactions']
 
     def list_transactions_by_address(self, address):
         blocks = json.loads(self.send_post_request_with_params_dict('transactions', {'address': address}))
-        return blocks["result"]
+        if 'error' in str(blocks):
+            exit('transaction list by address failed - ' + str(blocks['error']))
+        else: return blocks["result"]
 
     def list_transactions_by_range(self, start, end):
         blocks = json.loads(self.send_post_request_with_params_dict('transactions', {'range': {'start': start, "end": end}}))
-        return blocks["result"]
+        if 'error' in str(blocks):
+            exit('transaction list by range failed - ' + str(blocks['error']))
+        else: return blocks["result"]
 
     def create_new_transaction(self, transaction_name):
         '''
@@ -205,7 +217,9 @@ class APIObjectsWallet():
        '''
         block = json.loads(self.send_post_request_with_params_dict('compose-chain',
                  {'chain': {'firstentry': {'extids': external_ids, 'content': content}}, 'ecpub': ec_address}))
-        return block['result']
+        if 'error' in str(block):
+            exit('compose entry failed - ' + str(block['error']))
+        else: return block['result']
 
     def compose_entry(self, chainid, external_ids, content, ec_address):
         '''
@@ -230,7 +244,10 @@ class APIObjectsWallet():
         '''
         block = json.loads(self.send_post_request_with_params_dict('compose-entry',
                  {'entry': {'chainid': chainid, 'extids': external_ids, 'content': content}, 'ecpub': ec_address}))
-        return block['result']
+        if 'error' in str(block):
+            exit('compose entry failed - ' + str(block['error']))
+        else:
+            return block['result']
 
     def compose_transaction(self, transaction_name):
         blocks = json.loads(self.send_post_request_with_params_dict('compose-transaction',
@@ -250,4 +267,17 @@ class APIObjectsWallet():
         '''
         blocks = json.loads(self.send_get_request_with_method('properties'))
         return blocks['result']
+
+    def wallet_balances(self):
+        '''
+        Gets the total balances of acknowledged and saved balances for all addresses in the currently running factomd wallet
+        :return: dictionaries of the two kinds of totals (in factoshis) of all factoid addresses in the currently running factomd wallet
+            ack
+            saved
+        :return: dictionaries of the two kinds of totals (in entry credits) of all entry credit addresses in the currently running factomd wallet
+            ack
+            saved
+        '''
+        block = json.loads(self.send_get_request_with_method('wallet-balances'))
+        return block['result']['fctaccountbalances'], block['result']['ecaccountbalances']
 

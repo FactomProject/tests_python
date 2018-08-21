@@ -3,7 +3,7 @@ import os
 
 from nose.plugins.attrib import attr
 from helpers.helpers import create_random_string, read_data_from_json
-from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, fund_entry_credit_address
+from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, wait_for_entry_in_block, fund_entry_credit_address
 from helpers.api_methods import generate_random_external_ids_and_content
 from api_objects.api_objects_factomd import APIObjectsFactomd
 from api_objects.api_objects_wallet import APIObjectsWallet
@@ -14,7 +14,7 @@ from api_objects.api_objects_debug import APIObjectsDebug
 
 
 
-@attr(api=True)
+@attr(fast=True)
 class APIEntriesTests(unittest.TestCase):
 
     def setUp(self):
@@ -43,6 +43,7 @@ class APIEntriesTests(unittest.TestCase):
 
         chain_external_ids.insert(0, '-h')
         chain_external_ids.insert(2, '-h')
+
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
         # compose entry
@@ -53,14 +54,11 @@ class APIEntriesTests(unittest.TestCase):
         commit = self.api_objects_factomd.commit_entry(compose['commit']['params']['message'])
         # reveal entry
         reveal = self.api_objects_factomd.reveal_entry(compose['reveal']['params']['entry'])
-        # search for revealed entry
-        entry_external_ids.insert(0, '-h')
-        entry_external_ids.insert(2, '-h')
-        status = wait_for_chain_in_block(external_id_list=entry_external_ids)
-        # status = wait_for_chain_in_block(external_id_list=chain_names_list)
 
         # entry arrived in block?
-        self.assertIn('DBlockConfirmed', str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Entry not arrived in block')
+        wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
+        self.assertIn('DBlockConfirmed',
+                      str(self.api_objects_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Entry not arrived in block')
 
         # look for entry by hash
         self.assertIn(reveal['chainid'], str(self.api_objects_factomd.get_entry_by_hash(reveal['entryhash'])), 'Entry with entryhash ' + reveal['entryhash'] + ' not found')
@@ -81,6 +79,7 @@ class APIEntriesTests(unittest.TestCase):
 
         for x in range(0, self.blocktime+1):
             pending = self.api_objects_factomd.get_pending_entries()
+            # finished if non-empty
             if (pending and not str(pending).isspace()): break
             else: time.sleep(1)
         self.assertLess(x, self.blocktime, 'Entry ' + reveal['entryhash'] + ' never pending')
@@ -102,6 +101,7 @@ class APIEntriesTests(unittest.TestCase):
 
         chain_external_ids.insert(0, '-h')
         chain_external_ids.insert(2, '-h')
+
         wait_for_chain_in_block(external_id_list=chain_external_ids)
         receipt  = self.api_objects_factomd.get_receipt(reveal['entryhash'])
         self.assertEquals(receipt['receipt']['entry']['entryhash'], receipt['receipt']['merklebranch'][0]['left'], 'Receipt entryhash ' + receipt['receipt']['merklebranch'][0]['left'] + ' does not match entryhash ' + receipt['receipt']['entry']['entryhash'])

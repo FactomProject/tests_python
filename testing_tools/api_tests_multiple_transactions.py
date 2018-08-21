@@ -10,7 +10,7 @@ from api_objects.api_objects_wallet import APIObjectsWallet
 from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import read_data_from_json
 
-@attr(stress_test=True)
+@attr(load=True)
 class ApiTestsTransactions(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
     blocktime = int(os.environ['BLOCKTIME'])
@@ -48,7 +48,6 @@ class ApiTestsTransactions(unittest.TestCase):
                 status = self.api_objects.get_status(txid,'f')['status']
                 self.assertEquals(status, 'DBlockConfirmed', 'Transaction = %s is still not confirmed' % txid)
 
-
     def test_multiple_entrycredit_address_transactions(self):
         '''
         This testcase will submit 4 entry credit transactions per second and checks for transaction status after one block time.
@@ -58,6 +57,7 @@ class ApiTestsTransactions(unittest.TestCase):
         '''
         blocktime = self.blocktime
         txidlist = []
+        count = 0
         for x in range(1, 6000):
             for temp in range(1, blocktime):
                 for y in range(1, 5):
@@ -72,5 +72,6 @@ class ApiTestsTransactions(unittest.TestCase):
                 time.sleep(1)
             time.sleep(blocktime)
             for txid in txidlist:
+                count += 1
                 status = self.api_objects.get_status(txid, 'f')['status']
                 self.assertEquals(status, 'DBlockConfirmed', 'Transaction = %s is still not confirmed' % txid)

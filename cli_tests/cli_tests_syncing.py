@@ -9,7 +9,7 @@ from cli_objects.cli_objects_chain import CLIObjectsChain
 from helpers.helpers import read_data_from_json
 from helpers.cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
-@attr(slow=True)
+@attr(faulting=True)
 class CLITestsSyncing(unittest.TestCase):
 
     blocktime = int(os.environ['BLOCKTIME'])

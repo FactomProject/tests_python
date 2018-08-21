@@ -16,7 +16,7 @@ Many chains are created because the error is rare.
 
 NUMBER_OF_RUNS = 200000
 
-@attr(local_tool=True)
+@attr(load=True)
 class CLITestsChainsMakeMany(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 

@@ -10,7 +10,7 @@ import json
 
 class CLITestsChainhead(unittest.TestCase):
     data = read_data_from_json('addresses.json')
-    factomd_address_prod = data['factomd_address_prod3']
+    factomd_address_prod = data['factomd_address_prod2']
     factomd_address_ansible = data['factomd_address']
 
     def setUp(self):
@@ -18,13 +18,19 @@ class CLITestsChainhead(unittest.TestCase):
         self.cli_create = CLIObjectsCreate()
         self.chainlist = {}
 
-    @attr(production=True)
-    def test_production_chains(self):
-        self.verify_chains(self.factomd_address_prod)
-
-    @attr(fast=False)
+    @attr(last=True)
     def test_ansible_chains(self):
         self.verify_chains(self.factomd_address_ansible)
+
+    @attr(production=True)
+    def test_production_chains(self):
+        # testing against courtesy node
+        self.verify_chains(self.factomd_address_prod)
+
+
+
+
+
 
     def verify_chains(self, factomd_address):
         self.cli_create.change_factomd_address(factomd_address)

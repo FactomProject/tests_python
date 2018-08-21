@@ -7,7 +7,7 @@ from api_objects.api_objects_debug import APIObjectsDebug
 from helpers.helpers import read_data_from_json
 from helpers.cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
-@attr(slow=True)
+@attr(faulting=True)
 class CLITestsFaulting(unittest.TestCase):
     data = read_data_from_json('faulting.json')
     _stop_command = 'sudo docker stop factom-factomd-'
@@ -86,6 +86,7 @@ class CLITestsFaulting(unittest.TestCase):
             exec(command)
             for server, data in enumerate(result):
                 data_string = str(data)
+                print 'data_string', data_string
                 found = server_hash in data_string
                 if found: break
             blocks_waited += 1

@@ -1,4 +1,4 @@
-import requests, json
+import requests, json, ast
 
 from helpers.helpers import read_data_from_json
 from requests.exceptions import HTTPError
@@ -222,6 +222,18 @@ class APIObjectsFactomd():
         block = json.loads(self.send_get_request_with_params_dict('entry-credit-balance', {'address': ec_address}))
         return block['result']['balance']
 
+    def multiple_ec__balances(self, *ec_addresses):
+        '''
+        Gets entry credit balances for multiple ec addresses
+        :param *ec addresses: list, 1 or more ec addresses
+        :return: list of lists [acknowledged balance, saved balance (in entry credits)], one list for each input address
+        :return: int, last saved block height at which balances were detected
+        :return: int, current block being created at which balances were detected
+        '''
+        block = json.loads(self.send_get_request_with_params_dict('multiple-ec-balances', ast.literal_eval(
+            json.dumps({'addresses': [ec_address for ec_address in ec_addresses]}))))
+        return block['result']['balances'], block['result']['lastsavedheight'], block['result']['currentheight']
+
     def get_factoid_balance(self, factoid_address):
         '''
         Gets factoid balance by factoid address
@@ -230,6 +242,17 @@ class APIObjectsFactomd():
         '''
         block = json.loads(self.send_get_request_with_params_dict('factoid-balance', {'address': factoid_address}))
         return block['result']['balance']
+
+    def multiple_fct__balances(self, *fct_addresses):
+        '''
+        Gets factoid balances for multiple factoid addresses
+        :param *fct addresses: list, 1 or more factoid addresses
+        :return: list of lists [acknowledged balance, saved balance (in factoshis), error message], one list for each input address
+        :return: int, last saved block height at which balances were detected
+        :return: int, current block being created at which balances were detected
+        '''
+        block = json.loads(self.send_get_request_with_params_dict('multiple-fct-balances', ast.literal_eval(json.dumps({'addresses': [fct_address for fct_address in fct_addresses]}))))
+        return block['result']['balances'], block['result']['lastsavedheight'], block['result']['currentheight']
 
     def get_entry_credit_rate(self):
         '''

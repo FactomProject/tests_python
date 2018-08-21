@@ -8,7 +8,7 @@ from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import fund_entry_credit_address
 from random import randint
 
-@attr(load_tool=True)
+@attr(load=True)
 class CLITestsLoadNodes(unittest.TestCase):
 
     data = read_data_from_json('shared_test_data.json')

@@ -27,8 +27,7 @@ class CLITestsTransactionLimits(unittest.TestCase):
         transaction_name = create_random_string(5)
         self.cli_create.create_new_transaction(transaction_name)
         self.cli_create.add_input_to_transaction(transaction_name, self.first_address, '0')
-        self.assertIn("Insufficient Fee", self.cli_create.sign_transaction(transaction_name),
-                        "0 input to transaction was allowed")
+        self.assertIn("Insufficient Fee", self.cli_create.sign_transaction(transaction_name), "0 input to transaction was allowed")
         self.assertIn("Cannot send unsigned transaction", self.cli_create.send_transaction(transaction_name), "Unsigned transaction sent")
 
     def test_add_minus_input_to_transaction(self):

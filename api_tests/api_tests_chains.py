@@ -1,4 +1,4 @@
-import unittest, binascii, os, json
+import unittest, json
 
 from nose.plugins.attrib import attr
 from helpers.helpers import read_data_from_json, create_random_string
@@ -7,7 +7,6 @@ from helpers.api_methods import generate_random_external_ids_and_content
 from api_objects.api_objects_factomd import APIObjectsFactomd
 from api_objects.api_objects_wallet import APIObjectsWallet
 
-@attr(api=True)
 @attr(fast=True)
 class APIChainsTests(unittest.TestCase):
 
@@ -29,9 +28,10 @@ class APIChainsTests(unittest.TestCase):
         # reveal chain
         reveal  = self.api_objects_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
-        # search for revealed chain
         chain_external_ids.insert(0, '-h')
         chain_external_ids.insert(2, '-h')
+
+        # search for revealed chain
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
         # chain's existence is acknowledged?
@@ -74,7 +74,7 @@ class APIChainsTests(unittest.TestCase):
     def test_raw_message(self):
         external_ids, content = generate_random_external_ids_and_content()
         compose = self.api_objects_wallet.compose_chain(external_ids, content, self.entry_credit_address1000)
-        prefix = '0d'
+        prefix = '0e'
         timestamp = compose['commit']['params']['message'][2:14]
         entry = compose['reveal']['params']['entry']
         raw_message = prefix + timestamp + entry

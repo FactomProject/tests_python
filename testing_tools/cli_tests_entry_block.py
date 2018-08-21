@@ -21,13 +21,20 @@ class CLITestsEntryBlock(unittest.TestCase):
         self.chain_objects = CLIObjectsChain()
         self.cli_create = CLIObjectsCreate()
 
-    @attr(production_tool=True)
-    def test_production_entries(self):
-        self._missing_entries(self.factomd_address_prod)
-
-    @attr(local_tool=True)
+    @attr(last=True)
     def test_ansible_entries(self):
         self._missing_entries(self.factomd_address_ansible)
+
+    @attr(production=True)
+    def test_production_entries(self):
+        # testing against localhost
+        self._missing_entries(self.factomd_address_prod)
+
+
+
+
+
+
 
 
     def _missing_entries(self, factomd_address):

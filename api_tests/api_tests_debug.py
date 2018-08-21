@@ -4,7 +4,6 @@ import re
 from helpers.helpers import read_data_from_json
 from nose.plugins.attrib import attr
 
-@attr(api=True)
 @attr(fast=True)
 class FactomDebugAPItests(unittest.TestCase):
 

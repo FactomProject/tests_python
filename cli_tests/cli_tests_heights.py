@@ -11,7 +11,6 @@ from helpers.helpers import read_data_from_json
 import time
 
 @attr(last=True)
-@flaky
 class CLITestsHeight(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
@@ -68,7 +67,7 @@ class CLITestsHeight(unittest.TestCase):
                 self.assertTrue(entrycredit_block_height == entrycredit_block_height_1,
                                 "mismatch in entrycredit block at height %d" % (x))
 
-    def test_entrycredit_block_hdirectoryeight_suppress_raw_data(self):
+    def test_entrycredit_block_height_suppress_raw_data(self):
         directory_block_height = self.cli_chain.get_directory_block_height_from_head()
         entrycredit_block_height = self.cli_chain.get_entrycredit_block_by_height(directory_block_height, '-r')
         self.assertNotIn('raw', entrycredit_block_height, 'Raw data is not suppressed')
@@ -105,4 +104,4 @@ class CLITestsHeight(unittest.TestCase):
             directory_block_height = self.cli_chain.get_directory_block_height_from_head()
             wallet_height = self.cli_chain.get_wallet_height()
             time_waited += 1
-        self.assertEqual(directory_block_height, wallet_height, "mismatch in wallet height")
+        self.assertEqual(directory_block_height, wallet_height, 'directory block height of ' + str(directory_block_height) + ' does not match wallet height of ' + str(wallet_height))

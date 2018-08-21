@@ -7,7 +7,6 @@ from flaky import flaky
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from helpers.helpers import read_data_from_json
 
-@flaky(max_runs=3, min_passes=1)
 @attr(fast=True)
 class CLITestsTransactionsMultipleServers(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
