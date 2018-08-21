@@ -20,7 +20,7 @@ class CLITestsHeight(unittest.TestCase):
     data = read_data_from_json('addresses.json')
     data1 = read_data_from_json('shared_test_data.json')
     factomd_address = data['factomd_address']
-    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
+    factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2']]
 
     def setUp(self):
         self.cli_chain = CLIObjectsChain()
@@ -34,6 +34,9 @@ class CLITestsHeight(unittest.TestCase):
                 self.cli_chain.change_factomd_address(self.factomd_address)
                 admin_block_height = self.cli_chain.get_admin_block_by_height(x)
                 print 'admin_block_height', admin_block_height
+
+
+
                 self.cli_chain.change_factomd_address(factomd_address_custom)
                 admin_block_height_1 = self.cli_chain.get_admin_block_by_height(x)
                 print 'admin_block_height1', admin_block_height_1
