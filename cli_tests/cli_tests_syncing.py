@@ -12,8 +12,8 @@ from helpers.cli_methods import send_command_to_cli_and_receive_text, get_data_d
 @attr(faulting=True)
 class CLITestsSyncing(unittest.TestCase):
 
-    blocktime = int(os.environ['BLOCKTIME'])
     data_shared = read_data_from_json('shared_test_data.json')
+    blocktime = int(os.environ['BLOCKTIME'])
     data_fault = read_data_from_json('faulting.json')
     data_sync = read_data_from_json('syncing.json')
     _faulting_command = 'docker stop factom-factomd-'
