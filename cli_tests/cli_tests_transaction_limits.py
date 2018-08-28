@@ -1,19 +1,16 @@
 import unittest
 
 from nose.plugins.attrib import attr
-
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from helpers.helpers import create_random_string, read_data_from_json
 
 @attr(fast=True)
 class CLITestsTransactionLimits(unittest.TestCase):
-
+    cli_create = CLIObjectsCreate()
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.cli_create = CLIObjectsCreate()
-        imported_addresses = self.cli_create.import_addresses(self.data['factoid_wallet_address'],
-                                                              self.data['ec_wallet_address'])
+        imported_addresses = self.cli_create.import_addresses(self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
         self.first_address = imported_addresses[0]
         self.entry_credit_address = imported_addresses[1]
         self.second_address = self.cli_create.create_new_factoid_address()
@@ -36,7 +33,7 @@ class CLITestsTransactionLimits(unittest.TestCase):
         self.cli_create.add_input_to_transaction(transaction_name, self.first_address, '-1')
         self.cli_create.add_output_to_transaction(transaction_name, self.first_address, '-1')
         self.assertIn("Insufficient Fee", self.cli_create.sign_transaction(transaction_name),
-                        "Negative input to transaction was allowed")
+                      "Negative input to transaction was allowed")
         self.assertIn("Cannot send unsigned transaction", self.cli_create.send_transaction(transaction_name), "Unsigned transaction sent")
 
     def test_add_too_small_input_to_transaction(self):
@@ -44,7 +41,7 @@ class CLITestsTransactionLimits(unittest.TestCase):
         self.cli_create.create_new_transaction(transaction_name)
         self.cli_create.add_input_to_transaction(transaction_name, self.first_address, self.ecrate)
         self.assertIn("Insufficient Fee", self.cli_create.sign_transaction(transaction_name),
-                        "Input less than fee was allowed to transaction")
+                      "Input less than fee was allowed to transaction")
         self.assertIn("Cannot send unsigned transaction", self.cli_create.send_transaction(transaction_name), "Unsigned transaction sent")
 
     def test_add_more_than_balance_input_to_transaction(self):

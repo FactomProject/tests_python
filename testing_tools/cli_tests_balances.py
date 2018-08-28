@@ -1,20 +1,19 @@
 import unittest
 
 from nose.plugins.attrib import attr
-
-from cli_objects.cli_objects_create import CLIObjectsCreate
-from cli_objects.cli_objects_chain import CLIObjectsChain
 from api_objects.api_objects_factomd import APIObjectsFactomd
-
+from cli_objects.cli_objects_chain import CLIObjectsChain
+from cli_objects.cli_objects_create import CLIObjectsCreate
 from helpers.helpers import read_data_from_json
 
 @attr(last=True)
 class CLITestsBalances(unittest.TestCase):
+    api_factomd = APIObjectsFactomd()
+    cli_chain = CLIObjectsChain()
+    cli_create = CLIObjectsCreate()
 
     def setUp(self):
-        self.cli_create = CLIObjectsCreate()
-        self.chain_objects = CLIObjectsChain()
-        self.api_objects = APIObjectsFactomd()
+        pass
 
     def test_all_addresses_balances(self):
         '''

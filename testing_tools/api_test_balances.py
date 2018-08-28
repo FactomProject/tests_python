@@ -1,16 +1,15 @@
 import unittest
 
 from nose.plugins.attrib import attr
-from api_objects.api_objects_wallet import APIObjectsWallet
 from api_objects.api_objects_factomd import APIObjectsFactomd
-
+from api_objects.api_objects_wallet import APIObjectsWallet
 from helpers.helpers import read_data_from_json
 
 class APITestsBalances(unittest.TestCase):
+    api_factomd = APIObjectsFactomd()
+    api_wallet = APIObjectsWallet()
 
     def setUp(self):
-        self.api_wallet_objects = APIObjectsWallet()
-        self.api_objects = APIObjectsFactomd()
         self.address_list = []
         self.balance = 0
         self.total_balance = 0
@@ -19,36 +18,36 @@ class APITestsBalances(unittest.TestCase):
     def test_all_addresses_balances_by_api(self):
         addresses = read_data_from_json('addresses.json')
         factomd_server_list = [addresses['factomd_address'], addresses['factomd_address_0'], addresses['factomd_address_1'],
-                addresses['factomd_address_2'], addresses['factomd_address_3'], addresses['factomd_address_4'],
-                addresses['factomd_address_5'], addresses['factomd_address_6']]
+                               addresses['factomd_address_2'], addresses['factomd_address_3'], addresses['factomd_address_4'],
+                               addresses['factomd_address_5'], addresses['factomd_address_6']]
 
-        wallet_addresses_raw = self.api_wallet_objects.check_all_addresses()
+        wallet_addresses_raw = self.api_wallet.check_all_addresses()
         wallet_addresses = [x['public'] for x in wallet_addresses_raw]
 
         for w_address in wallet_addresses:
             balance = []
             for address in factomd_server_list:
-                self.api_objects.change_factomd_address(address)
+                self.api_factomd.change_factomd_address(address)
                 if 'FA' in w_address[:3]:
-                    balance.append(self.api_objects.get_factoid_balance(w_address))
+                    balance.append(self.api_factomd.get_factoid_balance(w_address))
                 else:
-                    balance.append(self.api_objects.get_entry_credit_balance(w_address))
+                    balance.append(self.api_factomd.get_entry_credit_balance(w_address))
                 self.assertTrue(all(x == balance[0] for x in balance), "Wrong balance in address: " + w_address + "\n")
 
     def test_one_address_balance_by_api(self):
         addresses = read_data_from_json('addresses.json')
         factomd_server_list = [addresses['factomd_address'], addresses['factomd_address_0'], addresses['factomd_address_1'],
-                addresses['factomd_address_2'], addresses['factomd_address_3'], addresses['factomd_address_4'],
-                addresses['factomd_address_5'], addresses['factomd_address_6']]
+                               addresses['factomd_address_2'], addresses['factomd_address_3'], addresses['factomd_address_4'],
+                               addresses['factomd_address_5'], addresses['factomd_address_6']]
 
         w_address = 'FA3EPZYqodgyEGXNMbiZKE5TS2x2J9wF8J9MvPZb52iGR78xMgCb'
         balance = []
         for address in factomd_server_list:
-            self.api_objects.change_factomd_address(address)
+            self.api_factomd.change_factomd_address(address)
             if 'FA' in w_address[:3]:
-                balance.append(self.api_objects.get_factoid_balance(w_address))
+                balance.append(self.api_factomd.get_factoid_balance(w_address))
             else:
-                balance.append(self.api_objects.get_entry_credit_balance(w_address))
+                balance.append(self.api_factomd.get_entry_credit_balance(w_address))
             self.assertTrue(all(x == balance[0] for x in balance), "Wrong balance in address: " + w_address + "\n")
 
     @attr(production=True)
@@ -61,8 +60,8 @@ class APITestsBalances(unittest.TestCase):
         '''
         addresses = read_data_from_json('addresses.json')
         factomd_address = addresses['localhost']
-        self.api_objects.change_factomd_address(factomd_address)
-        listtxs =  self.api_wallet_objects.list_all_transactions_in_factoid_blockchain()
+        self.api_factomd.change_factomd_address(factomd_address)
+        listtxs =  self.api_wallet.list_all_transactions_in_factoid_blockchain()
         count_transactions =  len(listtxs)
 
         for i in range(0,count_transactions):
@@ -96,6 +95,6 @@ class APITestsBalances(unittest.TestCase):
 
     def add_balance(self,address):
         self.address_list.append(address)
-        self.balance = self.api_objects.get_factoid_balance(address)
+        self.balance = self.api_factomd.get_factoid_balance(address)
         self.total_balance = self.total_balance + self.balance
         return self.balance
