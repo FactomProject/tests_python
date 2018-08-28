@@ -1,14 +1,15 @@
-import unittest, time, json
+import unittest, time
 
 from nose.plugins.attrib import attr
-
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from api_objects.api_objects_debug import APIObjectsDebug
 from helpers.helpers import read_data_from_json
-from helpers.cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
+from helpers.cli_methods import send_command_to_cli_and_receive_text
 
 @attr(faulting=True)
 class CLITestsFaulting(unittest.TestCase):
+    api_debug = APIObjectsDebug()
+    cli_create = CLIObjectsCreate()
     data = read_data_from_json('faulting.json')
     _stop_command = 'sudo docker stop factom-factomd-'
     _restart_command = 'sudo docker start factom-factomd-'
@@ -16,8 +17,7 @@ class CLITestsFaulting(unittest.TestCase):
     # NOTE if these tests are interrupted before they finish, the network server configuration may be altered
 
     def setUp(self):
-        self.cli_create = CLIObjectsCreate()
-        self.api_debug = APIObjectsDebug()
+        pass
 
     def test_fault_audit_server(self):
 
@@ -66,7 +66,7 @@ class CLITestsFaulting(unittest.TestCase):
     def wait_for_server_status_change(self, server_type, server_hash, status):
         '''
         The online/offline status of the server of type server_type ('federated' or 'audit') identified by the identity server_hash (888888...) will be monitored until either its status matches the requested input status ('online' or something else) or the number of blocks elapsed exceeds a preset limit (BLOCKS_TO_WAIT).
-        :param server_type: 'federated' or 'audit'; used to get a list of either all the current federated servers or all the current audit servers along with their online or offline status via the calls api_objects_debug/get_federated_servers() or api_objects_debug/get_audit_servers(). The call is constructed using the parameter, so if the parameter is incorrectly specified, the call will fail.
+        :param server_type: 'federated' or 'audit'; used to get a list of either all the current federated servers or all the current audit servers along with their online or offline status via the calls api_debug/get_federated_servers() or api_debug/get_audit_servers(). The call is constructed using the parameter, so if the parameter is incorrectly specified, the call will fail.
         :return blocks_waited; This is the number of blocks elapsed before the sought situation was found. If this equals the BLOCKS_TO_WAIT limit on the number of blocks to search, then the search failed.
         '''
         command = 'result = self.api_debug.get_' + server_type + '_servers()'

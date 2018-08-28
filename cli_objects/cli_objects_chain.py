@@ -1,7 +1,8 @@
 import shlex
+
+from cli_objects_base import CLIObjectsBase
 from collections import defaultdict
 from helpers.cli_methods import send_command_to_cli_and_receive_text
-from cli_objects_base import CLIObjectsBase
 from subprocess import Popen, PIPE
 
 class CLIObjectsChain(CLIObjectsBase):

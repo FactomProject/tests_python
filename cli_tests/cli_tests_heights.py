@@ -1,29 +1,27 @@
-import unittest
-import os
+import unittest, time
 
 from nose.plugins.attrib import attr
-from flaky import flaky
-
+from api_objects.api_objects_factomd import APIObjectsFactomd
 from cli_objects.cli_objects_chain import CLIObjectsChain
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from helpers.helpers import read_data_from_json
-
-import time
 
 @attr(last=True)
 class CLITestsHeight(unittest.TestCase):
     '''
     testcases to verify all the blocks(admin, directory, factoid, entrycredit) are the same in every node in the network
     '''
+    api_factomd = APIObjectsFactomd()
+    cli_chain = CLIObjectsChain()
+    cli_create = CLIObjectsCreate()
+    blocktime = api_factomd.calculate_blocktime()
     data = read_data_from_json('addresses.json')
     data1 = read_data_from_json('shared_test_data.json')
-    blocktime = int(os.environ['BLOCKTIME'])
     factomd_address = data['factomd_address']
     factomd_address_custom_list = [data['factomd_address_0'], data['factomd_address_1'], data['factomd_address_2'], data['factomd_address_3'], data['factomd_address_4'], data['factomd_address_5'], data['factomd_address_6']]
 
     def setUp(self):
-        self.cli_chain = CLIObjectsChain()
-        self.cli_create = CLIObjectsCreate()
+        pass
 
     def test_check_admin_block_height(self):
         directory_block_height = self.cli_chain.get_directory_block_height_from_head()
