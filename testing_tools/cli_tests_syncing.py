@@ -12,7 +12,7 @@ class CLITestsSyncing(unittest.TestCase):
     api_factomd = APIObjectsFactomd()
     cli_chain = CLIObjectsChain()
     cli_create = CLIObjectsCreate()
-    blocktime = api_factomd.calculate_blocktime()
+    blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
     data_shared = read_data_from_json('shared_test_data.json')
     data_fault = read_data_from_json('faulting.json')
     data_sync = read_data_from_json('syncing.json')

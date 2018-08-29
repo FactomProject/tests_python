@@ -15,9 +15,9 @@ class APIEntriesTests(unittest.TestCase):
     api_wallet = APIObjectsWallet()
     api_debug = APIObjectsDebug()
     cli_chain = CLIObjectsChain()
+    blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
 
     def setUp(self):
-        self.blocktime = self.api_factomd.calculate_blocktime()
         self.data = read_data_from_json('shared_test_data.json')
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
 

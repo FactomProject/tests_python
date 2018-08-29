@@ -12,7 +12,7 @@ class CLITestsRegression(unittest.TestCase):
     cli_chain = CLIObjectsChain()
     cli_create = CLIObjectsCreate()
     api_factomd = APIObjectsFactomd()
-    blocktime = api_factomd.calculate_blocktime()
+    blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):

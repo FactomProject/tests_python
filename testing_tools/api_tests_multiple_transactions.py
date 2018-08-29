@@ -9,7 +9,7 @@ from helpers.helpers import read_data_from_json
 class ApiTestsTransactions(unittest.TestCase):
     api_factomd = APIObjectsFactomd()
     api_wallet = APIObjectsWallet()
-    blocktime = api_factomd.calculate_blocktime()
+    blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):

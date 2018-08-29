@@ -10,7 +10,7 @@ from helpers.general_test_methods import wait_for_ack
 class ApiTestsWallet(unittest.TestCase):
     api_factomd = APIObjectsFactomd()
     api_wallet = APIObjectsWallet()
-    blocktime = api_factomd.calculate_blocktime()
+    blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
     WAITTIME = 300
     data = read_data_from_json('shared_test_data.json')
 
@@ -146,7 +146,7 @@ class ApiTestsWallet(unittest.TestCase):
 
         # wait for minute 0
         for seconds in range(0, self.WAITTIME):
-            minute = self.api_factomd.get_current_minute()
+            minute = self.api_factomd.get_current_minute()['minute']
             if minute == 0: break
             time.sleep(1)
         self.assertEqual(minute, 0, 'Minute 0 never happened')
@@ -156,14 +156,14 @@ class ApiTestsWallet(unittest.TestCase):
         self.assertIn("Successfully submitted", self.api_factomd.submit_factoid_by_transaction(transaction)['message'], "Transaction failed")
 
         for seconds in range(0, self.WAITTIME):
-            minute = self.api_factomd.get_current_minute()
+            minute = self.api_factomd.get_current_minute()['minute']
             fctaccountbalances, ecaccountbalances = self.api_wallet.wallet_balances()
             if minute == 9: break
             time.sleep(1)
         self.assertEqual(minute, 9, 'Minute 9 never happened')
 
         for seconds in range(0, self.WAITTIME):
-            minute = self.api_factomd.get_current_minute()
+            minute = self.api_factomd.get_current_minute()['minute']
             fctaccountbalances, ecaccountbalances = self.api_wallet.wallet_balances()
             if minute == 5: break
             time.sleep(1)

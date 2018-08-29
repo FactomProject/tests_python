@@ -357,7 +357,7 @@ class APIObjectsFactomd():
         :return: current minute currentblocktime
         '''
         block = json.loads(self.send_get_request_with_method('current-minute'))
-        return block['result']['minute']
+        return block['result']
 
     def get_factoid_block_by_keymr(self, keymr):
         '''
@@ -386,30 +386,4 @@ class APIObjectsFactomd():
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('admin-block', {'KeyMR': keymr}))
         return blocks['result']['ablock']
-
-
-    def calculate_blocktime(self):
-        minuteinitial = self.get_current_minute()
-
-        # get time of fresh minute
-        for seconds in range(601):
-            minutestart = self.get_current_minute()
-            if minutestart != minuteinitial:
-                timestart = time.time()
-                break
-            else:
-                time.sleep(1)
-        if seconds == 600: exit('Minute is over 600 seconds')
-
-        # get time of next minute
-        for seconds in range(601):
-            nextminutestart = self.get_current_minute()
-            if nextminutestart != minutestart:
-                timenext = time.time()
-                break
-            else:
-                time.sleep(1)
-        if seconds == 600: exit('Minute is over 600 seconds')
-        return int(10 * round(timenext - timestart))
-
 

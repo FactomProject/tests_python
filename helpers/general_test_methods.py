@@ -8,7 +8,7 @@ from helpers import read_data_from_json
 api_factomd = APIObjectsFactomd()
 cli_chain = CLIObjectsChain()
 cli_create = CLIObjectsCreate()
-blocktime = api_factomd.calculate_blocktime()
+blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
 data = read_data_from_json('shared_test_data.json')
 
 BLOCK_WAIT_TIME = blocktime * 2
