@@ -6,7 +6,7 @@ from cli_objects.cli_objects_create import CLIObjectsCreate
 from multiprocessing import Process
 from helpers.helpers import read_data_from_json
 
-@attr(fast=True)
+@attr(last=True)
 class CLITestsTransactionsMultipleServers(unittest.TestCase):
     cli_create = CLIObjectsCreate()
     data = read_data_from_json('shared_test_data.json')
