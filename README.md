@@ -10,12 +10,18 @@ in test folder:
 `nosetests`
 
 #test suits
-to use fast test suite - preferable durring development
+to quickly run full regression tests
 `nosetests -a fast`
 
-for slow tests
-`nostests -a slow`
+to run test suite which checks balances, blocks, chains, entries between servers
+`nosetests -a last`
 
-for load tests
+to run checks on the production network
+`nosetests -a production
+
+to run tests which put a load on the network
 `nosetests -a load`
+
+to run tests which verify the proper operation of the faulting and election process
+`nosetests -a election
 
