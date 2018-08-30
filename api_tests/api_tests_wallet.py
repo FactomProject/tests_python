@@ -126,12 +126,12 @@ class ApiTestsWallet(unittest.TestCase):
         self.assertTrue(fctaccountbalances['ack'] == factoid_total_ack, 'factoid ack total ' + str(
             fctaccountbalances['ack']) + ' does not match total of all wallet factoid addresses ' + str(factoid_total_ack))
         self.assertTrue(fctaccountbalances['saved'] == factoid_total_saved, 'factoid saved total ' + str(
-            fctaccountbalances['ack']) + ' does not match total of all wallet factoid addresses ' + str(factoid_total_saved))
+            fctaccountbalances['saved']) + ' does not match total of all wallet factoid addresses ' + str(factoid_total_saved))
         self.assertTrue(ecaccountbalances['ack'] == entry_credit_total_ack, 'entry credit ack total ' + str(
             ecaccountbalances['ack']) + ' does not match total of all wallet entry credit addresses ' + str(
             entry_credit_total_ack))
-        self.assertTrue(ecaccountbalances['ack'] == entry_credit_total_saved, 'entry credit saved total ' + str(
-            ecaccountbalances['ack']) + ' does not match total of all wallet entry credit addresses ' + str(
+        self.assertTrue(ecaccountbalances['saved'] == entry_credit_total_saved, 'entry credit saved total ' + str(
+            ecaccountbalances['saved']) + ' does not match total of all wallet entry credit addresses ' + str(
             entry_credit_total_saved))
 
     def test_ack_balance_vs_saved_balance(self):
