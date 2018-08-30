@@ -1,21 +1,19 @@
 import unittest
-from multiprocessing import Process
+
 
 from nose.plugins.attrib import attr
-from flaky import flaky
-
 from cli_objects.cli_objects_create import CLIObjectsCreate
+from multiprocessing import Process
 from helpers.helpers import read_data_from_json
 
 @attr(fast=True)
 class CLITestsTransactionsMultipleServers(unittest.TestCase):
+    cli_create = CLIObjectsCreate()
     data = read_data_from_json('shared_test_data.json')
     server_addresses = read_data_from_json('addresses.json')
 
     def setUp(self):
-        self.cli_create = CLIObjectsCreate()
-        imported_addresses = self.cli_create.import_addresses(self.data['factoid_wallet_address'],
-                                                              self.data['ec_wallet_address'])
+        imported_addresses = self.cli_create.import_addresses(self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
         self.first_address = imported_addresses[0]
         self.entry_credit_address = imported_addresses[1]
         self.second_address = self.cli_create.create_new_factoid_address()

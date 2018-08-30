@@ -1,7 +1,7 @@
-import unittest, json, binascii, hashlib, re, time, datetime
-import os
-from nose.plugins.attrib import attr
+import unittest, json, binascii, hashlib, re, time
 
+from nose.plugins.attrib import attr
+from api_objects.api_objects_factomd import APIObjectsFactomd
 from cli_objects.cli_objects_chain import CLIObjectsChain
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from helpers.helpers import create_random_string, read_data_from_json
@@ -9,11 +9,13 @@ from helpers.general_test_methods import wait_for_ack
 
 @attr(fast=True)
 class CLITestsRegression(unittest.TestCase):
+    cli_chain = CLIObjectsChain()
+    cli_create = CLIObjectsCreate()
+    api_factomd = APIObjectsFactomd()
+    blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.cli_chain = CLIObjectsChain()
-        self.cli_create = CLIObjectsCreate()
         imported_addresses = self.cli_create.import_addresses(self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
         self.first_address = imported_addresses[0]
         self.entry_credit_address = imported_addresses[1]
@@ -21,7 +23,6 @@ class CLITestsRegression(unittest.TestCase):
         words = '"'+self.data['words']+'"'
         self.third_address = self.cli_create.import_words_from_koinify_into_wallet(words)
         self.ecrate = self.cli_create.get_entry_credit_rate()
-        self.blocktime = int(os.environ['BLOCKTIME'])
 
     def test_raw_blocks(self):
 
@@ -167,7 +168,7 @@ class CLITestsRegression(unittest.TestCase):
                       self.cli_create.subtract_fee_from_transaction_output(transaction_name, self.first_address), "Input and output don't add up, but error is not displayed")
         self.cli_create.remove_transaction_from_wallet(transaction_name)
         self.assertNotIn(transaction_name, self.cli_create.list_local_transactions(),
-                        'Transaction was not deleted')
+                         'Transaction was not deleted')
 
     def test_add_input_larger_than_10x_fee_to_correct_transaction_quiet_input(self):
         transaction_name = create_random_string(5)
@@ -179,7 +180,7 @@ class CLITestsRegression(unittest.TestCase):
 
         # check that input was added
         text = self.cli_create.add_output_to_transaction(transaction_name, self.first_address,
-                                                                               '1')
+                                                         '1')
         dict = self.cli_chain.parse_transaction_data(text)
         self.assertEqual('1', dict['TotalInputs'], "Quiet input not accepted")
 
@@ -188,10 +189,10 @@ class CLITestsRegression(unittest.TestCase):
         # try to overpay
         self.cli_create.add_input_to_transaction(transaction_name, self.first_address, '10')
         self.assertIn('Overpaying fee', self.cli_create.sign_transaction(transaction_name),
-                        'Was able to overpay fee')
+                      'Was able to overpay fee')
         self.cli_create.remove_transaction_from_wallet(transaction_name)
         self.assertNotIn(transaction_name, self.cli_create.list_local_transactions(),
-                        'Transaction was not removed')
+                         'Transaction was not removed')
 
     def test_create_transaction_with_no_output_or_ec(self):
         balance_before = self.cli_create.check_wallet_address_balance(self.first_address)
@@ -256,7 +257,7 @@ class CLITestsRegression(unittest.TestCase):
         factom_flags_list = ['-q']
         self.cli_create.add_entry_credit_output_to_transaction(transaction_name, self.entry_credit_address, str(ENTRY_CREDIT_AMOUNT), flag_list=factom_flags_list)
         self.assertNotIn("Inputs and outputs don't add up", self.cli_create.subtract_fee_from_transaction_output(transaction_name, self.second_address),
-            "Entry credit output not added")
+                         "Entry credit output not added")
 
         self.cli_create.sign_transaction(transaction_name)
 

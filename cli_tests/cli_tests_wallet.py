@@ -1,15 +1,16 @@
 import unittest
 
+from nose.plugins.attrib import attr
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from helpers.helpers import read_data_from_json
-from nose.plugins.attrib import attr
 
 @attr(fast=True)
 class CLITestsWallet(unittest.TestCase):
+    cli_create = CLIObjectsCreate()
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.cli_create = CLIObjectsCreate()
+        pass
     '''
     The remote address feature of factomd is not currently activated
     def test_wallet_address_balance_remote(self):

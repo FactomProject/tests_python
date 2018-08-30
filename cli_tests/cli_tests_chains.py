@@ -1,25 +1,23 @@
-import unittest, os, binascii, hashlib, time
+import unittest, os, binascii, time
+
 from nose.plugins.attrib import attr
-from flaky import flaky
-
-from cli_objects.cli_objects_create import CLIObjectsCreate
-from cli_objects.cli_objects_chain import CLIObjectsChain
 from api_objects.api_objects_factomd import APIObjectsFactomd
-
+from cli_objects.cli_objects_chain import CLIObjectsChain
+from cli_objects.cli_objects_create import CLIObjectsCreate
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, fund_entry_credit_address
 
 @attr(fast=True)
 class CLITestsChains(unittest.TestCase):
+    cli_chain = CLIObjectsChain()
+    cli_create = CLIObjectsCreate()
+    api_factomd = APIObjectsFactomd()
+    blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
     data = read_data_from_json('shared_test_data.json')
-    blocktime = int(os.environ['BLOCKTIME'])
 
     TIME_TO_WAIT = 5
 
     def setUp(self):
-        self.cli_create = CLIObjectsCreate()
-        self.cli_chain = CLIObjectsChain()
-        self.api_factomd = APIObjectsFactomd()
         self.ecrate = self.cli_create.get_entry_credit_rate()
         imported_addresses = self.cli_create.import_addresses(self.data['factoid_wallet_address'],
                                                               self.data['ec_wallet_address'])
@@ -164,7 +162,7 @@ class CLITestsChains(unittest.TestCase):
         chain_flag_list = ['-E']
         self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
         self.assertTrue('Entry not found' not in self.cli_chain.get_entry_by_hash(self.data[
-                          '1st_hex_entry_hash']), 'Entry not found')
+                                                                                      '1st_hex_entry_hash']), 'Entry not found')
 
         # validate get firstentry by hex external id command
         wait_for_chain_in_block(external_id_list=names_list)
@@ -258,7 +256,7 @@ class CLITestsChains(unittest.TestCase):
         keyMR = self.cli_chain.parse_block_data(text)['DBlock']
         text = self.cli_chain.get_directory_block(keyMR)
         self.assertTrue(prevMR == self.cli_chain.parse_block_data(text)[
-    'PrevBlockKeyMR'], 'Get dblock by merkle root did not fetch correct directory block')
+            'PrevBlockKeyMR'], 'Get dblock by merkle root did not fetch correct directory block')
 
     def test_get_directory_block_by_merkel_root(self):
         factom_flags_list = ['-K']

@@ -1,31 +1,25 @@
-import unittest
-import os, binascii, hashlib, time
-
-from flaky import flaky
+import unittest, os, binascii, hashlib, time
 
 from nose.plugins.attrib import attr
+from api_objects.api_objects_factomd import APIObjectsFactomd
+from api_objects.api_objects_debug import APIObjectsDebug
+from cli_objects.cli_objects_chain import CLIObjectsChain
+from cli_objects.cli_objects_create import CLIObjectsCreate
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, fund_entry_credit_address
-from cli_objects.cli_objects_create import CLIObjectsCreate
-from cli_objects.cli_objects_chain import CLIObjectsChain
-
-from api_objects.api_objects_debug import APIObjectsDebug
-
 
 @attr(fast=True)
 class CLITestsEntries(unittest.TestCase):
+    cli_chain = CLIObjectsChain()
+    cli_create = CLIObjectsCreate()
+    api_factomd = APIObjectsFactomd()
+    api_debug = APIObjectsDebug()
+    blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        self.cli_create = CLIObjectsCreate()
-        self.cli_chain = CLIObjectsChain()
-
-        self.api_objects_debug = APIObjectsDebug()
-
-
         self.ecrate = self.cli_create.get_entry_credit_rate()
         self.entry_credit_address1000 = fund_entry_credit_address(1000)
-        self.blocktime = int(os.environ['BLOCKTIME'])
 
     def test_make_entry_return_entry_hash(self):
         # make chain
@@ -43,7 +37,7 @@ class CLITestsEntries(unittest.TestCase):
         factom_flags_list = ['-E']
         entry_hash = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, data, external_id_list=names_list, flag_list=factom_flags_list)
         self.assertNotIn("Entry not found", self.cli_chain.get_entry_by_hash(entry_hash),
-                        "Entry not revealed")
+                         "Entry not revealed")
 
     def test_try_to_make_entry_without_chain(self):
         # create non-existent chain external ids
@@ -59,7 +53,7 @@ class CLITestsEntries(unittest.TestCase):
         factom_flags_list = ['-f', '-E']
         entry_hash = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000, data, external_id_list=names_list, flag_list=factom_flags_list)
         self.assertIn("Entry not found", self.cli_chain.get_entry_by_hash(entry_hash),
-                        "Entry made without chain")
+                      "Entry made without chain")
 
     def test_raw_entry(self):
         # make chain
@@ -202,13 +196,13 @@ class CLITestsEntries(unittest.TestCase):
             self.assertNotIn('Invalid', text,'Entry Hash is invalid')
             entry_chain_id = self.cli_chain.parse_entry_data(text)['ChainID']
             if entry_chain_id == chain_id:
-               found = True
-               break
+                found = True
+                break
         self.assertTrue(found, 'Entry not shown as pending')
 
         wait_for_ack(tx_id)
         self.assertIn("TransactionACK", self.cli_create.request_transaction_acknowledgement(tx_id),
-                        "Forced entry was not revealed")
+                      "Forced entry was not revealed")
 
         # compose entry by external chain id
         self.assertTrue(

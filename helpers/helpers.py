@@ -1,7 +1,4 @@
-import random
-import string
-import json
-import os
+import random, string, json, os
 
 def create_random_string(char_nr):
     return ''.join(random.choice(string.ascii_letters) for _ in range(char_nr))

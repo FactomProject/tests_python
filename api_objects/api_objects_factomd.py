@@ -1,4 +1,4 @@
-import requests, json, ast
+import requests, json, ast, time
 
 from helpers.helpers import read_data_from_json
 from requests.exceptions import HTTPError
@@ -333,7 +333,7 @@ class APIObjectsFactomd():
 
     def get_status(self, hash_or_tx_id, chain_id):
         '''
-        This api call is used to find the status of a transaction, whether it be a factoid, reveal entry, or commit entry.
+        This api_factomd call is used to find the status of a transaction, whether it be a factoid, reveal entry, or commit entry.
         chainid for factoid transaction is always 000...f, abbreviated to just f
         :return:
         Status types
@@ -356,8 +356,8 @@ class APIObjectsFactomd():
         Get current minute of the directory block
         :return: current minute currentblocktime
         '''
-        blocks = json.loads(self.send_get_request_with_method('current-minute'))
-        return blocks['result']
+        block = json.loads(self.send_get_request_with_method('current-minute'))
+        return block['result']
 
     def get_factoid_block_by_keymr(self, keymr):
         '''
@@ -386,3 +386,4 @@ class APIObjectsFactomd():
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('admin-block', {'KeyMR': keymr}))
         return blocks['result']['ablock']
+

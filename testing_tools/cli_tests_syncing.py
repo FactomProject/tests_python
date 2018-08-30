@@ -1,18 +1,18 @@
-import unittest
-import time
-import os
+import unittest, time
 
 from nose.plugins.attrib import attr
-
-from cli_objects.cli_objects_create import CLIObjectsCreate
+from api_objects.api_objects_factomd import APIObjectsFactomd
 from cli_objects.cli_objects_chain import CLIObjectsChain
+from cli_objects.cli_objects_create import CLIObjectsCreate
 from helpers.helpers import read_data_from_json
 from helpers.cli_methods import send_command_to_cli_and_receive_text, get_data_dump_from_server
 
 @attr(faulting=True)
 class CLITestsSyncing(unittest.TestCase):
-
-    blocktime = int(os.environ['BLOCKTIME'])
+    api_factomd = APIObjectsFactomd()
+    cli_chain = CLIObjectsChain()
+    cli_create = CLIObjectsCreate()
+    blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
     data_shared = read_data_from_json('shared_test_data.json')
     data_fault = read_data_from_json('faulting.json')
     data_sync = read_data_from_json('syncing.json')
@@ -20,8 +20,7 @@ class CLITestsSyncing(unittest.TestCase):
     _restart_command = 'docker start factom-factomd-'
 
     def setUp(self):
-        self.cli_create = CLIObjectsCreate()
-        self.chain_objects = CLIObjectsChain()
+        pass
 
     def test_sync_stopped_node(self):
 
@@ -36,15 +35,15 @@ class CLITestsSyncing(unittest.TestCase):
         # restart node
         send_command_to_cli_and_receive_text(self._restart_command + self.data_fault['audit1'])
 
-        while "connection refused" in self.chain_objects.get_heights(): pass
+        while "connection refused" in self.cli_chain.get_heights(): pass
 
         # wait for node to resync
         synced = False
         start_time = time.time()
         while (time.time() - start_time < self.data_sync['SECONDS_TO_WAIT_FOR_SYNC']):
-            heights = self.chain_objects.get_heights()
-            directory_block_height = self.chain_objects.parse_transaction_data(heights)['DirectoryBlockHeight']
-            leader_block_height = self.chain_objects.parse_transaction_data(heights)['LeaderHeight']
+            heights = self.cli_chain.get_heights()
+            directory_block_height = self.cli_chain.parse_transaction_data(heights)['DirectoryBlockHeight']
+            leader_block_height = self.cli_chain.parse_transaction_data(heights)['LeaderHeight']
             if (directory_block_height == leader_block_height):
                 synced = True
                 break
