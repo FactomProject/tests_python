@@ -26,14 +26,19 @@ def wait_for_chain_in_block(**kwargs):
         chain_identifier = ' '.join(kwargs['external_id_list'])
     for x in range(0, BLOCK_WAIT_TIME):
         result = cli_chain.get_chainhead(external_id_list=[chain_identifier])
+        #print result
         if 'Missing Chain Head' not in result and 'Chain not yet included in a Directory Block' not in result: break
         time.sleep(1)
     return result
 
 def wait_for_entry_in_block(entryhash, chainid):
-    for x in range(0, BLOCK_WAIT_TIME):
+    for x in range(0, BLOCK_WAIT_TIME*10000):
         result = str(api_factomd.get_status(entryhash, chainid))
-        if 'DBlockConfirmed' in result: break
+        #print result
+        #if 'TransactionACK' in result or 'DBlockConfirmed' in result:
+        if 'TransactionACK' in result:
+            break
+        #if 'TransactionACK' in result: break
         time.sleep(1)
     return result
 
