@@ -142,7 +142,7 @@ class CLITestsLoadNodes(unittest.TestCase):
             chainid = reveal['chainid']
 
             logging.info("Chain_Created " + reveal['chainid'])
-            f.write(str(datetime.datetime.now()) +" Chain_Created " + reveal['chainid'])
+            f.write(str(datetime.datetime.now()) +" Chain_Created " + reveal['chainid'] + "\n")
 
             chain_external_ids.insert(0, '-h')
             chain_external_ids.insert(2, '-h')
@@ -151,7 +151,8 @@ class CLITestsLoadNodes(unittest.TestCase):
             #if status contains chainid then, print the time stamp
             result = re.search(chainid,status).group(0)
             logging.info("Chain_Acknowledged " + result)
-            f.write(str(datetime.datetime.now()) + " Chain_Acknowledged " + result)
+            f.write(str(datetime.datetime.now()) + " Chain_Acknowledged " + result + "\n")
+
 
             total_entries = 20001
 
@@ -178,7 +179,7 @@ class CLITestsLoadNodes(unittest.TestCase):
                     status = wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
                     result = re.search(entry_hash,status).group(0)
                     logging.info(str(i) + "th Entry_Acknowledged " + result)
-                    f.write(str(datetime.datetime.now()) + " " + str(i) + "th Entry_Acknowledged " + result)
+                    f.write(str(datetime.datetime.now()) + " " + str(i) + "th Entry_Acknowledged " + result + "\n")
                     #time.sleep(30)
             #time.sleep(30)
         f.close()
