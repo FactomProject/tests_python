@@ -27,6 +27,7 @@ class CLIObjectsChain(CLIObjectsBase):
     _get_entry_by_hash = 'get entry '
 
     def parse_simple_data(self, text):
+        print text
         if ':' not in text:
             exit('Dictionary parse failed because - ' + text)
         else: return dict(item.split(": ") for item in text.split('\n'))

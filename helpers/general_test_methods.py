@@ -26,7 +26,6 @@ def wait_for_chain_in_block(**kwargs):
         chain_identifier = ' '.join(kwargs['external_id_list'])
     for x in range(0, BLOCK_WAIT_TIME):
         result = cli_chain.get_chainhead(external_id_list=[chain_identifier])
-        #print result
         if 'Missing Chain Head' not in result and 'Chain not yet included in a Directory Block' not in result: break
         time.sleep(1)
     return result
