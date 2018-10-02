@@ -173,14 +173,15 @@ class CLITestsLoadNodes(unittest.TestCase):
                 #time.sleep(1)
 
                 # entry arrived in block?
-                val = (i % 1000)
-                if val == 0:
-                    print i
-                    status = wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
-                    result = re.search(entry_hash,status).group(0)
-                    logging.info(str(i) + "th Entry_Acknowledged " + result)
-                    f.write(str(datetime.datetime.now()) + " " + str(i) + "th Entry_Acknowledged " + result + "\n")
+                #val = (i % 1000)
+                #if val == 0:
+                    #print i
+                    #status = wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
+                    #result = re.search(entry_hash,status).group(0)
+                    #logging.info(str(i) + "th Entry_Acknowledged " + result)
+                    #f.write(str(datetime.datetime.now()) + " " + str(i) + "th Entry_Acknowledged " + result + "\n")
                     #time.sleep(30)
             #time.sleep(30)
+
         f.close()
 
