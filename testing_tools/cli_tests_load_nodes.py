@@ -32,7 +32,9 @@ class CLITestsLoadNodes(unittest.TestCase):
         self.first_address = self.cli_create.import_addresses(self.data['factoid_wallet_address'])[0]
         self.ecrate = self.cli_create.get_entry_credit_rate()
         self.entry_credit_address1000000 = fund_entry_credit_address(1000000)
-        #print self.entry_credit_address1000000
+        #self.entry_credit_address1000000 = "EC2DKSYyRcNWf7RS963VFYgMExoHRYLHVeCfQ9PGPmNzwrcmgm2r"
+        #self.entry_credit_address1000000 = self.cli_create.create_entry_credit_address()
+        print self.entry_credit_address1000000
         #self.entry_credit_address1000 = fund_entry_credit_address(1000)
         timestr = time.strftime("%Y%m%d-%H%M%S")
         logging.basicConfig(filename="perf_" + timestr + "_.txt", level=logging.INFO,format='%(asctime)s %(message)s')
@@ -85,6 +87,7 @@ class CLITestsLoadNodes(unittest.TestCase):
             # reveal_chain
             reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
             chainid = reveal['chainid']
+            print chainid
 
             logging.info("Chain_Created " + reveal['chainid'])
 
@@ -128,7 +131,7 @@ class CLITestsLoadNodes(unittest.TestCase):
         timestr = time.strftime("%Y%m%d-%H%M%S")
         f = open("performance_" + str(timestr) + ".txt","w")
 
-        for i in range(1):
+        for i in range(5):
             chain_external_ids, content = generate_random_external_ids_and_content()
 
             # compose chain
@@ -142,7 +145,7 @@ class CLITestsLoadNodes(unittest.TestCase):
             chainid = reveal['chainid']
 
             logging.info("Chain_Created " + reveal['chainid'])
-            f.write(str(datetime.datetime.now()) +" Chain_Created " + reveal['chainid'] + "\n")
+            #f.write(str(datetime.datetime.now()) +" Chain_Created " + reveal['chainid'] + "\n")
 
             chain_external_ids.insert(0, '-h')
             chain_external_ids.insert(2, '-h')
@@ -151,16 +154,15 @@ class CLITestsLoadNodes(unittest.TestCase):
             #if status contains chainid then, print the time stamp
             result = re.search(chainid,status).group(0)
             logging.info("Chain_Acknowledged " + result)
-            f.write(str(datetime.datetime.now()) + " Chain_Acknowledged " + result + "\n")
+            #f.write(str(datetime.datetime.now()) + " Chain_Acknowledged " + result + "\n")
 
 
             total_entries = 20001
-
             for i in range(0, total_entries):
                 # compose entry
 
                 entry_external_ids, content = generate_random_external_ids_and_content()
-                compose = self.api_wallet.compose_entry(reveal['chainid'], entry_external_ids, content,
+                compose = self.api_wallet.compose_entry(chainid, entry_external_ids, content,
                                                 self.entry_credit_address1000000)
 
                 # commit entry
@@ -169,19 +171,63 @@ class CLITestsLoadNodes(unittest.TestCase):
                 # reveal entry
                 reveal = self.api_factomd.reveal_entry(compose['reveal']['params']['entry'])
                 entry_hash = reveal['entryhash']
+                print entry_hash
 
-                #time.sleep(1)
+
+                #time.sleep(0.25)
 
                 # entry arrived in block?
-                #val = (i % 1000)
-                #if val == 0:
+                val = (i % 1000)
+                if val == 0:
                     #print i
-                    #status = wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
-                    #result = re.search(entry_hash,status).group(0)
-                    #logging.info(str(i) + "th Entry_Acknowledged " + result)
-                    #f.write(str(datetime.datetime.now()) + " " + str(i) + "th Entry_Acknowledged " + result + "\n")
+                    logging.info(str(i) + "th before Acknowledgement " + result)
+                    f.write(str(datetime.datetime.now()) + " " + str(i) + "th before Acknowledgement " + result + "\n")
+                    status = wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
+                    result = re.search(entry_hash,status).group(0)
+                    logging.info(str(i) + "th Entry_Acknowledged " + result)
+                    f.write(str(datetime.datetime.now()) + " " + str(i) + "th Entry_Acknowledged " + result + "\n")
                     #time.sleep(30)
             #time.sleep(30)
 
         f.close()
 
+
+    def test_ordermismatch(self):
+        for i in range(5):
+            chain_external_ids, content = generate_random_external_ids_and_content()
+
+            # compose chain
+            compose = self.api_wallet.compose_chain(chain_external_ids, content, self.entry_credit_address1000000)
+
+            # commit chain
+            commit = self.api_factomd.commit_chain(compose['commit']['params']['message'])
+
+            # reveal_chain
+            reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
+            chainid = reveal['chainid']
+
+            logging.info("Chain_Created " + reveal['chainid'])
+            chain_external_ids.insert(0, '-h')
+            chain_external_ids.insert(2, '-h')
+
+            status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+            #if status contains chainid then, print the time stamp
+            result = re.search(chainid,status).group(0)
+            print result
+
+            total_entries = 1001
+            #chainid = "79bb98f950dabe72809ce0aa4c2a26de7a0e73d0b04a80fea7386c0ba4c59852"
+
+            for i in range(0, total_entries):
+                # compose entry
+
+                entry_external_ids, content = generate_random_external_ids_and_content()
+                compose = self.api_wallet.compose_entry(chainid, entry_external_ids, content,
+                                                self.entry_credit_address1000000)
+                # commit entry
+                commit = self.api_factomd.commit_entry(compose['commit']['params']['message'])
+
+                # reveal entry
+                reveal = self.api_factomd.reveal_entry(compose['reveal']['params']['entry'])
+                entry_hash = reveal['entryhash']
+                print entry_hash

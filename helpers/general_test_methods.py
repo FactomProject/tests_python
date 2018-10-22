@@ -33,7 +33,6 @@ def wait_for_chain_in_block(**kwargs):
 def wait_for_entry_in_block(entryhash, chainid):
     for x in range(0, BLOCK_WAIT_TIME*10000):
         result = str(api_factomd.get_status(entryhash, chainid))
-        #print result
         #if 'TransactionACK' in result or 'DBlockConfirmed' in result:
         if 'TransactionACK' in result:
             break
