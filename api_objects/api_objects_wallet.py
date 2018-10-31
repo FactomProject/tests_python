@@ -288,6 +288,7 @@ class APIObjectsWallet():
         Output: public key and secret key
         '''
         block = json.loads(self.send_post_request_with_params_dict('identity-key',{'public': publickey}))
+        print block
         return block['result']
 
 
@@ -308,7 +309,7 @@ class APIObjectsWallet():
         Output: public key and secret key
         '''
         block = json.loads(self.send_get_request_with_method('all-identity-keys'))
-        print block
+
         return block['result']
 
 
@@ -318,7 +319,7 @@ class APIObjectsWallet():
         Input: secret key
         Output: public key and secret key
         '''
-        block = json.loads(self.send_get_request_with_method('import-identity-key',{'public': secretkey}))
+        block = json.loads(self.send_post_request_with_params_dict('import-identity-key',{'public': secretkey}))
         return block['result']
 
     def identity_key_at_height(self,chainid,height):
@@ -328,7 +329,7 @@ class APIObjectsWallet():
         Input: chainid, height
         Output: set of four public keys
         '''
-        block = json.loads(self.send_get_request_with_method('identity-keys-at-height', {'chainid': chainid,'height': height}))
+        block = json.loads(self.send_post_request_with_params_dict('identity-keys-at-height', {'chainid': chainid,'height': height}))
         return block['result']
 
 
@@ -338,7 +339,7 @@ class APIObjectsWallet():
         Input: secret key
         Output: successful or not
         '''
-        block = json.loads(self.send_get_request_with_method('remove-identity-key',{'public': secretkey}))
+        block = json.loads(self.send_post_request_with_params_dict('remove-identity-key',{'public': secretkey}))
         return block['result']
 
 
