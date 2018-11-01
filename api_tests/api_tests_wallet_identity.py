@@ -4,7 +4,7 @@ from nose.plugins.attrib import attr
 from api_objects.api_objects_factomd import APIObjectsFactomd
 from api_objects.api_objects_wallet import APIObjectsWallet
 from helpers.helpers import read_data_from_json
-from helpers.general_test_methods import fund_entry_credit_address
+from helpers.general_test_methods import fund_entry_credit_address, wait_for_chain_in_block
 from helpers.api_methods import generate_random_external_ids_and_content
 
 @attr(fast=True)
@@ -61,24 +61,63 @@ class ApiTestsWallet(unittest.TestCase):
         else:
             print "Remove Identity Key Failed"
 
-
-
     def test_compose_identity_chain(self):
+
         chain_external_ids, content = generate_random_external_ids_and_content()
-        keys = self.api_wallet.generate_identity_key()
-        # compose chain
-        compose = self.api_wallet.compose_identity_chain(chain_external_ids, keys['public'], self.entry_credit_address1000)
-        print compose
+        keylist = []
+        # generate 5 identities to be added as identity chain content
+        for i in range(0, 5):
+            keylist.append(self.api_wallet.generate_identity_key()['public'])
+
+        # compose identity chain
+        compose = self.api_wallet.compose_identity_chain(chain_external_ids, keylist, self.entry_credit_address1000)
 
         # commit chain
         commit = self.api_factomd.commit_chain(compose['commit']['params']['message'])
-        print commit
 
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
-        print reveal
+
+    def test_compose_identity_chain_max_size(self):
+
+        chain_external_ids, content = generate_random_external_ids_and_content()
+        keylist = []
+        #each identity is 55 bytes. 170 identities creates 10KB of chain content
+        for i in range(0,170):
+            keylist.append(self.api_wallet.generate_identity_key()['public'])
+
+        # compose identity chain
+        compose = self.api_wallet.compose_identity_chain(chain_external_ids,keylist,self.entry_credit_address1000)
+
+        # commit chain
+        commit = self.api_factomd.commit_chain(compose['commit']['params']['message'])
+
+        # reveal chain
+        reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
 
+    def test_identity_key_at_height(self):
 
+        chain_external_ids, content = generate_random_external_ids_and_content()
+        keylist = []
 
+        # generate 5 identities to be added as identity chain content
+        for i in range(0, 5):
+            keylist.append(self.api_wallet.generate_identity_key()['public'])
 
+        # compose identity chain
+        compose = self.api_wallet.compose_identity_chain(chain_external_ids, keylist, self.entry_credit_address1000)
+
+        # commit chain
+        commit = self.api_factomd.commit_chain(compose['commit']['params']['message'])
+
+        # reveal chain
+        reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
+        print reveal['chainid']
+        status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+        print status
+        time.sleep(30)
+
+        height = self.api_factomd.get_heights()
+
+        print self.api_wallet.identity_key_at_height(reveal['chainid'], height['directoryblockheight'])

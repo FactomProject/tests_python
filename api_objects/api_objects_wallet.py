@@ -330,6 +330,7 @@ class APIObjectsWallet():
         Output: set of four public keys
         '''
         block = json.loads(self.send_post_request_with_params_dict('identity-keys-at-height', {'chainid': chainid,'height': height}))
+        print block
         return block['result']
 
 
@@ -364,7 +365,7 @@ class APIObjectsWallet():
                     entry
                 method: "reveal-chain"
        '''
-        block = json.loads(self.send_post_request_with_params_dict('compose-identity_chain', {'name': [external_ids], 'pubkeys': [pubkeys], 'ecpub': ec_address}))
+        block = json.loads(self.send_post_request_with_params_dict('compose-identity-chain', {'name': external_ids, 'pubkeys': pubkeys, 'ecpub': ec_address}))
         if 'error' in str(block):
             exit('compose entry failed - ' + str(block['error']))
         else: return block['result']
