@@ -394,14 +394,14 @@ class APIObjectsWallet():
                     entry
                 method: "reveal-chain"
        '''
-        block = json.loads(self.send_post_request_with_params_dict('compose-identity_attribute', {'chainid': chainid, 'oldkey': oldkey, 'newkey': newkey, 'signerkey': signerkey, 'ecpub': ec_address,'force': force}))
+        block = json.loads(self.send_post_request_with_params_dict('compose-identity-key-replacement', {'chainid': chainid, 'oldkey': oldkey, 'newkey': newkey, 'signerkey': signerkey, 'ecpub': ec_address,'force': force}))
         if 'error' in str(block):
             exit('compose entry failed - ' + str(block['error']))
         else: return block['result']
 
 
 
-    def compose_identity_attribute(self,receiver_chainid,destination_chainid,attributes, signer_chainid,signerkey):
+    def compose_identity_attribute(self,receiver_chainid,destination_chainid,attributes, signer_chainid,signerkey,ecpub):
         '''
         https://docs-dev.factom.com/api#compose-identity-attribute
         This method helps you endorse an attribute that has already been registered on the Factom blockchain.
@@ -425,13 +425,13 @@ class APIObjectsWallet():
                 method: "reveal-chain"
        '''
         block = json.loads(self.send_post_request_with_params_dict('compose-identity-attribute', {'receiver-chainid': receiver_chainid, 'destination-chainid': destination_chainid,
-                                                                                                  'attributes': attributes,'signerchainid': signer_chainid, 'signerkey': signerkey}))
+                                                                                                  'attributes': attributes,'signerchainid': signer_chainid, 'signerkey': signerkey,'ecpub': ecpub}))
         if 'error' in str(block):
             exit('compose entry failed - ' + str(block['error']))
         else: return block['result']
 
 
-    def compose_identity_attribute_endorsement(self, destination_chainid,entryhash,signerkey,signer_chainid):
+    def compose_identity_attribute_endorsement(self, destination_chainid,entryhash,signerkey,signer_chainid,ecpub):
         '''
         https://docs-dev.factom.com/api#compose-identity-attribute
         This method helps you endorse an attribute that has already been registered on the Factom blockchain.
@@ -454,7 +454,7 @@ class APIObjectsWallet():
                 method: "reveal-chain"
        '''
         block = json.loads(self.send_post_request_with_params_dict('compose-identity-attribute-endorsement', {'destination-chainid': destination_chainid,
-                                                                                                  'entryhash': entryhash, 'signerkey': signerkey, 'signerchainid': signer_chainid, }))
+                                                                                                  'entryhash': entryhash, 'signerkey': signerkey, 'signerchainid': signer_chainid, 'ecpub': ecpub}))
         if 'error' in str(block):
             exit('compose entry failed - ' + str(block['error']))
         else: return block['result']
