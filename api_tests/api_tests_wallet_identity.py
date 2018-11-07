@@ -29,14 +29,20 @@ class ApiTestsWallet(unittest.TestCase):
     def test_identity_key(self):
         keys = self.api_wallet.generate_identity_key()
         result =  self.api_wallet.identity_key(keys['public'])
+        found = False
         if result['secret'] == keys['secret']:
-            print "keys matched"
+            found = True
+        self.assertTrue(found == True, "Found keys. Test Case Passed")
 
 
     def test_all_identity_keys(self):
-        result = self.api_wallet.all_identity_keys()
-        print result
-
+        newkey = self.api_wallet.generate_identity_key()
+        key_list = self.api_wallet.all_identity_keys()
+        found = False
+        for i in range(0, len(key_list['keys'])-1):
+          if (key_list['keys'][i]['public'] == newkey['public']):
+                found = True
+        self.assertTrue(found == True, "Found keys. Test Case Passed")
 
     def test_remove_identity_keys(self):
         #generate identity key
@@ -52,14 +58,10 @@ class ApiTestsWallet(unittest.TestCase):
         found = False
 
         #check if the check is found in the list of identity keys. pass if not found. fail if found.
-        for i in range(0,len(identity_list['keys'])):
+        for i in range(0,len(identity_list['keys'])-1):
             if identity_list['keys'][i]['public'] == keys['public']:
                 found = True
-
-        if found == False:
-            print "Remove Identity Key Passed"
-        else:
-            print "Remove Identity Key Failed"
+        self.assertTrue(found == False, "Remove Identity Key Passed")
 
 
     def test_compose_identity_chain(self):
@@ -97,6 +99,18 @@ class ApiTestsWallet(unittest.TestCase):
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
+        chain_external_ids.insert(0, '-h')
+        chain_external_ids.insert(2, '-h')
+
+        # search for revealed chain
+        status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+
+        # chain's existence is acknowledged?
+        self.assertNotIn('Missing Chain Head', status, 'Chain not revealed')
+
+        # chain arrived in block?
+        self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
+                        'Chain not arrived in block')
 
     def test_identity_key_at_height(self):
 
@@ -115,14 +129,14 @@ class ApiTestsWallet(unittest.TestCase):
 
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
-        print reveal['chainid']
-        status = wait_for_chain_in_block(external_id_list=chain_external_ids)
-        print status
-        time.sleep(30)
+        chain_external_ids.insert(0, '-h')
+        chain_external_ids.insert(2, '-h')
+        wait_for_chain_in_block(external_id_list=chain_external_ids)
 
         height = self.api_factomd.get_heights()
 
-        print self.api_wallet.identity_key_at_height(reveal['chainid'], height['directoryblockheight'])
+        result = self.api_wallet.identity_key_at_height(reveal['chainid'], height['directoryblockheight'])
+        self.assertTrue(keylist == result['keys'],"Found the key. Testcase Passed")
 
 
     def test_compose_key_replacement(self):
@@ -175,11 +189,7 @@ class ApiTestsWallet(unittest.TestCase):
         result = self.api_wallet.identity_key_at_height(reveal['chainid'], height['directoryblockheight'])
 
         #compare the identity keys before replacing and after replacing. If they are same then test case failed else test case passed
-        if keylist != result['keys']:
-            print "keys are not matching"
-        else:
-            print "keys matched"
-
+        self.assertTrue(keylist != result['keys'], "Key Found. Testcase Passed")
 
     def compose_attribute(self):
         #create destination chain
@@ -202,9 +212,7 @@ class ApiTestsWallet(unittest.TestCase):
 
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
-
         #create receiver chain
-
         chain_external_ids, content = generate_random_external_ids_and_content()
         keylist = []
         # generate 5 identities to be added as identity chain content

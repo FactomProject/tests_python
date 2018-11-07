@@ -43,6 +43,10 @@ class CLIObjectsChain(CLIObjectsBase):
         del entry_text[-1:]
         return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
 
+    def parse_keys_data(self,keys,index):
+        key_list = keys.split('\n')
+        return key_list[index]
+
     def parse_block_data(self, text):
         parsed_dict = defaultdict(list)
         starts = []

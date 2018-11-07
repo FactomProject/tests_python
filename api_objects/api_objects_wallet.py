@@ -288,7 +288,6 @@ class APIObjectsWallet():
         Output: public key and secret key
         '''
         block = json.loads(self.send_post_request_with_params_dict('identity-key',{'public': publickey}))
-        print block
         return block['result']
 
 
@@ -330,7 +329,6 @@ class APIObjectsWallet():
         Output: set of four public keys
         '''
         block = json.loads(self.send_post_request_with_params_dict('identity-keys-at-height', {'chainid': chainid,'height': height}))
-        print block
         return block['result']
 
 

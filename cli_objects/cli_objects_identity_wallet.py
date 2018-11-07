@@ -4,23 +4,32 @@ from cli_objects_base import CLIObjectsBase
 from subprocess import Popen, PIPE
 
 class CLIObjectsIdentityWallet(CLIObjectsBase):
-    _add_chain = "identity addchain"
-    _add_attribute = "identity addattribute"
-    _add_attribute_endorsement = "identity addattributeendorsement"
-    _new_identity = "newidentitykey"
-    _list_identity_keys = "listidentitykeys"
+    _add_identity_chain = "identity addchain "
+    _add_attribute = "identity addattribute "
+    _add_attribute_endorsement = "identity addattributeendorsement "
+    _new_identity = "newidentitykey "
+    _list_identity_keys = "listidentitykeys "
+    _rm_identity_key = "rmidentitykey "
+    _identity_get_height = "identity getkeysatheight "
+    _identity_key_replacement = "identity addkeyreplacement "
 
-    def make_identity_chain(self, ecaddress, content, pubkeys, **kwargs):
+
+
+    def add_identity_chain(self, ecaddress, content, **kwargs):
         flags = ''
         if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
         chain_identifier = ''
+
         if 'external_id_list' in kwargs:
             chain_identifier = ' '.join(kwargs['external_id_list'])
 
+        if 'public_key_list' in kwargs:
+            key_list = ' '.join(kwargs['public_key_list'])
+
         # open subprocess as a way to 'write' content into the command instead of it coming from a file
         args = shlex.split(
-            ''.join((self._cli_command, self._add_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
+            ''.join((self._cli_command, self._add_identity_chain, ' ',  chain_identifier, ' ', flags, ' ', key_list , ' ' , ecaddress)))
         p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
         text = p.communicate(content)
         '''
@@ -38,7 +47,29 @@ class CLIObjectsIdentityWallet(CLIObjectsBase):
     def new_identity_key(self):
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._new_identity)))
 
+
     def list_identity_keys(self):
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._list_identity_keys)))
 
 
+    def rm_identity_key(self,identity):
+        return send_command_to_cli_and_receive_text(''.join((self._cli_command,self._rm_identity_key, identity)))
+
+
+    def add_attribute(self,chainid,receiver_chainid, signer_chainid, signer_pubkey, attribute, ecaddress):
+
+        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._add_attribute, ' -c ', chainid, ' -creceiver ', receiver_chainid, ' -csigner ', signer_chainid, ' -signerkey ', signer_pubkey
+                                                             , ' -attribute ', attribute, ' ',  ecaddress)))
+
+
+    def get_keys_at_height(self,chainid, height):
+        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._identity_get_height, ' -c ', chainid, ' ' , height)))
+
+
+
+    def add_attribute_endorsement(self,chainid, signer_chainid, signer_pubkey, entryhash, ecaddress):
+        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._add_attribute_endorsement, ' -c ', chainid, ' -csigner ', signer_chainid, ' -signerkey ', signer_pubkey
+                                                             , ' -entryhash ', entryhash, ' ',  ecaddress)))
+
+    def add_key_replacement(self,chainid,oldkey,newkey,signerkey,ecaddress):
+        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._identity_key_replacement, ' -c ', chainid, ' --oldkey ', oldkey, ' --newkey ', newkey, ' --signerkey ', signerkey, ' ', ecaddress)))
