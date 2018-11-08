@@ -27,24 +27,53 @@ class ApiTestsWallet(unittest.TestCase):
 
 
     def test_identity_key(self):
+        '''
+        Test to generate identity key and verify the secret is key is same when fetched from identity_key api
+        :return:
+        '''
+        #generate identity keys
         keys = self.api_wallet.generate_identity_key()
+
+        #fetch secret key from identity key api
         result =  self.api_wallet.identity_key(keys['public'])
+
+        #check if secret key of the identities is the same. pass if found. false if not found
         found = False
         if result['secret'] == keys['secret']:
             found = True
+        else:
+            found = False
+
         self.assertTrue(found == True, "Found keys. Test Case Passed")
 
 
     def test_all_identity_keys(self):
+        '''
+        Test to generate identity key and verify it is part of all the identities list
+        :return:
+        '''
+        #generate identity key
         newkey = self.api_wallet.generate_identity_key()
+
+        #list all identities
         key_list = self.api_wallet.all_identity_keys()
+
+        #flag to confirm identity is found
         found = False
+
+        #check if the identity is found in the list of identity keys. pass if found. fail if not found.
         for i in range(0, len(key_list['keys'])-1):
           if (key_list['keys'][i]['public'] == newkey['public']):
                 found = True
+
         self.assertTrue(found == True, "Found keys. Test Case Passed")
 
     def test_remove_identity_keys(self):
+        '''
+        Test to verify the newly generated key when removed is not part of all the identities list
+        :return:
+        '''
+
         #generate identity key
         keys = self.api_wallet.generate_identity_key()
 
@@ -54,10 +83,10 @@ class ApiTestsWallet(unittest.TestCase):
         #list all the identity key
         identity_list = self.api_wallet.all_identity_keys()
 
-        #flag to confirm the key is found
+        #flag to confirm the identity key is found
         found = False
 
-        #check if the check is found in the list of identity keys. pass if not found. fail if found.
+        #check if the identity is found in the list of identity keys. pass if not found. fail if found.
         for i in range(0,len(identity_list['keys'])-1):
             if identity_list['keys'][i]['public'] == keys['public']:
                 found = True
@@ -65,6 +94,10 @@ class ApiTestsWallet(unittest.TestCase):
 
 
     def test_compose_identity_chain(self):
+        '''
+        Test to create identity chain
+        :return:
+        '''
 
         chain_external_ids, content = generate_random_external_ids_and_content()
         keylist = []
@@ -81,9 +114,21 @@ class ApiTestsWallet(unittest.TestCase):
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
+        chain_external_ids.insert(0, '-h')
+        chain_external_ids.insert(2, '-h')
+
+        # search for revealed chain
+        status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+
+        # chain arrived in block?
+        self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
+                        'Chain not arrived in block')
 
     def test_compose_identity_chain_max_size(self):
-
+        '''
+        Test case to compose identity chain with max number of identities.
+        :return:
+        '''
         chain_external_ids, content = generate_random_external_ids_and_content()
         keylist = []
         #each identity is 55 bytes. 170 identities creates 10KB of chain content
@@ -105,15 +150,15 @@ class ApiTestsWallet(unittest.TestCase):
         # search for revealed chain
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
-        # chain's existence is acknowledged?
-        #self.assertNotIn('Missing Chain Head', status, 'Chain not revealed')
-
         # chain arrived in block?
         self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
                         'Chain not arrived in block')
 
     def test_identity_key_at_height(self):
-
+        '''
+        Test to fetch the identity keys of identity chain at a specific height
+        :return:
+        '''
         chain_external_ids, content = generate_random_external_ids_and_content()
         keylist = []
 
@@ -140,6 +185,10 @@ class ApiTestsWallet(unittest.TestCase):
 
 
     def test_compose_key_replacement(self):
+        '''
+        Test to replace the identity keys in the identity chain
+        :return:
+        '''
         chain_external_ids, content = generate_random_external_ids_and_content()
         keylist = []
         # generate 5 identities to be added as identity chain content
@@ -191,7 +240,13 @@ class ApiTestsWallet(unittest.TestCase):
         #compare the identity keys before replacing and after replacing. If they are same then test case failed else test case passed
         self.assertTrue(keylist != result['keys'], "Key Found. Testcase Passed")
 
+
     def compose_attribute(self):
+        '''
+        This function creates API calls to create a new Identity Attribute Entry using the Entry Credits from the specified address.
+        :return:
+        '''
+
         #create destination chain
         chain_external_ids, content = generate_random_external_ids_and_content()
 
@@ -254,12 +309,21 @@ class ApiTestsWallet(unittest.TestCase):
 
 
     def test_compose_attribute(self):
+        '''
+        Test case Create API calls to create a new Identity Attribute Entry using the Entry Credits from the specified address.
+        :return:
+        '''
 
         entry_hash, chainid, receiver_chainid = self.compose_attribute()
         self.assertIn('DBlockConfirmed', str(self.api_factomd.get_status(entry_hash,chainid)), 'Entry not arrived in block')
 
 
     def test_compose_attribute_endorsement(self):
+        '''
+        Test case compose API calls to create a new Endorsement Entry for the Identity Attribute at the given entry hash. Uses the Entry Credits from the specified address.
+        :return:
+        '''
+
         entry_hash,chainid, receiver_chainid = self.compose_attribute()
 
         # get the current height
@@ -282,3 +346,4 @@ class ApiTestsWallet(unittest.TestCase):
         status = wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
         self.assertIn('DBlockConfirmed', str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
                       'Entry not arrived in block')
+
