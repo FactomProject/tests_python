@@ -89,11 +89,11 @@ class CLITestsChains(unittest.TestCase):
                 found = True
                 break
             time.sleep(1)
+        self.assertTrue(found, 'Chainhead not included in a Directory Block after 1 block')
 
     def test_compose_attribute(self):
         '''
         Create a new Identity Attribute Entry using the Entry Credits from the specified address. Optional output flags: -C ChainID. -E EntryHash. -T TxID.
-        :return:
         '''
         chainid =  self.make_chain()
         self.confirm_chain_in_blockchain(chainid)
@@ -119,7 +119,6 @@ class CLITestsChains(unittest.TestCase):
     def test_compose_attribute_endorsement(self):
         '''
         Create a new Endorsement Entry for the Identity Attribute at the given entry hash. Uses the Entry Credits from the specified address. Optional output flags: -C ChainID. -E EntryHash. -T TxID.
-        :return:
         '''
 
         #compose attribute
