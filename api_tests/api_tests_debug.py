@@ -1,4 +1,5 @@
 import unittest, re
+import time
 
 from nose.plugins.attrib import attr
 from api_objects.api_objects_debug import APIObjectsDebug
@@ -97,6 +98,7 @@ class FactomDebugAPItests(unittest.TestCase):
 
 
     def test_droprate(self):
+        print "executing"
         droprate = self.api_debug.get_droprate()
         print droprate
 
@@ -137,14 +139,17 @@ class FactomDebugAPItests(unittest.TestCase):
         result = self.api_debug.get_delay()
         print result
 
-
     def test_set_delay(self):
-        result = self.api_debug.set_delay('200')
-        print result
+        result = self.api_debug.set_delay('20')
+        delay = result['Delay']
+        result = self.api_debug.get_delay()
+        self.assertEqual(result['Delay'],delay,"Testcase passed. Delay has been set")
 
     def test_set_droprate(self):
         result = self.api_debug.set_droprate('10')
-        print result
+        droprate = result['DropRate']
+        result = self.api_debug.get_droprate()
+        self.assertEqual(result['DropRate'],droprate,"Testcase passed. Drop Rate has been set")
 
     def test_reload_configuration(self):
         result = self.api_debug.reload_configuration()
@@ -158,3 +163,4 @@ class FactomDebugAPItests(unittest.TestCase):
         print "in messages"
         result = self.api_debug.get_messages_list()
         print result
+

@@ -48,7 +48,7 @@ class APIObjectsDebug():
         :return: holding messages in the queue
         '''
         holding_queue = json.loads(self.send_get_request_with_method('holding-queue'))
-        return holding_queue
+        return holding_queue['result']
 
     def get_network_info(self):
         '''
@@ -56,7 +56,7 @@ class APIObjectsDebug():
         :return: the network information
         '''
         network_info = json.loads(self.send_get_request_with_method('network-info'))
-        return network_info
+        return network_info['result']
 
     def get_predictive_fer(self):
         '''
@@ -64,7 +64,7 @@ class APIObjectsDebug():
         :return: Get the predicted future exchange rate
         '''
         predictive_fer = json.loads(self.send_get_request_with_method('predictive-fer'))
-        return predictive_fer
+        return predictive_fer['result']
 
     def get_configuration(self):
         '''
@@ -72,7 +72,7 @@ class APIObjectsDebug():
         :return: Get the configuration from the config file
         '''
         configuration = json.loads(self.send_get_request_with_method('configuration'))
-        return configuration
+        return configuration['result']
 
     def get_droprate(self):
         '''
@@ -80,15 +80,15 @@ class APIObjectsDebug():
         :return: Get the drop rate of factomd
         '''
         droprate = json.loads(self.send_get_request_with_method('drop-rate'))
-        return droprate
+        return droprate['result']
 
     def set_droprate(self,droprate):
         '''
         Set the drop rate of factomd node
         :return: Set the drop rate of factomd node
         '''
-        delay = json.loads(self.send_get_request_with_params_dict('droprate', {'droprate': droprate})[0])
-        return delay
+        delay = json.loads(self.send_get_request_with_params_dict('set-drop-rate', {'DropRate': int(droprate)})[0])
+        return delay['result']
 
     def get_currentminute(self):
         '''
@@ -104,7 +104,7 @@ class APIObjectsDebug():
         :return: Get the summary of factomd
         '''
         summary = json.loads(self.send_get_request_with_method('summary'))
-        return summary
+        return summary['result']
 
     def get_delay(self):
         '''
@@ -112,24 +112,25 @@ class APIObjectsDebug():
         :return: Get the delay of factomd
         '''
         delay = json.loads(self.send_get_request_with_method('delay'))
-        return delay
+        return delay['result']
 
     def set_delay(self,delay):
         '''
         Set the delay of factomd node
         :return: Set the delay of factomd node
         '''
-        delay = json.loads(self.send_get_request_with_params_dict('delay', {'delay': delay})[0])
-        return delay
+        delay = json.loads(self.send_get_request_with_params_dict('set-delay', {'Delay': int(delay)})[0])
+        return delay['result']
 
     def reload_configuration(self):
         conf = json.loads(self.send_get_request_with_method('reload-configuration'))
-        return conf
+        return conf['result']
 
     def get_process_list(self):
         processlist =  json.loads(self.send_get_request_with_method('process-list'))
-        return processlist
+        return processlist['result']
 
     def get_messages_list(self):
         messages = json.loads(self.send_get_request_with_method('messages'))
-        return messages
+        return messages['result']
+
