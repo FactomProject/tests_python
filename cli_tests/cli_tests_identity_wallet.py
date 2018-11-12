@@ -191,4 +191,4 @@ class CLITestsChains(unittest.TestCase):
             if (str(parsed_key_list[i]) == str(newkey)):
                 found = True
 
-        self.assertFalse(found == False, "Testcase Failed")
+        self.assertTrue(found, "Testcase Failed")
