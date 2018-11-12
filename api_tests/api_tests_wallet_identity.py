@@ -44,7 +44,8 @@ class ApiTestsWallet(unittest.TestCase):
         else:
             found = False
 
-        self.assertTrue(found == True, "Found keys. Test Case Passed")
+        self.assertTrue(found, "Found keys. Test Case Passed")
+
 
 
     def test_all_identity_keys(self):
