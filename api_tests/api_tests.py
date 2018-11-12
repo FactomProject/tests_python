@@ -84,3 +84,5 @@ class APITests(unittest.TestCase):
         result = str(self.api_wallet.get_wallet_properties())
         self.assertTrue('walletversion' in result and 'walletapiversion' in result, 'wallet properties command not working' )
 
+
+
