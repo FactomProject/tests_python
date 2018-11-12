@@ -1,6 +1,6 @@
 {
-  "wallet_address": "localhost:8089",
-  "factomd_address": "localhost:8088",
+  "wallet_address": "apiplus-walletd:8089",
+  "factomd_address": "apiplus-factomd-default:8088",
   "factomd_address_0": "apiplus-factomd-c10:8088",
   "factomd_address_1": "apiplus-factomd-c11:8088",
   "factomd_address_2": "apiplus-factomd-c12:8088",
