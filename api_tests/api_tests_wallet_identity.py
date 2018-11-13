@@ -8,7 +8,7 @@ from helpers.general_test_methods import fund_entry_credit_address, wait_for_cha
 from helpers.api_methods import generate_random_external_ids_and_content
 
 @attr(fast=True)
-class ApiTestsWallet(unittest.TestCase):
+class ApiTestsWalletIdentity(unittest.TestCase):
     api_factomd = APIObjectsFactomd()
     api_wallet = APIObjectsWallet()
     blocktime = api_factomd.get_current_minute()['directoryblockinseconds']
@@ -66,7 +66,7 @@ class ApiTestsWallet(unittest.TestCase):
           if (key_list['keys'][i]['public'] == newkey['public']):
                 found = True
 
-        self.assertTrue(found == True, "Found keys. Test Case Passed")
+        self.assertTrue(found,"Not Found keys. Test Case Failed")
 
     def test_remove_identity_keys(self):
         '''
@@ -90,7 +90,7 @@ class ApiTestsWallet(unittest.TestCase):
         for i in range(0,len(identity_list['keys'])-1):
             if identity_list['keys'][i]['public'] == keys['public']:
                 found = True
-        self.assertTrue(found == False, "Remove Identity Key Passed")
+        self.assertFalse(found, "Remove Identity Key Passed")
 
 
     def test_compose_identity_chain(self):
@@ -114,11 +114,17 @@ class ApiTestsWallet(unittest.TestCase):
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
-        chain_external_ids.insert(0, '-h')
-        chain_external_ids.insert(2, '-h')
+        chain_external_ids.insert(0, '-n')
+        chain_external_ids.insert(2, '-n')
 
         # search for revealed chain
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+
+        # chain's existence is acknowledged?
+        self.assertNotIn('Missing Chain Head', status, 'Chain not revealed')
+
+        # chain arrived in block?
+        self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
         # chain arrived in block?
         self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
@@ -144,11 +150,17 @@ class ApiTestsWallet(unittest.TestCase):
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
-        chain_external_ids.insert(0, '-h')
-        chain_external_ids.insert(2, '-h')
+        chain_external_ids.insert(0, '-n')
+        chain_external_ids.insert(2, '-n')
 
         # search for revealed chain
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+
+        # chain's existence is acknowledged?
+        self.assertNotIn('Missing Chain Head', status, 'Chain not revealed')
+
+        # chain arrived in block?
+        self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
         # chain arrived in block?
         self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
@@ -174,9 +186,16 @@ class ApiTestsWallet(unittest.TestCase):
 
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
-        chain_external_ids.insert(0, '-h')
-        chain_external_ids.insert(2, '-h')
-        wait_for_chain_in_block(external_id_list=chain_external_ids)
+        chain_external_ids.insert(0, '-n')
+        chain_external_ids.insert(2, '-n')
+        status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+
+
+        # chain's existence is acknowledged?
+        self.assertNotIn('Missing Chain Head', status, 'Chain not revealed')
+
+        # chain arrived in block?
+        self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
         height = self.api_factomd.get_heights()
 
@@ -205,16 +224,22 @@ class ApiTestsWallet(unittest.TestCase):
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
         #wait until chain is written into the blockchain
-        chain_external_ids.insert(0, '-h')
-        chain_external_ids.insert(2, '-h')
+        chain_external_ids.insert(0, '-n')
+        chain_external_ids.insert(2, '-n')
 
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+
+        # chain's existence is acknowledged?
+        self.assertNotIn('Missing Chain Head', status, 'Chain not revealed')
+
+        # chain arrived in block?
+        self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
         #generate a new key to replace one of the old keys
         newkey = self.api_wallet.generate_identity_key()
 
         #compose entry with the new key
-        compose_entry = self.api_wallet.compose_identity_key_replacement(reveal['chainid'],keylist[3],newkey['public'],keylist[0],self.entry_credit_address1000,True)
+        compose_entry = self.api_wallet.compose_identity_key_replacement(reveal['chainid'],keylist[3],newkey['public'],keylist[0],self.entry_credit_address1000,False)
 
         # commit entry
         commit_entry = self.api_factomd.commit_entry(compose_entry['commit']['params']['message'])
@@ -267,6 +292,12 @@ class ApiTestsWallet(unittest.TestCase):
 
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
+        # chain's existence is acknowledged?
+        self.assertNotIn('Missing Chain Head', status, 'Chain not revealed')
+
+        # chain arrived in block?
+        self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
+
         #create receiver chain
         chain_external_ids, content = generate_random_external_ids_and_content()
         keylist = []
@@ -286,17 +317,23 @@ class ApiTestsWallet(unittest.TestCase):
         receiver_chainid= reveal['chainid']
 
         # wait until chain is written into the blockchain
-        chain_external_ids.insert(0, '-h')
-        chain_external_ids.insert(2, '-h')
+        chain_external_ids.insert(0, '-n')
+        chain_external_ids.insert(2, '-n')
 
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+
+        # chain's existence is acknowledged?
+        self.assertNotIn('Missing Chain Head', status, 'Chain not revealed')
+
+        # chain arrived in block?
+        self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
         #compose chain to create new identity attribute entry
         attributes = [{"key":"email","value":"veena@abc.com"}]
         signerkey = keylist[0]
         signer_chainid =  receiver_chainid
 
-        compose = self.api_wallet.compose_identity_attribute(receiver_chainid,destination_chainid,attributes,signer_chainid,signerkey,self.entry_credit_address1000)
+        compose = self.api_wallet.compose_identity_attribute(receiver_chainid,destination_chainid,attributes,signer_chainid,signerkey,self.entry_credit_address1000,True)
         # commit entry
         commit = self.api_factomd.commit_entry(compose['commit']['params']['message'])
 
@@ -334,7 +371,7 @@ class ApiTestsWallet(unittest.TestCase):
         signer_key = result['keys'][0]
 
         #compose entry for attribute endorsement
-        compose = self.api_wallet.compose_identity_attribute_endorsement(receiver_chainid,entry_hash,signer_key,chainid,self.entry_credit_address1000)
+        compose = self.api_wallet.compose_identity_attribute_endorsement(receiver_chainid,entry_hash,signer_key,chainid,self.entry_credit_address1000,False)
 
         # commit entry
 
@@ -346,4 +383,3 @@ class ApiTestsWallet(unittest.TestCase):
         status = wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
         self.assertIn('DBlockConfirmed', str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
                       'Entry not arrived in block')
-
