@@ -246,7 +246,7 @@ class ApiTestsWallet(unittest.TestCase):
         result = self.api_wallet.identity_key_at_height(reveal['chainid'], height['directoryblockheight'])
 
         #compare the identity keys before replacing and after replacing. If they are same then test case failed else test case passed
-        self.assertTrue(keylist != result['keys'], "Key Found. Testcase Passed")
+        self.assertNotEqual(keylist, result['keys'], "Key Found. Testcase Failed")
 
 
     def compose_attribute(self):
