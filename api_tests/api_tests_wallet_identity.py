@@ -38,7 +38,7 @@ class ApiTestsWallet(unittest.TestCase):
         result =  self.api_wallet.identity_key(keys['public'])
 
         #check if secret key of the identities is the same. pass if found. false if not found
-        found = False
+       
         if result['secret'] == keys['secret']:
             found = True
         else:
