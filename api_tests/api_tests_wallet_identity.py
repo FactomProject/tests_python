@@ -66,6 +66,7 @@ class ApiTestsWallet(unittest.TestCase):
         for i in range(0, len(key_list['keys'])-1):
           if (key_list['keys'][i]['public'] == newkey['public']):
                 found = True
+                break
 
         self.assertTrue(found == True, "Found keys. Test Case Passed")
 
