@@ -43,7 +43,7 @@ class CLITestsChains(unittest.TestCase):
             if newkey == keylist[i]:
                 found = True
                 break
-        self.assertFalse(found == True, "Testcase Failed")
+        self.assertFalse(found, "Testcase Failed")
 
     def test_make_chain_and_check_chainhead(self):
         chainid = self.compose_identity_chain()
