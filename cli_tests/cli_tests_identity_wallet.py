@@ -42,6 +42,7 @@ class CLITestsChains(unittest.TestCase):
         for i in range(0, len(keylist) - 1):
             if newkey == keylist[i]:
                 found = True
+                break
         self.assertFalse(found == True, "Testcase Failed")
 
     def test_make_chain_and_check_chainhead(self):
