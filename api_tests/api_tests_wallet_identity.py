@@ -38,13 +38,14 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         result =  self.api_wallet.identity_key(keys['public'])
 
         #check if secret key of the identities is the same. pass if found. false if not found
-        found = False
+       
         if result['secret'] == keys['secret']:
             found = True
         else:
             found = False
 
-        self.assertTrue(found == True, "Found keys. Test Case Passed")
+        self.assertTrue(found, "Found keys. Test Case Passed")
+
 
 
     def test_all_identity_keys(self):
@@ -65,6 +66,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         for i in range(0, len(key_list['keys'])-1):
           if (key_list['keys'][i]['public'] == newkey['public']):
                 found = True
+                break
 
         self.assertTrue(found,"Not Found keys. Test Case Failed")
 
@@ -90,6 +92,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         for i in range(0,len(identity_list['keys'])-1):
             if identity_list['keys'][i]['public'] == keys['public']:
                 found = True
+                break
         self.assertFalse(found, "Remove Identity Key Passed")
 
 
@@ -127,7 +130,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])), 'Chain not arrived in block')
 
         # chain arrived in block?
-        self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
+        self.assertIn('DBlockConfirmed', str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
                         'Chain not arrived in block')
 
     def test_compose_identity_chain_max_size(self):
@@ -263,7 +266,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         result = self.api_wallet.identity_key_at_height(reveal['chainid'], height['directoryblockheight'])
 
         #compare the identity keys before replacing and after replacing. If they are same then test case failed else test case passed
-        self.assertTrue(keylist != result['keys'], "Key Found. Testcase Passed")
+        self.assertNotEqual(keylist, result['keys'], "Key Found. Testcase Failed")
 
 
     def compose_attribute(self):

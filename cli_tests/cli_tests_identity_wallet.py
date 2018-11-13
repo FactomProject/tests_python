@@ -29,7 +29,8 @@ class CLITestsChains(unittest.TestCase):
         for i in range(0, len(keylist)-1):
             if newkey == keylist[i]:
                 found = True
-        self.assertFalse(found == False, "Testcase Failed")
+                break
+        self.assertTrue(found, "Testcase Failed")
 
     def test_rm_identity_keys(self):
         newkey = self.cli_identity.new_identity_key()
@@ -41,7 +42,8 @@ class CLITestsChains(unittest.TestCase):
         for i in range(0, len(keylist) - 1):
             if newkey == keylist[i]:
                 found = True
-        self.assertFalse(found == True, "Testcase Failed")
+                break
+        self.assertFalse(found, "Testcase Failed")
 
     def test_make_chain_and_check_chainhead(self):
         chainid = self.compose_identity_chain()
@@ -189,5 +191,6 @@ class CLITestsChains(unittest.TestCase):
         for i in range(0,len(parsed_key_list)):
             if (str(parsed_key_list[i]) == str(newkey)):
                 found = True
+                break
 
         self.assertTrue(found, "Testcase Failed")
