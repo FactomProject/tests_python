@@ -177,6 +177,7 @@ class ApiTestsWallet(unittest.TestCase):
 
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
+        
         chain_external_ids.insert(0, '-h')
         chain_external_ids.insert(2, '-h')
         wait_for_chain_in_block(external_id_list=chain_external_ids)
