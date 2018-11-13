@@ -92,6 +92,7 @@ class ApiTestsWallet(unittest.TestCase):
         for i in range(0,len(identity_list['keys'])-1):
             if identity_list['keys'][i]['public'] == keys['public']:
                 found = True
+                break
         self.assertTrue(found == False, "Remove Identity Key Passed")
 
 
