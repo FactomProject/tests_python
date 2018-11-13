@@ -30,7 +30,7 @@ class CLITestsChains(unittest.TestCase):
             if newkey == keylist[i]:
                 found = True
                 break
-        self.assertFalse(found == False, "Testcase Failed")
+        self.assertTrue(found, "Testcase Failed")
 
     def test_rm_identity_keys(self):
         newkey = self.cli_identity.new_identity_key()
