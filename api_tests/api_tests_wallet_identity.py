@@ -124,7 +124,7 @@ class ApiTestsWallet(unittest.TestCase):
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
         # chain arrived in block?
-        self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
+        self.assertIn('DBlockConfirmed', str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
                         'Chain not arrived in block')
 
     def test_compose_identity_chain_max_size(self):
