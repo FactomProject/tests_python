@@ -180,7 +180,11 @@ class ApiTestsWallet(unittest.TestCase):
         
         chain_external_ids.insert(0, '-h')
         chain_external_ids.insert(2, '-h')
-        wait_for_chain_in_block(external_id_list=chain_external_ids)
+        status = wait_for_chain_in_block(external_id_list=chain_external_ids)
+
+         # chain arrived in block?
+        self.assertIn('DBlockConfirmed, str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
+                        'Chain not arrived in block')
 
         height = self.api_factomd.get_heights()
 
