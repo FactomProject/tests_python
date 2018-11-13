@@ -192,5 +192,6 @@ class CLITestsChains(unittest.TestCase):
         for i in range(0,len(parsed_key_list)):
             if (str(parsed_key_list[i]) == str(newkey)):
                 found = True
+                break
 
         self.assertTrue(found, "Testcase Failed")
