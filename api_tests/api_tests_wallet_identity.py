@@ -93,7 +93,7 @@ class ApiTestsWallet(unittest.TestCase):
             if identity_list['keys'][i]['public'] == keys['public']:
                 found = True
                 break
-        self.assertTrue(found == False, "Remove Identity Key Passed")
+        self.assertFalse(found, "Remove Identity Key Passed")
 
 
     def test_compose_identity_chain(self):
