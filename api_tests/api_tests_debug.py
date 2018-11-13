@@ -5,6 +5,7 @@ from nose.plugins.attrib import attr
 from api_objects.api_objects_debug import APIObjectsDebug
 from helpers.helpers import read_data_from_json
 from helpers.cli_methods import get_data_dump_from_server
+import logging
 
 @attr(debug=True)
 class FactomDebugAPItests(unittest.TestCase):
@@ -43,13 +44,13 @@ class FactomDebugAPItests(unittest.TestCase):
     def test_get_holding_messages_in_queue(self):
         holding_queue_msgs = self.api_debug.get_holding_queue()
         self.assertFalse(re.search('Method not found',str(holding_queue_msgs)),"holding message api is not found")
-        print(holding_queue_msgs)
+        logging.getLogger('cli_command').info(holding_queue_msgs)
                 
         
     def test_get_predictive_fer(self):
         predictive_fer = self.api_debug.get_predictive_fer()
         self.assertFalse(re.search('Method not found',str(predictive_fer)), "get predictive fer is not found")
-        print predictive_fer
+        logging.getLogger('cli_command').info(predictive_fer)
 
     def test_audit_servers(self):
         self.parse_federated_audit_servers("Audit")
@@ -64,11 +65,11 @@ class FactomDebugAPItests(unittest.TestCase):
         found = True
         if authority == "Fed":
             result = self.find_between(str(output),'FederatedServersStart===','FederatedServersEnd')
-            fed_audit_list = self.get_federated_servers()
+            fed_audit_list = self.api_debug.get_federated_servers()
         else:
             result = self.find_between(str(output), 'AuditServersStart===', 'AuditServersEnd')
             result = result.replace("online","")
-            fed_audit_list = self.get_audit_servers()
+            fed_audit_list = self.api_debug.get_audit_servers()
         server_list = result.split("\\n")
         if len(fed_audit_list) > 0 and len(server_list) > 0:
             self.assertTrue(len(fed_audit_list) == int(server_list[0]),"servers is not matching")
@@ -94,18 +95,14 @@ class FactomDebugAPItests(unittest.TestCase):
 
     def test_get_configuration(self):
         configuration = self.api_debug.get_configuration()
-        print configuration
+        logging.getLogger('cli_command').info(configuration)
 
-
-    def test_droprate(self):
-        print "executing"
-        droprate = self.api_debug.get_droprate()
-        print droprate
 
 
     def test_currentminute(self):
         currentminute = self.api_debug.get_currentminute()
-        print "current minute is %d" % currentminute['Minute']
+        result = "current minute is %d" % currentminute['Minute']
+        logging.getLogger('cli_command').info(result)
 
 
     def test_current_minute_on_all_nodes(self):
@@ -115,12 +112,13 @@ class FactomDebugAPItests(unittest.TestCase):
           self.api_debug.change_factomd_address(factomd_address_custom)
           currentminute_1 = self.api_debug.get_currentminute()
           if (currentminute == currentminute_1):
-              print "current minute on node - %s and node %s is %d" % (
+              result = "current minute on node - %s and node %s is %d" % (
               self.factomd_address, factomd_address_custom, currentminute['Minute'])
           else:
-            print "mismatch in node %s (%d) and %s (%d) " % (self.factomd_address, currentminute['Minute'], factomd_address_custom, currentminute_1['Minute'])
+            result= "mismatch in node %s (%d) and %s (%d) " % (self.factomd_address, currentminute['Minute'], factomd_address_custom, currentminute_1['Minute'])
             #try again before giving up
             time.sleep(5)
+            logging.getLogger('cli_command').info(result)
             currentminute = self.api_debug.get_currentminute()
             currentminute_1 = self.api_debug.get_currentminute()
             self.assertTrue(currentminute == currentminute_1,
@@ -130,14 +128,10 @@ class FactomDebugAPItests(unittest.TestCase):
         result = get_data_dump_from_server(self.controlpanel['default_server_address'])
         return result
 
-
     def test_summary(self):
         result = self.api_debug.get_summary()
-        print result
+        logging.getLogger('cli_command').info(result)
 
-    def test_get_delay(self):
-        result = self.api_debug.get_delay()
-        print result
 
     def test_set_delay(self):
         result = self.api_debug.set_delay('20')
@@ -153,14 +147,12 @@ class FactomDebugAPItests(unittest.TestCase):
 
     def test_reload_configuration(self):
         result = self.api_debug.reload_configuration()
-        print result
+        logging.getLogger('cli_command').info(result)
 
     def test_process_list(self):
         result = self.api_debug.get_process_list()
-        print result
+        logging.getLogger('cli_command').info(result)
 
     def test_messages(self):
-        print "in messages"
         result = self.api_debug.get_messages_list()
-        print result
-
+        logging.getLogger('cli_command').info(result)
