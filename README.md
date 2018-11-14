@@ -6,12 +6,12 @@ in test folder:
 `export PYTHONPATH=.`
 `nosetests`
 
-#test suits
-to use fast test suite - preferable durring development
+#test suites
+to use fast test suite - preferable during development
 `nosetests -a fast`
 
 for slow tests
-`nostests -a slow`
+`nosetests -a slow`
 
 for load tests
 `nosetests -a load`
