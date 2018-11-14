@@ -16,14 +16,15 @@ class ApiTestsWalletIdentity(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
 
     def setUp(self):
-        public_keys = self.api_wallet.import_addresses(
-            self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
-        self.first_address = public_keys[0]
-        self.entry_creds_wallet = public_keys[1]
-        self.second_address = self.api_wallet.generate_factoid_address()
-        self.entry_creds_wallet2 = self.api_wallet.generate_ec_address()
-        self.data = read_data_from_json('shared_test_data.json')
-        self.entry_credit_address1000 = fund_entry_credit_address(1000)
+        print "in setup"
+        # public_keys = self.api_wallet.import_addresses(
+        #     self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
+        # self.first_address = public_keys[0]
+        # self.entry_creds_wallet = public_keys[1]
+        # self.second_address = self.api_wallet.generate_factoid_address()
+        # self.entry_creds_wallet2 = self.api_wallet.generate_ec_address()
+        # self.data = read_data_from_json('shared_test_data.json')
+        # self.entry_credit_address1000 = fund_entry_credit_address(1000)
 
 
     def test_identity_key(self):
@@ -386,3 +387,28 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         status = wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
         self.assertIn('DBlockConfirmed', str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
                       'Entry not arrived in block')
+
+
+
+    def test_create_max_identity_keys(self):
+        '''
+        Test to generate identity key and verify it is part of all the identities list
+        :return:
+        '''
+        #generate identity key
+        for i in range(1, 1000000):
+            newkey = self.api_wallet.generate_identity_key()
+            print newkey
+
+
+    def test_create_max_addresses(self):
+        for i in range(1, 1000000):
+            newfct = self.api_wallet.generate_factoid_address()
+            newec = self.api_wallet.generate_ec_address()
+            print newfct
+            print newec
+
+    def test_list_identity_keys(self):
+
+        for i in range(1, 1000000):
+            print (self.api_wallet.all_identity_keys())

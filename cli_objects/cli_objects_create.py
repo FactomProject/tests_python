@@ -28,6 +28,7 @@ class CLIObjectsCreate(CLIObjectsBase):
     _acknowledge = "status "
     _backup_wallet = "backupwallet"
     _get_raw = 'get raw '
+    _unlock_wallet = 'unlockwallet '
 
     def import_addresses(self, *addresses):
         address_string = addresses[0]
@@ -145,3 +146,6 @@ class CLIObjectsCreate(CLIObjectsBase):
         return text
 
 
+    def unlock_wallet(self, passphrase, timeout):
+        result = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._unlock_wallet,' -v ', passphrase, ' ', timeout)))
+        return result

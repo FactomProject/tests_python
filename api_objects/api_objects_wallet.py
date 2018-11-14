@@ -53,7 +53,9 @@ class APIObjectsWallet():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_method('generate-ec-address'))
-        if 'error' in str(blocks): exit('generate ec address failed - ' + str(blocks))
+        #if 'error' in str(blocks): exit('generate ec address failed - ' + str(blocks))
+        if 'error' in str(blocks):
+            return blocks
         else: return blocks['result']['public']
 
     def generate_factoid_address(self):
@@ -62,7 +64,9 @@ class APIObjectsWallet():
         :return:
         '''
         blocks = json.loads(self.send_get_request_with_method('generate-factoid-address'))
-        if 'error' in str(blocks): exit('generate factoid address failed - ' + str(blocks))
+        #if 'error' in str(blocks): exit('generate factoid address failed - ' + str(blocks))
+        if 'error' in str(blocks):
+            return blocks
         else: return blocks['result']['public']
 
     def import_addresses(self, *secret_addresses):
@@ -298,7 +302,9 @@ class APIObjectsWallet():
         Output: public key and secret key
         '''
         block = json.loads(self.send_get_request_with_method('generate-identity-key'))
-        return block['result']
+        print block
+        return block
+        #return block['result']
 
 
     def all_identity_keys(self):
@@ -308,8 +314,8 @@ class APIObjectsWallet():
         Output: public key and secret key
         '''
         block = json.loads(self.send_get_request_with_method('all-identity-keys'))
-
-        return block['result']
+        return block
+        #return block['result']
 
 
     def import_identity_keys(self,secretkey):
@@ -456,4 +462,5 @@ class APIObjectsWallet():
         if 'error' in str(block):
             exit('compose entry failed - ' + str(block['error']))
         else: return block['result']
+
 

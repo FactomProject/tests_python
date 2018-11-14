@@ -386,4 +386,3 @@ class APIObjectsFactomd():
         '''
         blocks = json.loads(self.send_get_request_with_params_dict('admin-block', {'KeyMR': keymr}))
         return blocks['result']['ablock']
-
