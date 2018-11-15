@@ -40,47 +40,63 @@ class CLITestsChains(unittest.TestCase):
 
 
     def test_get_entrycredit_rate(self):
-        print self.cli_create.get_entry_credit_rate()
+        ec_rate = self.cli_create.get_entry_credit_rate()
         result = self.unlock_wallet()
         if result == "Incorrect passphrase" or result == "Wallet is locked":
             print result
             exit()
         else:
-            print self.cli_create.get_entry_credit_rate()
+            ec_rate = self.cli_create.get_entry_credit_rate()
 
 
     def test_new_address(self):
-        self.cli_create.create_new_factoid_address()
-        result = self.unlock_wallet()
-        if result == "Incorrect passphrase":
-            print result
-            exit()
-        else:
-            self.cli_create.create_new_factoid_address()
+        # new fct address
+        result =  self.cli_create.create_new_factoid_address()
+        print result
+        self.assertIn("Wallet is locked", result, "Wallet is not locked. Result returned is " + str(result))
 
+        result = self.unlock_wallet()
+        print result
+        self.assertNotIn("Incorrect passphrase", result, "Unlocking the wallet failed")
+
+        result = self.cli_create.create_new_factoid_address()
+        print result
+        self.assertNotIn("Wallet is locked", result, "Wallet should not be locked. Result returned is " + str(result))
+
+        # new ec address
         self.cli_create.create_entry_credit_address()
         result = self.unlock_wallet()
         if result == "Incorrect passphrase":
-            print result
             exit()
         else:
             self.cli_create.create_entry_credit_address()
 
+        result = self.unlock_wallet()
+        # new import address
+        result = self.cli_create.import_addresses(self.data['factoid_wallet_address'])
+        print result
+        self.assertNotIn("Wallet is locked",result,"Wallet is not locked. Result returned is " +  str(result))
 
-    def test_new_address(self):
+
+        result = self.cli_create.import_addresses(self.data['ec_wallet_address'])
+        print result
+        self.assertNotIn("Wallet is locked", result, "Wallet is not locked. Result returned is " + str(result))
+
+
+    def test_address(self):
+
         for i in range(1,1000):
-            self.cli_create.create_new_factoid_address()
-            result = self.unlock_wallet()
-            if result == "Incorrect passphrase":
-                print result
-                exit()
-            else:
-                self.cli_create.create_new_factoid_address()
+            result = self.cli_create.create_new_factoid_address()
+            print result
+            self.assertIn("Wallet is locked", result, "Wallet is not locked. Result returned is " + str(result))
 
-            self.cli_create.create_entry_credit_address()
             result = self.unlock_wallet()
-            if result == "Incorrect passphrase":
-                print result
-                exit()
-            else:
-                self.cli_create.create_entry_credit_address()
+            print result
+            self.assertNotIn("Incorrect passphrase", result, "Unlocking the wallet failed")
+
+            result = self.cli_create.create_new_factoid_address()
+            print result
+            self.assertNotIn("Wallet is locked", result,
+                             "Wallet should not be locked. Result returned is " + str(result))
+
+            time.sleep(2)
