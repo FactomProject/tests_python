@@ -1,7 +1,7 @@
 {
   "BLOCK_TIME": 40,
   "BLOCKS_TO_WAIT": 10,
-  "default_server_address": "http://apiplus-factomd-relay/c10/",
+  "default_server_address": "http://localhost:8090/",
   "default_server_port": "apiplus-factomd-c10:8088",
   "default_private_key": "4c38c72fc5cdad68f13b74674d3ffb1f3d63a112710868c9b08946553448d26d",
   "federated": "c12",
