@@ -80,3 +80,5 @@ class APIChainsTests(unittest.TestCase):
         raw_message = prefix + timestamp + entry
         self.api_factomd.commit_chain(compose['commit']['params']['message'])
         self.api_factomd.send_raw_message(raw_message)
+
+
