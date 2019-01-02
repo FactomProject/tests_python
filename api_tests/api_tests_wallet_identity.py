@@ -118,8 +118,8 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
-        chain_external_ids.insert(0, '-n')
-        chain_external_ids.insert(2, '-n')
+        chain_external_ids.insert(0, 'IdentityChain')
+        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
 
         # search for revealed chain
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
@@ -154,8 +154,8 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
-        chain_external_ids.insert(0, '-n')
-        chain_external_ids.insert(2, '-n')
+        chain_external_ids.insert(0, 'IdentityChain')
+        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
 
         # search for revealed chain
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
@@ -170,7 +170,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
                         'Chain not arrived in block')
 
-    def test_identity_key_at_height(self):
+    def test_active_identity_keys(self):
         '''
         Test to fetch the identity keys of identity chain at a specific height
         :return:
@@ -190,8 +190,10 @@ class ApiTestsWalletIdentity(unittest.TestCase):
 
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
-        chain_external_ids.insert(0, '-n')
-        chain_external_ids.insert(2, '-n')
+        
+        chain_external_ids.insert(0, 'IdentityChain')
+        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
+
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
 
@@ -203,7 +205,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
 
         height = self.api_factomd.get_heights()
 
-        result = self.api_wallet.identity_key_at_height(reveal['chainid'], height['directoryblockheight'])
+        result = self.api_wallet.active_identity_keys(reveal['chainid'], height['directoryblockheight'])
         self.assertTrue(keylist == result['keys'],"Found the key. Testcase Passed")
 
 
@@ -228,8 +230,8 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
         #wait until chain is written into the blockchain
-        chain_external_ids.insert(0, '-n')
-        chain_external_ids.insert(2, '-n')
+        chain_external_ids.insert(0, 'IdentityChain')
+        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
 
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
@@ -264,7 +266,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         height = self.api_factomd.get_heights()
 
         #get the identity keys of the chain
-        result = self.api_wallet.identity_key_at_height(reveal['chainid'], height['directoryblockheight'])
+        result = self.api_wallet.active_identity_keys(reveal['chainid'], height['directoryblockheight'])
 
         #compare the identity keys before replacing and after replacing. If they are same then test case failed else test case passed
         self.assertNotEqual(keylist, result['keys'], "Key Found. Testcase Failed")
@@ -321,8 +323,8 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         receiver_chainid= reveal['chainid']
 
         # wait until chain is written into the blockchain
-        chain_external_ids.insert(0, '-n')
-        chain_external_ids.insert(2, '-n')
+        chain_external_ids.insert(0, 'IdentityChain')
+        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
 
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
@@ -371,7 +373,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         height = self.api_factomd.get_heights()
 
         # get the identity keys of the chain
-        result = self.api_wallet.identity_key_at_height(receiver_chainid, height['directoryblockheight'])
+        result = self.api_wallet.active_identity_keys(receiver_chainid, height['directoryblockheight'])
         signer_key = result['keys'][0]
 
         #compose entry for attribute endorsement
