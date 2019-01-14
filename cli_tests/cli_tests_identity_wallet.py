@@ -11,7 +11,7 @@ from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, fund_entry_credit_address, wait_for_entry_in_block
 
 @attr(fast=True)
-class CLITestsChains(unittest.TestCase):
+class CLITestsIdentityChains(unittest.TestCase):
     cli_chain = CLIObjectsChain()
     cli_create = CLIObjectsCreate()
     cli_identity = CLIObjectsIdentityWallet()

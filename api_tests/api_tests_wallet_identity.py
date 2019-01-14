@@ -17,14 +17,14 @@ class ApiTestsWalletIdentity(unittest.TestCase):
 
     def setUp(self):
         print "in setup"
-        # public_keys = self.api_wallet.import_addresses(
-        #     self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
-        # self.first_address = public_keys[0]
-        # self.entry_creds_wallet = public_keys[1]
-        # self.second_address = self.api_wallet.generate_factoid_address()
-        # self.entry_creds_wallet2 = self.api_wallet.generate_ec_address()
-        # self.data = read_data_from_json('shared_test_data.json')
-        # self.entry_credit_address1000 = fund_entry_credit_address(1000)
+        public_keys = self.api_wallet.import_addresses(
+            self.data['factoid_wallet_address'], self.data['ec_wallet_address'])
+        self.first_address = public_keys[0]
+        self.entry_creds_wallet = public_keys[1]
+        self.second_address = self.api_wallet.generate_factoid_address()
+        self.entry_creds_wallet2 = self.api_wallet.generate_ec_address()
+        self.data = read_data_from_json('shared_test_data.json')
+        self.entry_credit_address1000 = fund_entry_credit_address(1000)
 
 
     def test_identity_key(self):
@@ -59,6 +59,8 @@ class ApiTestsWalletIdentity(unittest.TestCase):
 
         #list all identities
         key_list = self.api_wallet.all_identity_keys()
+        print key_list
+        print key_list['keys']
 
         #flag to confirm identity is found
         found = False
@@ -157,6 +159,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         chain_external_ids.insert(0, 'IdentityChain')
         chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
 
+
         # search for revealed chain
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
@@ -230,6 +233,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
         #wait until chain is written into the blockchain
+
         chain_external_ids.insert(0, 'IdentityChain')
         chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
 
@@ -293,8 +297,10 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         destination_chainid = reveal['chainid']
 
         # wait until chain is written into the blockchain
-        chain_external_ids.insert(0, '-h')
-        chain_external_ids.insert(2, '-h')
+
+        #chain_external_ids.insert(0, 'IdentityChain')
+        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-h', ext_id)]
+
 
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
@@ -392,25 +398,25 @@ class ApiTestsWalletIdentity(unittest.TestCase):
 
 
 
-    def test_create_max_identity_keys(self):
-        '''
-        Test to generate identity key and verify it is part of all the identities list
-        :return:
-        '''
-        #generate identity key
-        for i in range(1, 1000000):
-            newkey = self.api_wallet.generate_identity_key()
-            print newkey
-
-
-    def test_create_max_addresses(self):
-        for i in range(1, 1000000):
-            newfct = self.api_wallet.generate_factoid_address()
-            newec = self.api_wallet.generate_ec_address()
-            print newfct
-            print newec
-
-    def test_list_identity_keys(self):
-
-        for i in range(1, 1000000):
-            print (self.api_wallet.all_identity_keys())
+    # def test_create_max_identity_keys(self):
+    #     '''
+    #     Test to generate identity key and verify it is part of all the identities list
+    #     :return:
+    #     '''
+    #     #generate identity key
+    #     for i in range(1, 1000000):
+    #         newkey = self.api_wallet.generate_identity_key()
+    #         print newkey
+    #
+    #
+    # def test_create_max_addresses(self):
+    #     for i in range(1, 1000000):
+    #         newfct = self.api_wallet.generate_factoid_address()
+    #         newec = self.api_wallet.generate_ec_address()
+    #         print newfct
+    #         print newec
+    #
+    # def test_list_identity_keys(self):
+    #
+    #     for i in range(1, 1000000):
+    #         print (self.api_wallet.all_identity_keys())

@@ -85,7 +85,7 @@ class CLITestsChains(unittest.TestCase):
 
     def test_address(self):
 
-        for i in range(1,1000):
+        for i in range(1,10):
             result = self.cli_create.create_new_factoid_address()
             print result
             self.assertIn("Wallet is locked", result, "Wallet is not locked. Result returned is " + str(result))

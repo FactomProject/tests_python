@@ -303,8 +303,8 @@ class APIObjectsWallet():
         '''
         block = json.loads(self.send_get_request_with_method('generate-identity-key'))
         print block
-        return block
-        #return block['result']
+        #return block
+        return block['result']
 
 
     def all_identity_keys(self):
@@ -314,8 +314,8 @@ class APIObjectsWallet():
         Output: public key and secret key
         '''
         block = json.loads(self.send_get_request_with_method('all-identity-keys'))
-        return block
-        #return block['result']
+        #return block
+        return block['result']
 
 
     def import_identity_keys(self,secretkey):
