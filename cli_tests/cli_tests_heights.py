@@ -1,4 +1,5 @@
 import unittest, time
+import json
 
 from nose.plugins.attrib import attr
 from api_objects.api_objects_factomd import APIObjectsFactomd
@@ -103,3 +104,19 @@ class CLITestsHeight(unittest.TestCase):
             wallet_height = self.cli_chain.get_wallet_height()
             time_waited += 1
         self.assertEqual(directory_block_height, wallet_height, 'directory block height of ' + str(directory_block_height) + ' does not match wallet height of ' + str(wallet_height))
+
+
+
+    def test_server_fault(self):
+        directory_block_height = self.cli_chain.get_directory_block_height_from_head()
+        for x in range(int(directory_block_height),0,-1):
+            admin_block = self.cli_chain.get_admin_block_by_height(x)
+            result = json.loads(admin_block)
+            # print(result['ablock']['abentries'][0]['adminidtype'])
+
+            for i in result['ablock']['abentries']:
+                if(i['adminidtype']) != 1 and (i['adminidtype']) != 11 and (i['adminidtype']) != 5 and (i['adminidtype']) != 6 and (i['adminidtype']) != 14 and (i['adminidtype']) != 0 \
+                        and (i['adminidtype']) != 8  and (i['adminidtype']) != 9 and (i['adminidtype']) != 13 and (i['adminidtype']) != 3 and (i['adminidtype']) != 7:
+                    print "adminidtype " + str(i['adminidtype']) + " height:  " + str(x)
+
+
