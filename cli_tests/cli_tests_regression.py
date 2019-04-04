@@ -1,4 +1,4 @@
-import unittest, json, binascii, hashlib, re, time
+import unittest, json, binascii, hashlib, re, time, sys
 
 from nose.plugins.attrib import attr
 from api_objects.api_objects_factomd import APIObjectsFactomd
@@ -116,6 +116,8 @@ class CLITestsRegression(unittest.TestCase):
         # send transaction
         text = self.cli_create.send_transaction(transaction_name)
         transaction_dict = self.cli_chain.parse_transaction_data(text)
+        chain_dict = self.cli_chain.parse_simple_data(text)
+        tx_id = chain_dict['TxID']
 
         # check for pending transaction
         for x in range(0, self.blocktime+1):
@@ -125,11 +127,8 @@ class CLITestsRegression(unittest.TestCase):
         self.assertLess(x, self.blocktime, 'Transaction never pending')
         self.assertIn(transaction_dict['TxID'], pending, 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
 
-        chain_dict = self.cli_chain.parse_simple_data(text)
-        tx_id = chain_dict['TxID']
         wait_for_ack(tx_id)
 
-        # transaction arrived?
         self.assertNotEqual(self.cli_create.check_wallet_address_balance(self.second_address), '0', 'Factoids were not sent to address: ' + self.second_address)
 
     def test_if_you_can_compose_wrong_transaction(self):

@@ -29,7 +29,7 @@ class CLITestsChainsMakeMany(unittest.TestCase):
         content = create_random_string(1024)
         for i in range(NUMBER_OF_RUNS):
             # this print statement is necessary to monitor the test progress
-            print 'Chain', i + 1
+            print('Chain', i + 1)
             name_1 = create_random_string(5)
             name_2 = create_random_string(5)
             names_list = ['-n', name_1, '-n', name_2]

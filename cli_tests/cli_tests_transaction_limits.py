@@ -69,7 +69,7 @@ class CLITestsTransactionLimits(unittest.TestCase):
         '''
         transaction_name = create_random_string(5)
         self.cli_create.create_new_transaction(transaction_name)
-        for i in xrange(1, 79):
+        for i in range(1, 79):
             new_name = transaction_name+str(i)
             self.add_input_to_master_transaction(transaction_name, new_name)
         self.assertNotIn("Transaction is greater than the max transaction size", self.cli_create.sign_transaction(transaction_name), "Largest allowable transaction was not allowed")

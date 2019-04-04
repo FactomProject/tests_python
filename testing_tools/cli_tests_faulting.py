@@ -86,7 +86,7 @@ class CLITestsFaulting(unittest.TestCase):
             exec(command)
             for server, data in enumerate(result):
                 data_string = str(data)
-                print 'data_string', data_string
+                print('data_string', data_string)
                 found = server_hash in data_string
                 if found: break
             blocks_waited += 1

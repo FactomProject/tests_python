@@ -3,7 +3,7 @@ import time
 from api_objects.api_objects_factomd import APIObjectsFactomd
 from cli_objects.cli_objects_chain import CLIObjectsChain
 from cli_objects.cli_objects_create import CLIObjectsCreate
-from helpers import read_data_from_json
+from .helpers import read_data_from_json
 
 api_factomd = APIObjectsFactomd()
 cli_chain = CLIObjectsChain()
@@ -16,8 +16,7 @@ ACK_WAIT_TIME = 60
 
 def wait_for_ack(transaction_id):
     for x in range(0, ACK_WAIT_TIME):
-        if any(status in cli_create.request_transaction_acknowledgement(transaction_id) for status in ('TransactionACK', 'DBlockConfirmed')):
-            break
+        if any(status in cli_create.request_transaction_acknowledgement(transaction_id) for status in ('TransactionACK', 'DBlockConfirmed')): break
         time.sleep(1)
 
 def wait_for_chain_in_block(**kwargs):

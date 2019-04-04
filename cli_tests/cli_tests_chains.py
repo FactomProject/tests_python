@@ -1,4 +1,4 @@
-import unittest, os, binascii, time
+import unittest, os, binascii, time, hashlib
 
 from nose.plugins.attrib import attr
 from api_objects.api_objects_factomd import APIObjectsFactomd
@@ -97,7 +97,7 @@ class CLITestsChains(unittest.TestCase):
             time.sleep(1)
         self.assertTrue(found, 'Chainhead not included in a Directory Block after 1 block')
 
-    # TODO reinstate this test when FD-547 is implemented to make it work
+    # # TODO reinstate this test when FD-547 is implemented to make it work
     # def test_raw_commit(self):
     #     # Currently this test fails about every 3-7 times. FD-547 to fix it is in backlog.
     #
@@ -133,8 +133,8 @@ class CLITestsChains(unittest.TestCase):
     #         print 'hashed256_raw', hashed256_raw
     #
     #         self.assertEqual(hashed256_raw, tx_id, 'Raw data string is not correct')
-
-    # TODO remove this helper code when FD-547 is implemented
+    #
+    # # TODO remove this helper code when FD-547 is implemented
     # def test_many_raw(self):
     #     # This test is just to run the previous test many times because it fails only about every 3-7 times.
     #     for run in range(0,100):
@@ -156,8 +156,8 @@ class CLITestsChains(unittest.TestCase):
          '''
         self.entry_credit_address100 = fund_entry_credit_address(100)
         data = 'a'*1024
-        name_1 = binascii.b2a_hex(self.data['1st_hex_external_id1'])
-        name_2 = binascii.b2a_hex(self.data['1st_hex_external_id2'])
+        name_1 = binascii.b2a_hex(str.encode(self.data['1st_hex_external_id1'])).decode('UTF-8')
+        name_2 = binascii.b2a_hex(str.encode(self.data['1st_hex_external_id2'])).decode('UTF-8')
         names_list = ['-h', name_1, '-h', name_2]
         chain_flag_list = ['-E']
         self.cli_chain.make_chain(self.entry_credit_address100, data, external_id_list=names_list, flag_list=chain_flag_list)
@@ -211,8 +211,8 @@ class CLITestsChains(unittest.TestCase):
     def test_compose_chain_with_hex_external_id(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
         data = create_random_string(1024)
-        name_1 = binascii.b2a_hex(os.urandom(2))
-        name_2 = binascii.b2a_hex(os.urandom(2))
+        name_1 = binascii.b2a_hex(os.urandom(2)).decode('UTF-8')
+        name_2 = binascii.b2a_hex(os.urandom(2)).decode('UTF-8')
         names_list = ['-h', name_1, '-h', name_2]
         text = self.cli_chain.compose_chain(self.entry_credit_address100, data, external_id_list=names_list)
         start = text.find('"message":"') + 11

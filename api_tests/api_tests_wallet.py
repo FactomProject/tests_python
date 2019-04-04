@@ -43,7 +43,7 @@ class ApiTestsWallet(unittest.TestCase):
             if (status == 'TransactionACK'):
                 break
             time.sleep(1)
-        self.assertLess(x, 299, 'Factoid transaction not acknowledged within 5 minutes')
+        self.assertLess(x, 299, 'Factoid transaction ' + result['txid'] + ' not acknowledged within 5 minutes')
         self.api_wallet.list_transactions_by_txid(result['txid'])
 
 
