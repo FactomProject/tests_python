@@ -5,8 +5,8 @@ import subprocess
 from nose.plugins.attrib import attr
 
 
-@attr(election=True)
-class goTestsElections(unittest.TestCase):
+@attr(simtests=True)
+class SimTests(unittest.TestCase):
 
 # NOTE: factomd MUST NOT be running when these are run
 # factomd --debuglog=badMsgs --faulttimeout=10 --roundtimeout=5 for 60 second blocks runs much quicker
