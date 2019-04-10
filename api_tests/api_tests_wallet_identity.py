@@ -170,7 +170,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         self.assertTrue('DBlockConfirmed' in str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
                         'Chain not arrived in block')
 
-    def test_identity_key_at_height(self):
+    def test_active_identity_keys(self):
         '''
         Test to fetch the identity keys of identity chain at a specific height
         :return:

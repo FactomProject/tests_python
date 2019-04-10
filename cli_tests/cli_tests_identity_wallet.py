@@ -90,7 +90,7 @@ class CLITestsIdentityWallet(unittest.TestCase):
         self.entry_credit_address100 = fund_entry_credit_address(100)
         self.heights =  self.cli_chain.get_heights()
         directory_block_height = self.cli_chain.parse_transaction_data(self.heights)['DirectoryBlockHeight']
-        self.keys = self.cli_identity.get_keys_at_height(receiver_chainid,directory_block_height)
+        self.keys = self.cli_identity.get_active_keys_at_height(receiver_chainid,directory_block_height)
         signerkey = self.cli_chain.parse_keys_data(self.keys,0)
         signer_chainid = receiver_chainid
         attributes = "\'[{\"key\": \"email\", \"value\": \"veena@abc.com\"}]\'"
@@ -117,7 +117,7 @@ class CLITestsIdentityWallet(unittest.TestCase):
         self.entry_credit_address100 = fund_entry_credit_address(100)
         self.heights =  self.cli_chain.get_heights()
         directory_block_height = self.cli_chain.parse_transaction_data(self.heights)['DirectoryBlockHeight']
-        self.keys = self.cli_identity.get_keys_at_height(receiver_chainid,directory_block_height)
+        self.keys = self.cli_identity.get_active_keys_at_height(receiver_chainid,directory_block_height)
         signerkey = self.cli_chain.parse_keys_data(self.keys,0)
         signer_chainid = receiver_chainid
         attributes = "\'[{\"key\": \"email\", \"value\": \"veena@abc.com\"}]\'"
@@ -149,7 +149,7 @@ class CLITestsIdentityWallet(unittest.TestCase):
         # fetch the height and keys of the chain id
         self.heights =  self.cli_chain.get_heights()
         directory_block_height = self.cli_chain.parse_transaction_data(self.heights)['DirectoryBlockHeight']
-        keys = self.cli_identity.get_keys_at_height(chainid,directory_block_height)
+        keys = self.cli_identity.get_active_keys_at_height(chainid,directory_block_height)
         signerkey = self.cli_chain.parse_keys_data(keys,0)
         oldkey = self.cli_chain.parse_keys_data(keys,2)
 
@@ -165,7 +165,7 @@ class CLITestsIdentityWallet(unittest.TestCase):
         # fetch the height and keys of the chain id
         heights = self.cli_chain.get_heights()
         directory_block_height = self.cli_chain.parse_transaction_data(heights)['DirectoryBlockHeight']
-        new_key_list = self.cli_identity.get_keys_at_height(chainid, directory_block_height)
+        new_key_list = self.cli_identity.get_active_keys_at_height(chainid, directory_block_height)
 
         # fetch the key list and add it to the parsed key list
         parsed_key_list = []
