@@ -63,7 +63,7 @@ class CLIObjectsIdentityWallet(CLIObjectsBase):
 
 
     def get_keys_at_height(self,chainid, height):
-        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._identity_get_active_keys_at_height, ' -c ', chainid, ' ' , height)))
+        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._identity_get_active_keys, ' -c ', chainid, ' ' , height)))
 
 
 
