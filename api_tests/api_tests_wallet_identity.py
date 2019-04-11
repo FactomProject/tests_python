@@ -103,6 +103,7 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         '''
 
         chain_external_ids, content = generate_random_external_ids_and_content()
+
         keylist = []
         # generate 5 identities to be added as identity chain content
         for i in range(0, 5):
@@ -117,8 +118,8 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
-        chain_external_ids.insert(0, 'IdentityChain')
-        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
+        chain_external_ids.insert(0, '-n IdentityChain -n')
+        chain_external_ids.insert(2, '-n')
 
         # search for revealed chain
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
@@ -153,8 +154,8 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
-        chain_external_ids.insert(0, 'IdentityChain')
-        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
+        chain_external_ids.insert(0, '-n IdentityChain -n')
+        chain_external_ids.insert(2, '-n')
 
         # search for revealed chain
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
@@ -189,10 +190,8 @@ class ApiTestsWalletIdentity(unittest.TestCase):
 
         # reveal chain
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
-        
-        chain_external_ids.insert(0, 'IdentityChain')
-        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
-
+        chain_external_ids.insert(0, '-n IdentityChain -n')
+        chain_external_ids.insert(2, '-n')
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
 
@@ -229,8 +228,8 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         reveal = self.api_factomd.reveal_chain(compose['reveal']['params']['entry'])
 
         #wait until chain is written into the blockchain
-        chain_external_ids.insert(0, 'IdentityChain')
-        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
+        chain_external_ids.insert(0, '-n IdentityChain -n')
+        chain_external_ids.insert(2, '-n')
 
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
@@ -270,6 +269,45 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         #compare the identity keys before replacing and after replacing. If they are same then test case failed else test case passed
         self.assertNotEqual(keylist, result['keys'], "Key Found. Testcase Failed")
 
+
+    def test_compose_attribute(self):
+        '''
+        Test case Create API calls to create a new Identity Attribute Entry using the Entry Credits from the specified address.
+        :return:
+        '''
+
+        entry_hash, chainid, receiver_chainid = self.compose_attribute()
+        self.assertIn('DBlockConfirmed', str(self.api_factomd.get_status(entry_hash,chainid)), 'Entry not arrived in block')
+
+
+    def test_compose_attribute_endorsement(self):
+        '''
+        Test case compose API calls to create a new Endorsement Entry for the Identity Attribute at the given entry hash. Uses the Entry Credits from the specified address.
+        :return:
+        '''
+
+        entry_hash,chainid, receiver_chainid = self.compose_attribute()
+
+        # get the current height
+        height = self.api_factomd.get_heights()
+
+        # get the identity keys of the chain
+        result = self.api_wallet.active_identity_keys(receiver_chainid, height['directoryblockheight'])
+        signer_key = result['keys'][0]
+
+        #compose entry for attribute endorsement
+        compose = self.api_wallet.compose_identity_attribute_endorsement(receiver_chainid,entry_hash,signer_key,chainid,self.entry_credit_address1000,False)
+
+        # commit entry
+
+        commit = self.api_factomd.commit_entry(compose['commit']['params']['message'])
+
+        # reveal entry
+        reveal = self.api_factomd.reveal_entry(compose['reveal']['params']['entry'])
+
+        status = wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
+        self.assertIn('DBlockConfirmed', str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
+                      'Entry not arrived in block')
 
     def compose_attribute(self):
         '''
@@ -322,8 +360,8 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         receiver_chainid= reveal['chainid']
 
         # wait until chain is written into the blockchain
-        chain_external_ids.insert(0, 'IdentityChain')
-        chain_external_ids = [v for ext_id in chain_external_ids for v in ('-n', ext_id)]
+        chain_external_ids.insert(0, '-n IdentityChain -n')
+        chain_external_ids.insert(2, '-n')
 
         status = wait_for_chain_in_block(external_id_list=chain_external_ids)
 
@@ -350,41 +388,3 @@ class ApiTestsWalletIdentity(unittest.TestCase):
         return reveal['entryhash'], reveal['chainid'], receiver_chainid
 
 
-    def test_compose_attribute(self):
-        '''
-        Test case Create API calls to create a new Identity Attribute Entry using the Entry Credits from the specified address.
-        :return:
-        '''
-
-        entry_hash, chainid, receiver_chainid = self.compose_attribute()
-        self.assertIn('DBlockConfirmed', str(self.api_factomd.get_status(entry_hash,chainid)), 'Entry not arrived in block')
-
-
-    def test_compose_attribute_endorsement(self):
-        '''
-        Test case compose API calls to create a new Endorsement Entry for the Identity Attribute at the given entry hash. Uses the Entry Credits from the specified address.
-        :return:
-        '''
-
-        entry_hash,chainid, receiver_chainid = self.compose_attribute()
-
-        # get the current height
-        height = self.api_factomd.get_heights()
-
-        # get the identity keys of the chain
-        result = self.api_wallet.active_identity_keys(receiver_chainid, height['directoryblockheight'])
-        signer_key = result['keys'][0]
-
-        #compose entry for attribute endorsement
-        compose = self.api_wallet.compose_identity_attribute_endorsement(receiver_chainid,entry_hash,signer_key,chainid,self.entry_credit_address1000,False)
-
-        # commit entry
-
-        commit = self.api_factomd.commit_entry(compose['commit']['params']['message'])
-
-        # reveal entry
-        reveal = self.api_factomd.reveal_entry(compose['reveal']['params']['entry'])
-
-        status = wait_for_entry_in_block(reveal['entryhash'], reveal['chainid'])
-        self.assertIn('DBlockConfirmed', str(self.api_factomd.get_status(reveal['entryhash'], reveal['chainid'])),
-                      'Entry not arrived in block')

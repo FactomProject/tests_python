@@ -1,6 +1,5 @@
 import unittest, os, binascii, hashlib, time
 from nose.plugins.attrib import attr
-from flaky import flaky
 
 from cli_objects.cli_objects_create import CLIObjectsCreate
 from cli_objects.cli_objects_chain import CLIObjectsChain
@@ -9,7 +8,7 @@ from api_objects.api_objects_factomd import APIObjectsFactomd
 from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, fund_entry_credit_address
 
-@attr(fast=True)
+@attr(fast=True, flaky=True)
 class CLITestsChains(unittest.TestCase):
     data = read_data_from_json('shared_test_data.json')
     blocktime = int(os.environ['BLOCKTIME'])

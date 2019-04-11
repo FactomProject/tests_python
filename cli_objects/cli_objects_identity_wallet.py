@@ -1,6 +1,6 @@
 import shlex
 from helpers.cli_methods import send_command_to_cli_and_receive_text
-from cli_objects_base import CLIObjectsBase
+from .cli_objects_base import CLIObjectsBase
 from subprocess import Popen, PIPE
 
 class CLIObjectsIdentityWallet(CLIObjectsBase):
@@ -11,7 +11,6 @@ class CLIObjectsIdentityWallet(CLIObjectsBase):
     _list_identity_keys = "listidentitykeys "
     _rm_identity_key = "rmidentitykey "
     _identity_get_active_keys = "identity getactivekeys "
-    _identity_get_active_keys_at_height = "identity getactivekeysatheight "
     _identity_key_replacement = "identity addkeyreplacement "
 
 
@@ -20,8 +19,8 @@ class CLIObjectsIdentityWallet(CLIObjectsBase):
         flags = ''
         if 'flag_list' in kwargs:
             flags = ' '.join(kwargs['flag_list'])
-        chain_identifier = ''
 
+        chain_identifier = ''
         if 'external_id_list' in kwargs:
             chain_identifier = ' '.join(kwargs['external_id_list'])
 
@@ -42,7 +41,7 @@ class CLIObjectsIdentityWallet(CLIObjectsBase):
         # strip final line feed
         text = text[:-1]
         p.stdin.close()
-        return text
+        return text.decode('utf-8')
 
 
     def new_identity_key(self):
@@ -63,10 +62,7 @@ class CLIObjectsIdentityWallet(CLIObjectsBase):
                                                              , ' -attribute ', attribute, ' ',  ecaddress)))
 
 
-    def get_active_keys(self,chainid):
-        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._identity_get_active_keys, ' -c ', chainid)))
-
-    def get_active_keys_at_height(self,chainid, height):
+    def get_keys_at_height(self,chainid, height):
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._identity_get_active_keys_at_height, ' -c ', chainid, ' ' , height)))
 
 
