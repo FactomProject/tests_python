@@ -1,6 +1,6 @@
 import shlex
 
-from cli_objects_base import CLIObjectsBase
+from .cli_objects_base import CLIObjectsBase
 from collections import defaultdict
 from helpers.cli_methods import send_command_to_cli_and_receive_text
 from subprocess import Popen, PIPE
@@ -16,12 +16,12 @@ class CLIObjectsChain(CLIObjectsBase):
     _pending_transactions = 'get pendingtransactions '
     _get_chainhead = ' get chainhead '
     _get_head = 'get head '
-    _get_walletheight = ' get walletheight '
     _get_heights = 'get heights'
-    _get_fbheight = 'get fbheight '
     _get_abheight = 'get abheight '
     _get_dbheight = 'get dbheight '
     _get_ecbheight = 'get ecbheight '
+    _get_fbheight = 'get fbheight '
+    _get_walletheight = 'get walletheight '
     _get_directoryblock = 'get dblock '
     _get_entryblock = 'get eblock '
     _get_entry_by_hash = 'get entry '
@@ -36,12 +36,11 @@ class CLIObjectsChain(CLIObjectsBase):
         content = ' '.join([entry_text[-3], entry_text[-2]])
         del entry_text[-3:]
         entry_text.append(content)
-        return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
+        return dict(item.split(": ") for item in entry_text)
 
     def parse_transaction_data(self, entry_text):
         entry_text = entry_text.split('\n')
-        del entry_text[-1:]
-        return dict(item.split(": ") for item in str(entry_text)[1:-1].translate(None, "'").split(', '))
+        return dict(item.split(": ") for item in entry_text)
 
     def parse_keys_data(self,keys,index):
         key_list = keys.split('\n')
@@ -87,7 +86,9 @@ class CLIObjectsChain(CLIObjectsBase):
         # open subprocess as a way to 'write' content into the command instead of it coming from a file
         args = shlex.split(''.join((self._cli_command, self._add_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
         p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
-        text = p.communicate(content)
+        contentbytes = content.encode('UTF-8')
+        text = list(p.communicate(contentbytes))
+        text = [text[i].decode('UTF-8')for i in range(len(text))]
         '''
         separate output from status
         If all goes well, the output from the command will be in the 1st piece, followed by a null
@@ -110,7 +111,10 @@ class CLIObjectsChain(CLIObjectsBase):
         # open subprocess as a way to 'write' content into the command instead of it coming from a file
         args = shlex.split(''.join((self._cli_command, self._compose_chain, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
         p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
-        text = p.communicate(content)
+        contentbytes = content.encode('UTF-8')
+        text = list(p.communicate(contentbytes))
+        text = [text[i].decode('UTF-8')for i in range(len(text))]
+
         '''
         separate output from status
         If all goes well, the output from the command will be in the 1st piece, followed by a null
@@ -132,7 +136,9 @@ class CLIObjectsChain(CLIObjectsBase):
         # open subprocess as a way to 'write' content into the command instead of it coming from a file
         args =  shlex.split(''.join((self._cli_command, self._add_entry, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
         p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
-        text = p.communicate(content)
+        contentbytes = content.encode('UTF-8')
+        text = list(p.communicate(contentbytes))
+        text = [text[i].decode('UTF-8')for i in range(len(text))]
         '''
         separate output from status
         If all goes well, the output from the command will be in the 1st piece, followed by a null
@@ -154,7 +160,9 @@ class CLIObjectsChain(CLIObjectsBase):
         # open subprocess as a way to 'write' content into the command instead of it coming from a file
         args =  shlex.split(''.join((self._cli_command, self._compose_entry, ' ', flags, ' ', chain_identifier, ' ', ecaddress)))
         p = Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
-        text = p.communicate(content)
+        contentbytes = content.encode('UTF-8')
+        text = list(p.communicate(contentbytes))
+        text = [text[i].decode('UTF-8')for i in range(len(text))]
         '''
         separate output from status
         If all goes well, the output from the command will be in the 1st piece, followed by a null

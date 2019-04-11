@@ -121,14 +121,14 @@ class CLITestsEntries(unittest.TestCase):
             tx_id = self.cli_chain.parse_simple_data(text)['CommitTxID']
             wait_for_ack(tx_id)
             balance_last = self.cli_create.check_wallet_address_balance(self.entry_credit_address1000)
-            self.assertEqual(int(balance_1st), int(balance_last) + (i + 7) / 1024 + 1, 'Incorrect charge for entry')
+            self.assertEqual(int(balance_1st), int(int(balance_last) + (i + 7) / 1024) + 1, 'Incorrect charge for entry')
 
             # write smallest entry for fee amount
             i += 1
             data = create_random_string(i)
             if i == MAX_ENTRY_SIZE_MINUS_7: break
-            name_1 = binascii.b2a_hex(os.urandom(2))
-            name_2 = binascii.b2a_hex(os.urandom(2))
+            name_1 = binascii.b2a_hex(bytearray(create_random_string(2), 'utf-8')).decode('UTF-8')
+            name_2 = binascii.b2a_hex(bytearray(create_random_string(2), 'utf-8')).decode('UTF-8')
             names_list = ['-c', chain_id, '-x', name_1, '-x', name_2]
             text = self.cli_chain.add_entry_to_chain(self.entry_credit_address1000,
                                                      data, external_id_list=names_list)
@@ -162,14 +162,13 @@ class CLITestsEntries(unittest.TestCase):
         # validate get firstentry_return_entry_hash
         factom_flags_list = ['-E']
         entry_hash = self.cli_chain.get_firstentry(flag_list=factom_flags_list, chain_id=chain_id)
-        self.assertTrue(entry_hash and "Entry [0]" in self.cli_chain.get_allentries(chain_id=chain_id),
-                        'Entry not found')
+        self.assertTrue(entry_hash and "Entry [0]" in self.cli_chain.get_allentries(chain_id=chain_id), 'Entry not found')
 
     def test_force_make_entry_with_hex_external_chain_id(self):
         # make chain
         data = create_random_string(1024)
-        name_1 = binascii.b2a_hex(os.urandom(2))
-        name_2 = binascii.b2a_hex(os.urandom(2))
+        name_1 = binascii.b2a_hex(bytearray(create_random_string(2),'utf-8')).decode('UTF-8')
+        name_2 = binascii.b2a_hex(bytearray(create_random_string(2),'utf-8')).decode('UTF-8')
         chain_names_list = ['-h', name_1, '-h', name_2]
         text = self.cli_chain.make_chain(self.entry_credit_address1000, data, external_id_list=chain_names_list)
         chain_id = self.cli_chain.parse_simple_data(text)['ChainID']
@@ -308,8 +307,8 @@ class CLITestsEntries(unittest.TestCase):
         self.assertTrue("message" and "entry" in self.cli_chain.compose_entry(self.entry_credit_address1000, content, external_id_list=entry_names_list))
 
         # force compose entry by hex external id
-        name_1 = binascii.b2a_hex(os.urandom(2))
-        name_2 = binascii.b2a_hex(os.urandom(2))
+        name_1 = binascii.b2a_hex(os.urandom(2)).decode('UTF-8')
+        name_2 = binascii.b2a_hex(os.urandom(2)).decode('UTF-8')
         factom_flags_list = ['-f']
         entry_names_list = chain_names_list + ['-x', name_1, '-x', name_2]
         content = create_random_string(1024)

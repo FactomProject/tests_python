@@ -5,8 +5,8 @@ import subprocess
 from nose.plugins.attrib import attr
 
 
-@attr(election=True)
-class goTestsElections(unittest.TestCase):
+@attr(simtests=True)
+class SimTests(unittest.TestCase):
 
 # NOTE: factomd MUST NOT be running when these are run
 # factomd --debuglog=badMsgs --faulttimeout=10 --roundtimeout=5 for 60 second blocks runs much quicker
@@ -20,7 +20,7 @@ class goTestsElections(unittest.TestCase):
             print('***************************************************')
             print(unittestname)
             process = subprocess.Popen("cd /home/factom/go/src/github.com/FactomProject/factomd/engine/; /usr/local/go/bin/go test -run " + str(unittestname), stdout=subprocess.PIPE, shell=True)
-            print process.communicate()[0].strip()
+            print(process.communicate()[0].strip())
 
     def test_set_up_network(self):
         global process
@@ -49,12 +49,12 @@ class goTestsElections(unittest.TestCase):
     def test_multiple_7_election(self):
         global process
         process = subprocess.Popen("cd /home/factom/go/src/github.com/FactomProject/factomd/engine/; /usr/local/go/bin/go test -run TestMultiple7Election", stdout=subprocess.PIPE, shell=True)
-        print process.communicate()[0].strip()
+        print(process.communicate()[0].strip())
 
     def test_DBsig_election_every_2nd_block(self):
         global process
         process = subprocess.Popen("cd /home/factom/go/src/github.com/FactomProject/factomd/engine/; /usr/local/go/bin/go test -run TestDBsigElectionEvery2Block", stdout=subprocess.PIPE, shell=True)
-        print process.communicate()[0].strip()
+        print(process.communicate()[0].strip())
 
     # def tearDown(self):
     #     print process.communicate()[0].strip()

@@ -321,7 +321,7 @@ class APIObjectsWallet():
         block = json.loads(self.send_post_request_with_params_dict('import-identity-key',{'public': secretkey}))
         return block['result']
 
-    def active_identity_keys(self,chainid,height):
+    def active_identity_keys(self, chainid, height):
         '''
         This command will return the active public keys for an identity at a given point in time.
         Time is indicated by the block height of the Factom blockchain at the desired time.

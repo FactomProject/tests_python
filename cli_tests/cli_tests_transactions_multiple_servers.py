@@ -30,7 +30,7 @@ class CLITestsTransactionsMultipleServers(unittest.TestCase):
         cli_three.change_factomd_address(self.server_addresses['factomd_address_5'])
         cli_four = CLIObjectsCreate()
         cli_four.change_factomd_address(self.server_addresses['factomd_address_3'])
-        cli_one.send_factoids(self.first_address, self.second_address, '200')
+        cli_one.send_factoids(self.first_address, self.second_address, '2000')
         third_address = self.cli_create.create_new_factoid_address()
 
         for i in range(100):

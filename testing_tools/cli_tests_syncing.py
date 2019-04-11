@@ -30,7 +30,7 @@ class CLITestsSyncing(unittest.TestCase):
         self.assertIn(self.data_fault['audit1_hash'] + ' offline', get_data_dump_from_server(self.data_fault['default_server_address']), 'Audit server ' + self.data_fault['audit1_hash'] + ' not faulted')
 
         # keep node stopped for a bit
-        for i in xrange(self.data_sync['BLOCKS_TO_FALL_BEHIND']): time.sleep(self.blocktime)
+        for i in range(self.data_sync['BLOCKS_TO_FALL_BEHIND']): time.sleep(self.blocktime)
 
         # restart node
         send_command_to_cli_and_receive_text(self._restart_command + self.data_fault['audit1'])

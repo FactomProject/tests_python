@@ -1,6 +1,4 @@
-import unittest, os, binascii, time
-
-from helpers.helpers import create_random_string
+import unittest, os, time
 
 from nose.plugins.attrib import attr
 from api_objects.api_objects_factomd import APIObjectsFactomd
@@ -11,7 +9,7 @@ from helpers.helpers import create_random_string, read_data_from_json
 from helpers.general_test_methods import wait_for_ack, wait_for_chain_in_block, fund_entry_credit_address, wait_for_entry_in_block
 
 @attr(fast=True)
-class CLITestsChains(unittest.TestCase):
+class CLITestsIdentityWallet(unittest.TestCase):
     cli_chain = CLIObjectsChain()
     cli_create = CLIObjectsCreate()
     cli_identity = CLIObjectsIdentityWallet()
@@ -24,26 +22,14 @@ class CLITestsChains(unittest.TestCase):
 
     def test_list_all_identity_keys(self):
         newkey = self.cli_identity.new_identity_key()
-        found = False
         keylist =  (self.cli_identity.list_identity_keys()).split()
-        for i in range(0, len(keylist)-1):
-            if newkey == keylist[i]:
-                found = True
-                break
-        self.assertTrue(found, "Testcase Failed")
+        self.assertTrue(newkey in keylist, "Testcase Failed")
 
     def test_rm_identity_keys(self):
         newkey = self.cli_identity.new_identity_key()
-        found = False
         self.cli_identity.rm_identity_key(newkey)
-
         keylist = (self.cli_identity.list_identity_keys()).split()
-
-        for i in range(0, len(keylist) - 1):
-            if newkey == keylist[i]:
-                found = True
-                break
-        self.assertFalse(found, "Testcase Failed")
+        self.assertFalse(newkey in keylist, "Testcase Failed")
 
     def test_make_chain_and_check_chainhead(self):
         chainid = self.compose_identity_chain()
@@ -51,7 +37,7 @@ class CLITestsChains(unittest.TestCase):
 
     def compose_identity_chain(self):
         self.entry_credit_address100 = fund_entry_credit_address(100)
-        data = create_random_string(1024)
+        data = create_random_string(1024).encode()
         path = os.path.join(os.path.dirname(__file__), self.data['test_file_path'])
         name_1 = create_random_string(5)
         name_2 = create_random_string(5)
@@ -104,7 +90,7 @@ class CLITestsChains(unittest.TestCase):
         self.entry_credit_address100 = fund_entry_credit_address(100)
         self.heights =  self.cli_chain.get_heights()
         directory_block_height = self.cli_chain.parse_transaction_data(self.heights)['DirectoryBlockHeight']
-        self.keys = self.cli_identity.get_active_keys_at_height(receiver_chainid,directory_block_height)
+        self.keys = self.cli_identity.get_keys_at_height(receiver_chainid,directory_block_height)
         signerkey = self.cli_chain.parse_keys_data(self.keys,0)
         signer_chainid = receiver_chainid
         attributes = "\'[{\"key\": \"email\", \"value\": \"veena@abc.com\"}]\'"
@@ -131,7 +117,7 @@ class CLITestsChains(unittest.TestCase):
         self.entry_credit_address100 = fund_entry_credit_address(100)
         self.heights =  self.cli_chain.get_heights()
         directory_block_height = self.cli_chain.parse_transaction_data(self.heights)['DirectoryBlockHeight']
-        self.keys = self.cli_identity.get_active_keys_at_height(receiver_chainid,directory_block_height)
+        self.keys = self.cli_identity.get_keys_at_height(receiver_chainid,directory_block_height)
         signerkey = self.cli_chain.parse_keys_data(self.keys,0)
         signer_chainid = receiver_chainid
         attributes = "\'[{\"key\": \"email\", \"value\": \"veena@abc.com\"}]\'"
@@ -163,7 +149,7 @@ class CLITestsChains(unittest.TestCase):
         # fetch the height and keys of the chain id
         self.heights =  self.cli_chain.get_heights()
         directory_block_height = self.cli_chain.parse_transaction_data(self.heights)['DirectoryBlockHeight']
-        keys = self.cli_identity.get_active_keys_at_height(chainid,directory_block_height)
+        keys = self.cli_identity.get_keys_at_height(chainid,directory_block_height)
         signerkey = self.cli_chain.parse_keys_data(keys,0)
         oldkey = self.cli_chain.parse_keys_data(keys,2)
 
@@ -179,7 +165,7 @@ class CLITestsChains(unittest.TestCase):
         # fetch the height and keys of the chain id
         heights = self.cli_chain.get_heights()
         directory_block_height = self.cli_chain.parse_transaction_data(heights)['DirectoryBlockHeight']
-        new_key_list = self.cli_identity.get_active_keys_at_height(chainid, directory_block_height)
+        new_key_list = self.cli_identity.get_keys_at_height(chainid, directory_block_height)
 
         # fetch the key list and add it to the parsed key list
         parsed_key_list = []
