@@ -328,7 +328,6 @@ class APIObjectsWallet():
         Input: chainid, height
         Output: set of four public keys
         '''
-        # block = json.loads(self.send_post_request_with_params_dict('identity-keys-at-height', {'chainid': chainid,'height': height}))
         block = json.loads(self.send_post_request_with_params_dict('active-identity-keys', {'chainid': chainid,'height': height}))
         return block['result']
 

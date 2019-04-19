@@ -19,7 +19,8 @@ class SimTests(unittest.TestCase):
             print
             print('***************************************************')
             print(unittestname)
-            process = subprocess.Popen("cd /home/factom/go/src/github.com/FactomProject/factomd/engine/; /usr/local/go/bin/go test -run " + str(unittestname), stdout=subprocess.PIPE, shell=True)
+            process = subprocess.Popen("cd /home/factom/go/src/github.com/Facto"
+                                       "/go test -run " + str(unittestname), stdout=subprocess.PIPE, shell=True)
             print(process.communicate()[0].strip())
 
     def test_set_up_network(self):
