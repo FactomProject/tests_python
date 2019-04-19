@@ -323,7 +323,7 @@ class APIObjectsWallet():
 
     def active_identity_keys(self, chainid, height):
         '''
-        This command will return the valid public keys for an identity at a given point in time.
+        This command will return the active public keys for an identity at a given point in time.
         Time is indicated by the block height of the Factom blockchain at the desired time.
         Input: chainid, height
         Output: set of four public keys
