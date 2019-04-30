@@ -207,14 +207,15 @@ class CLITestsRegression(unittest.TestCase):
         text = self.cli_create.send_transaction(transaction_name)
         transaction_dict = self.cli_chain.parse_transaction_data(text)
 
+        # TODO reinstate or otherwise deal with this test when AUT-217 is implemented
         # check for pending transaction return transaction id
-        factom_flags_list = ['-T']
-        for x in range(0, self.blocktime+1):
-            pending = self.cli_chain.get_pending_transactions(flag_list=factom_flags_list)
-            if (pending and not pending.isspace()): break
-            else: time.sleep(1)
-        self.assertLess(x, self.blocktime, 'Transaction never pending')
-        self.assertIn(transaction_dict['TxID'], pending, 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
+        # factom_flags_list = ['-T']
+        # for x in range(0, self.blocktime+1):
+        #     pending = self.cli_chain.get_pending_transactions(flag_list=factom_flags_list)
+        #     if (pending and not pending.isspace()): break
+        #     else: time.sleep(1)
+        # self.assertLess(x, self.blocktime, 'Transaction never pending')
+        # self.assertIn(transaction_dict['TxID'], pending, 'Transaction ' + transaction_dict['TxID'] + ' not displayed in pending transactions')
 
         balance_after = self.cli_create.check_wallet_address_balance(self.first_address)
         self.assertTrue(abs(float(balance_after) - (float(balance_before) - float(self.ecrate) * 8)) <= 0.0000001, 'Balance is not subtracted correctly')
