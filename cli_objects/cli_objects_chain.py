@@ -18,7 +18,7 @@ class CLIObjectsChain(CLIObjectsBase):
     _get_head = 'get head '
     _get_heights = 'get heights'
     _get_abheight = 'get abheight '
-    _get_dbheight = 'get dbheight '
+    _get_dbheight = 'get dblock '
     _get_ecbheight = 'get ecbheight '
     _get_fbheight = 'get fbheight '
     _get_walletheight = 'get walletheight '
@@ -47,6 +47,7 @@ class CLIObjectsChain(CLIObjectsBase):
         return key_list[index]
 
     def parse_block_data(self, text):
+
         parsed_dict = defaultdict(list)
         starts = []
         ends = []

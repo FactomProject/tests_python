@@ -30,16 +30,33 @@ class CLITestsRegression(unittest.TestCase):
         block_height = 0
         head_height = int(self.cli_chain.get_directory_block_height_from_head())
         for x in range(0, head_height):
-            dblock = json.loads(self.cli_chain.get_directory_block_by_height(x))
-            entries = len(dblock['dblock']['dbentries'])
-            if entries > 3:
-                block_height = x
+            # dblock = json.loads(self.cli_chain.get_directory_block_by_height(x))
+            dblock = self.cli_chain.get_directory_block_by_height(x)
+            # entries = len(dblock['dblock']['dbentries'])
+            # for line in self.cli_chain.parse_block_data(dblock):
+            #     print(line)
+            dblock_output = self.cli_chain.parse_block_data(dblock)
+            dbentries = dblock_output['DBEntries']
+            for entries in dbentries:
+                if entries['ChainID:'] != '000000000000000000000000000000000000000000000000000000000000000f':
+                    block_height = x
+                    print(block_height)
+                    break
+                else:
+                    continue
                 break
+            # time.sleep(60)
+            # entries = len(dblock['dbentries'])
+            # if entries > 3:
+            #     block_height = x
+            #     break
         self.assertNotEquals(block_height, 0, 'Network has no identities')
+        # print(block_height)
 
         # directory block raw data
-        dhash=dblock['dblock']['dbhash']
-        self.assertEquals(dblock['rawdata'], self.cli_create.get_raw(dhash), 'Incorrect raw data fetched for Directory Block at height ' + str(block_height))
+        # dhash=dblock['dblock']['dbhash']
+        dbhash= dblock_output['DBHash']
+        self.assertEquals(dblock['rawdata'], self.cli_create.get_raw(dbhash), 'Incorrect raw data fetched for Directory Block at height ' + str(block_height))
 
         # entry block raw data
         # ENTRY = 3 skips over administrative entries
@@ -62,6 +79,8 @@ class CLITestsRegression(unittest.TestCase):
         fblock=json.loads(self.cli_chain.get_factoid_block_by_height(block_height))
         fhash=fblock['fblock']['keymr']
         self.assertEquals(fblock['rawdata'], self.cli_create.get_raw(fhash), 'Incorrect raw data fetched for Factoid Block at height ' + str(block_height))
+
+
 
     def test_raw_transaction(self):
         FACTOID_AMOUNT = 1
