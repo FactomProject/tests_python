@@ -210,12 +210,11 @@ class CLITestsEntries(unittest.TestCase):
         wait_for_chain_in_block(external_id_list=chain_names_list)
 
         # look for chainhead by hex external id
+        factom_flags_list = ['-K']
+        keyMR = self.cli_chain.get_chainhead(external_id_list=chain_names_list, flag_list=factom_flags_list)
         text = self.cli_chain.get_chainhead(external_id_list=chain_names_list)
         self.assertIn('PrevKeyMR: 0000000000000000000000000000000000000000000000000000000000000000', text, 'Chainhead not found')
 
-        # look for chainhead by hex external id return KeyMR
-        keyMR = self.cli_chain.parse_block_data(text)['EBlock']
-        factom_flags_list = ['-K']
         self.assertEqual(keyMR, self.cli_chain.get_chainhead(external_id_list=chain_names_list, flag_list=factom_flags_list), 'Key merkle root does not match')
 
         # check get allentries by hex external id
