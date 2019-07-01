@@ -241,7 +241,6 @@ class CLITestsChains(unittest.TestCase):
         self.assertTrue("Not enough Entry Credits" in self.cli_chain.compose_chain(self.entry_credit_address10, data, external_id_list=names_list), "Insufficient balance not detected")
 
     def test_check_chain_height(self):
-
         # get latest block sequence number
         text = self.cli_chain.get_latest_directory_block()
         seq = self.cli_chain.parse_block_data(text)['SequenceNumber']
@@ -250,13 +249,13 @@ class CLITestsChains(unittest.TestCase):
         self.assertTrue(seq == self.cli_chain.get_directory_block_height_from_head(), 'Directory block is not equal to sequence number')
 
         # get latest block previous merkel root
-        prevMR = self.cli_chain.parse_block_data(text)['PrevBlockKeyMR']
+        prevMR = self.cli_chain.parse_block_data(text)['PrevKeyMR']
 
         # compare to previous merkel root given by looking up directory block merkel root
-        keyMR = self.cli_chain.parse_block_data(text)['DBlock']
+        keyMR = self.cli_chain.parse_block_data(text)['KeyMR']
+
         text = self.cli_chain.get_directory_block(keyMR)
-        self.assertTrue(prevMR == self.cli_chain.parse_block_data(text)[
-            'PrevBlockKeyMR'], 'Get dblock by merkle root did not fetch correct directory block')
+        self.assertTrue(prevMR == self.cli_chain.parse_block_data(text)['PrevKeyMR'], 'Get dblock by merkle root did not fetch correct directory block')
 
     def test_get_directory_block_by_merkel_root(self):
         factom_flags_list = ['-K']
