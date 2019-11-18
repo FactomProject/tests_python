@@ -12,6 +12,7 @@ class CLIObjectsCreate(CLIObjectsBase):
     _new_entry_credit_address = "newecaddress"
     _list_addresses = "listaddresses"
     _balance = "balance "
+    _balancetotals = "balancetotals "
     _newtx = "newtx "
     _add_input_to_transaction = "addtxinput "
     _add_output_to_transaction = "addtxoutput "
@@ -28,6 +29,7 @@ class CLIObjectsCreate(CLIObjectsBase):
     _acknowledge = "status "
     _backup_wallet = "backupwallet"
     _get_raw = 'get raw '
+
 
     def import_addresses(self, *addresses):
         address_string = addresses[0]
@@ -52,6 +54,12 @@ class CLIObjectsCreate(CLIObjectsBase):
 
     def check_wallet_address_balance_remote(self, address):
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._balance, '-r ', address)))
+
+    def check_wallet_address_balancetotals(self):
+        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._balancetotals)))
+
+    def check_wallet_address_balancetotals_with_flags(self, flags):
+        return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._balancetotals, flags)))
 
     def get_entry_credit_rate(self):
         return send_command_to_cli_and_receive_text(''.join((self._cli_command, self._ecrate)))

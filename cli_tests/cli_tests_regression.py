@@ -330,3 +330,4 @@ class CLITestsRegression(unittest.TestCase):
         self.assertEqual('0', self.cli_create.check_wallet_address_balance(third_address), 'Factoids sent when balance insufficient')
         self.cli_create.send_factoids(second_address, third_address, '99.99988')
         self.assertEqual('99.99988', self.cli_create.check_wallet_address_balance(third_address), 'Factoids not sent when balance sufficient')
+

@@ -27,6 +27,8 @@ def send_command_to_cli_and_receive_text(cli_command):
     p.stdin.close()
     # logging.getLogger('cli_command').info(cli_command)
     # logging.getLogger('cli_command').info(text[0])
+    print(cli_command)
+    # print(text[0])
     return ''.join(text)
 
 def get_data_dump_from_server(server_address):

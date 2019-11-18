@@ -1,10 +1,11 @@
 import shlex
+import re
 
 from .cli_objects_base import CLIObjectsBase
 from collections import defaultdict
 from helpers.cli_methods import send_command_to_cli_and_receive_text
 from subprocess import Popen, PIPE
-
+import json
 class CLIObjectsChain(CLIObjectsBase):
     _add_chain = 'addchain'
     _compose_chain = 'composechain '
@@ -23,8 +24,20 @@ class CLIObjectsChain(CLIObjectsBase):
     _get_fbheight = 'get fbheight '
     _get_walletheight = 'get walletheight '
     _get_directoryblock = 'get dblock '
+    _get_ablock = 'get ablock '
+    _get_ecblock = 'get ecblock '
+    _get_fblock = 'get fblock '
     _get_entryblock = 'get eblock '
     _get_entry_by_hash = 'get entry '
+    _diagnostics = ' diagnostics '
+    _diagnostics_server = ' diagnostics server '
+    _diagnostics_network = ' diagnostics network '
+    _diagnostics_sync = ' diagnostics sync '
+    _diagnostics_election = ' diagnostics election '
+    _diagnostics_authset = ' diagnostics authset '
+    _get_currentminute = ' get currentminute '
+    _get_tps = ' get tps '
+    _properties = ' properties '
 
     def parse_simple_data(self, text):
         if ':' not in text:
@@ -46,6 +59,11 @@ class CLIObjectsChain(CLIObjectsBase):
         key_list = keys.split('\n')
         return key_list[index]
 
+    def parse_fblock_data(self,text):
+        text = re.sub(r"[\n\t\s]*", "", text)
+        parsed_dict = json.loads(text)
+        return parsed_dict
+
     def parse_block_data(self, text):
         parsed_dict = defaultdict(list)
         starts = []
@@ -53,7 +71,6 @@ class CLIObjectsChain(CLIObjectsBase):
         lines = text.split("\n")
 
         for index, line in enumerate(lines):
-
             if ": " in line:
                 line_parsed = line.split(": ")
                 parsed_dict[line_parsed[0]] = line_parsed[1]
@@ -244,6 +261,10 @@ class CLIObjectsChain(CLIObjectsBase):
         text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_heights)))
         return text
 
+    def get_heights_with_flag(self, flags=""):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_heights,flags)))
+        return text
+
     def get_directory_block_height_from_head(self):
         text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_heights)))
         dict = self.parse_transaction_data(text)
@@ -274,10 +295,93 @@ class CLIObjectsChain(CLIObjectsBase):
             ''.join((self._cli_command, self._get_directoryblock, keymr)))
         return text
 
+    def get_dblock_by_height(self, height, flags=""):
+        text = send_command_to_cli_and_receive_text(
+            ''.join((self._cli_command, self._get_directoryblock, flags, height)))
+        return text
+
+    def get_ablock_by_keymr(self, keymr, flags=""):
+        text = send_command_to_cli_and_receive_text(
+            ''.join((self._cli_command, self._get_ablock, flags, keymr)))
+        return text
+
+    def get_ablock_by_height(self, height, flags=""):
+        text = send_command_to_cli_and_receive_text(
+            ''.join((self._cli_command, self._get_ablock, flags, height)))
+        return text
+
+    def get_ecblock_by_keymr(self, keymr, flags=""):
+        text = send_command_to_cli_and_receive_text(
+            ''.join((self._cli_command, self._get_ecblock, flags, keymr)))
+        return text
+
+    def get_ecblock_by_height(self, height, flags=""):
+        text = send_command_to_cli_and_receive_text(
+            ''.join((self._cli_command, self._get_ecblock, flags, height)))
+        return text
+
+    def get_fblock_by_keymr(self, keymr, flags=""):
+        text = send_command_to_cli_and_receive_text(
+            ''.join((self._cli_command, self._get_fblock, flags, keymr)))
+        return text
+
+    def get_fblock_by_height(self, height, flags=""):
+        text = send_command_to_cli_and_receive_text(
+            ''.join((self._cli_command, self._get_fblock, flags, height)))
+        return text
+
     def get_entry_block(self,keymr):
         text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_entryblock, keymr)))
         return text
 
     def get_entry_by_hash(self, entryhash):
         text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_entry_by_hash, entryhash)))
+        return text
+
+    def parse_balance_totals(self, balance_totals):
+        balance_totals = balance_totals.split('\n')
+        return dict(item.split(": ") for item in balance_totals)
+
+
+    def get_diagnostics(self):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._diagnostics)))
+        return text
+
+    def get_diagnostics_server(self,flags=""):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._diagnostics_server, flags)))
+        return text
+
+    def get_diagnostics_authset(self,flags=""):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._diagnostics_authset,flags)))
+        return text
+
+    def get_diagnostics_network(self,flags=""):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._diagnostics_network,flags)))
+        return text
+
+    def get_diagnostics_election(self,flags=""):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._diagnostics_election,flags)))
+        return text
+
+    def get_diagnostics_sync(self,flags=""):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._diagnostics_sync,flags)))
+        return text
+
+    def parse_diagnostics(self, diag_data):
+        input_data = diag_data.split('\n')
+        # print(input_data)
+        # for item in input_data:
+        #     print(item)
+        return dict(item.split(": ") for item in input_data)
+
+    def get_currentminute(self,flags=""):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_currentminute, flags)))
+        return text
+
+    def get_tps(self,flags=""):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._get_tps, flags)))
+        return text
+
+    def get_properties(self, flags=""):
+        text = send_command_to_cli_and_receive_text(''.join((self._cli_command, self._properties, flags)))
         return text
